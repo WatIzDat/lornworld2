@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -13,7 +14,7 @@ public class DualGridTilemap : MonoBehaviour
         new(1, 1)
     };
 
-    private static Dictionary<Tuple<bool, bool, bool, bool>, Tile> neighbourStateToTile;
+    private static Dictionary<Tuple<bool, bool, bool, bool>, TileState> neighbourStateToTileState;
 
     [SerializeField]
     private Tilemap worldTilemap;
@@ -21,32 +22,52 @@ public class DualGridTilemap : MonoBehaviour
     [SerializeField]
     private Tilemap displayTilemap;
 
-    // make this into dictionary
     [SerializeField]
-    private Tile[] tiles = new Tile[16];
+    private string tilesResourcesPath = "Tiles";
+
+    [SerializeField]
+    private TileNameToPlaceholderTileMapping[] tileDirectoryNameToPlaceholderTile;
+
+    // make this into dictionary
+    //[SerializeField]
+    //private Tile[] tiles = new Tile[16];
+
+    // make this dictionary into a separate class
+    private readonly System.Collections.Generic.SortedDictionary<Tile, Tile[]> placeholderTileToTiles = new();
 
     private void Awake()
     {
-        neighbourStateToTile = new()
+        foreach (TileNameToPlaceholderTileMapping mapping in tileDirectoryNameToPlaceholderTile)
         {
-            {new (true, true, true, true), tiles[6]},
-            {new (false, false, false, true), tiles[13]}, // OUTER_BOTTOM_RIGHT
-            {new (false, false, true, false), tiles[0]}, // OUTER_BOTTOM_LEFT
-            {new (false, true, false, false), tiles[8]}, // OUTER_TOP_RIGHT
-            {new (true, false, false, false), tiles[15]}, // OUTER_TOP_LEFT
-            {new (false, true, false, true), tiles[1]}, // EDGE_RIGHT
-            {new (true, false, true, false), tiles[11]}, // EDGE_LEFT
-            {new (false, false, true, true), tiles[3]}, // EDGE_BOTTOM
-            {new (true, true, false, false), tiles[9]}, // EDGE_TOP
-            {new (false, true, true, true), tiles[5]}, // INNER_BOTTOM_RIGHT
-            {new (true, false, true, true), tiles[2]}, // INNER_BOTTOM_LEFT
-            {new (true, true, false, true), tiles[10]}, // INNER_TOP_RIGHT
-            {new (true, true, true, false), tiles[7]}, // INNER_TOP_LEFT
-            {new (false, true, true, false), tiles[14]}, // DUAL_UP_RIGHT
-            {new (true, false, false, true), tiles[4]}, // DUAL_DOWN_RIGHT
-            {new (false, false, false, false), tiles[12]},
-        };
+            string tileDirectoryName = mapping.name;
+            Tile placeholderTile = mapping.tile;
 
+            Tile[] tiles = Resources.LoadAll<Tile>($"{tilesResourcesPath}/{tileDirectoryName}");
+
+            Array.Sort(tiles, (x, y) => string.Compare(x.name, y.name));
+
+            placeholderTileToTiles.Add(placeholderTile, tiles);
+        }
+
+        neighbourStateToTileState = new()
+        {
+            {new (true, true, true, true), TileState.Full},
+            {new (false, false, false, true), TileState.OuterBottomRight}, // OUTER_BOTTOM_RIGHT
+            {new (false, false, true, false), TileState.OuterBottomLeft}, // OUTER_BOTTOM_LEFT
+            {new (false, true, false, false), TileState.OuterTopRight}, // OUTER_TOP_RIGHT
+            {new (true, false, false, false), TileState.OuterTopLeft}, // OUTER_TOP_LEFT
+            {new (false, true, false, true), TileState.EdgeRight}, // EDGE_RIGHT
+            {new (true, false, true, false), TileState.EdgeLeft}, // EDGE_LEFT
+            {new (false, false, true, true), TileState.EdgeBottom}, // EDGE_BOTTOM
+            {new (true, true, false, false), TileState.EdgeTop}, // EDGE_TOP
+            {new (false, true, true, true), TileState.InnerBottomRight}, // INNER_BOTTOM_RIGHT
+            {new (true, false, true, true), TileState.InnerBottomLeft}, // INNER_BOTTOM_LEFT
+            {new (true, true, false, true), TileState.InnerTopRight}, // INNER_TOP_RIGHT
+            {new (true, true, true, false), TileState.InnerTopLeft}, // INNER_TOP_LEFT
+            {new (false, true, true, false), TileState.DualUpRight}, // DUAL_UP_RIGHT
+            {new (true, false, false, true), TileState.DualDownRight}, // DUAL_DOWN_RIGHT
+            {new (false, false, false, false), TileState.Empty},
+        };
     }
 
     private void Start()
@@ -54,13 +75,13 @@ public class DualGridTilemap : MonoBehaviour
         RefreshDisplayTilemap();
     }
 
-    private TileBase GetWorldTile(Vector2Int position)
+    private Tile GetWorldTile(Vector2Int position)
     {
         // make this into cast
-        return worldTilemap.GetTile(new Vector3Int(position.x, position.y, 0));
+        return worldTilemap.GetTile<Tile>(new Vector3Int(position.x, position.y, 0));
     }
 
-    public void SetWorldTile(Vector2Int position, Tile tile)
+    public void SetTile(Vector2Int position, Tile tile)
     {
         worldTilemap.SetTile(new Vector3Int(position.x, position.y, 0), tile);
         SetDisplayTile((Vector3Int)position, tile);
@@ -68,14 +89,17 @@ public class DualGridTilemap : MonoBehaviour
 
     private Tile GetDisplayTile(Vector2Int displayPosition, Tile tile)
     {
-        bool topRight = GetWorldTile(displayPosition - neighbours[0]);
-        bool topLeft = GetWorldTile(displayPosition - neighbours[1]);
-        bool botRight = GetWorldTile(displayPosition - neighbours[2]);
-        bool botLeft = GetWorldTile(displayPosition - neighbours[3]);
+        bool topRight = GetWorldTile(displayPosition - neighbours[0]) == tile;
+        bool topLeft = GetWorldTile(displayPosition - neighbours[1]) == tile;
+        bool botRight = GetWorldTile(displayPosition - neighbours[2]) == tile;
+        bool botLeft = GetWorldTile(displayPosition - neighbours[3]) == tile;
 
         Tuple<bool, bool, bool, bool> neighbourState = new(topLeft, topRight, botLeft, botRight);
 
-        return neighbourStateToTile[neighbourState];
+        Tile[] displayTiles = placeholderTileToTiles[tile];
+        int displayTileIndex = (int)neighbourStateToTileState[neighbourState];
+
+        return displayTiles[displayTileIndex];
     }
 
     private void SetDisplayTile(Vector3Int position, Tile tile)
@@ -96,7 +120,16 @@ public class DualGridTilemap : MonoBehaviour
         {
             for (int j = -50; j < 50; j++)
             {
-                SetDisplayTile(new Vector3Int(i, j, 0), null);
+                Vector3Int pos = new(i, j, 0);
+
+                Tile tile = GetWorldTile(new Vector2Int(i, j));
+
+                if (tile == null)
+                {
+                    continue;
+                }
+
+                SetDisplayTile(pos, tile);
             }
         }
     }
