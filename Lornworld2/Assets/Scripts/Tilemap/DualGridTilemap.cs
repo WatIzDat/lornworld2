@@ -46,6 +46,12 @@ public class DualGridTilemap : MonoBehaviour
             {new (true, false, false, true), tiles[4]}, // DUAL_DOWN_RIGHT
             {new (false, false, false, false), tiles[12]},
         };
+
+    }
+
+    private void Start()
+    {
+        RefreshDisplayTilemap();
     }
 
     private TileBase GetWorldTile(Vector2Int position)
@@ -81,6 +87,17 @@ public class DualGridTilemap : MonoBehaviour
             displayTilemap.SetTile(
                 offsetPos,
                 GetDisplayTile(new Vector2Int(offsetPos.x, offsetPos.y), tile));
+        }
+    }
+
+    private void RefreshDisplayTilemap()
+    {
+        for (int i = -50; i < 50; i++)
+        {
+            for (int j = -50; j < 50; j++)
+            {
+                SetDisplayTile(new Vector3Int(i, j, 0), null);
+            }
         }
     }
 }
