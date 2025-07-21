@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -28,12 +27,10 @@ public class DualGridTilemap : MonoBehaviour
     [SerializeField]
     private TileNameToPlaceholderTileMapping[] tileDirectoryNameToPlaceholderTile;
 
-    // make this into dictionary
-    //[SerializeField]
-    //private Tile[] tiles = new Tile[16];
+    [SerializeField]
+    private Tile[] tileOrder;
 
-    // make this dictionary into a separate class
-    private readonly System.Collections.Generic.SortedDictionary<Tile, Tile[]> placeholderTileToTiles = new();
+    private readonly Dictionary<Tile, Tile[]> placeholderTileToTiles = new();
 
     private void Awake()
     {
@@ -72,19 +69,20 @@ public class DualGridTilemap : MonoBehaviour
 
     private void Start()
     {
+        worldTilemap.GetComponent<TilemapRenderer>().enabled = false;
+
         RefreshDisplayTilemap();
     }
 
     private Tile GetWorldTile(Vector2Int position)
     {
-        // make this into cast
-        return worldTilemap.GetTile<Tile>(new Vector3Int(position.x, position.y, 0));
+        return worldTilemap.GetTile<Tile>((Vector3Int)position);
     }
 
     public void SetTile(Vector2Int position, Tile tile)
     {
-        worldTilemap.SetTile(new Vector3Int(position.x, position.y, 0), tile);
-        SetDisplayTile((Vector3Int)position, tile);
+        worldTilemap.SetTile((Vector3Int)position, tile);
+        SetDisplayTile(position, tile);
     }
 
     private Tile GetDisplayTile(Vector2Int displayPosition, Tile tile)
@@ -102,15 +100,17 @@ public class DualGridTilemap : MonoBehaviour
         return displayTiles[displayTileIndex];
     }
 
-    private void SetDisplayTile(Vector3Int position, Tile tile)
+    private void SetDisplayTile(Vector2Int position, Tile tile)
     {
         foreach (Vector2Int neighbourPos in neighbours)
         {
-            Vector3Int offsetPos = position + new Vector3Int(neighbourPos.x, neighbourPos.y, 0);
+            int z = Array.FindIndex(tileOrder, x => x == tile); 
+
+            Vector3Int offsetPos = (Vector3Int)position + new Vector3Int(neighbourPos.x, neighbourPos.y, z);
 
             displayTilemap.SetTile(
                 offsetPos,
-                GetDisplayTile(new Vector2Int(offsetPos.x, offsetPos.y), tile));
+                GetDisplayTile((Vector2Int)offsetPos, tile));
         }
     }
 
@@ -120,9 +120,9 @@ public class DualGridTilemap : MonoBehaviour
         {
             for (int j = -50; j < 50; j++)
             {
-                Vector3Int pos = new(i, j, 0);
+                Vector2Int pos = new(i, j);
 
-                Tile tile = GetWorldTile(new Vector2Int(i, j));
+                Tile tile = GetWorldTile(pos);
 
                 if (tile == null)
                 {

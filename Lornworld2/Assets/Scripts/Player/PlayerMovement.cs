@@ -20,7 +20,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector2 moveDir = inputValue.Get<Vector2>();
 
-        rb.velocity = new Vector2(moveDir.x * moveSpeed, moveDir.y * moveSpeed);
+        rb.linearVelocity = new Vector2(moveDir.x * moveSpeed, moveDir.y * moveSpeed);
 
         if (moveDir.x > 0)
         {
