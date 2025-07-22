@@ -31,4 +31,9 @@ public class ChunkManager : MonoBehaviour
             Debug.Log("y");
         }
     }
+
+    public void Generate(IWorldGenerator generator)
+    {
+
+    }
 }

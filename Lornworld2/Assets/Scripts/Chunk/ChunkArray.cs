@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class ChunkArray
 {
@@ -28,6 +30,14 @@ public class ChunkArray
             Debug.Log(pos);
 
             chunks[i] = new Chunk(new ChunkPos(pos));
+        }
+    }
+
+    public void PopulateChunksWith(Func<ChunkPos, Tile[], Tile[]> generate)
+    {
+        foreach (Chunk chunk in chunks)
+        {
+            chunk.PopulateWith(generate);
         }
     }
 }
