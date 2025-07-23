@@ -24,26 +24,20 @@ public class DualGridTilemap : MonoBehaviour
     [SerializeField]
     private string tilesResourcesPath = "Tiles";
 
-    [SerializeField]
-    private TileNameToPlaceholderTileMapping[] tileDirectoryNameToPlaceholderTile;
-
-    [SerializeField]
-    private Tile[] tileOrder;
-
-    private readonly Dictionary<Tile, Tile[]> placeholderTileToTiles = new();
+    private readonly Dictionary<Tile, Tile[]> placeholderTileToDisplayTiles = new();
 
     private void Awake()
     {
-        foreach (TileNameToPlaceholderTileMapping mapping in tileDirectoryNameToPlaceholderTile)
+        foreach (TileScriptableObject tileObj in TileRegistry.Instance.Tiles)
         {
-            string tileDirectoryName = mapping.name;
-            Tile placeholderTile = mapping.tile;
+            string tileDirectoryName = tileObj.tileName;
+            Tile placeholderTile = tileObj.placeholderTile;
 
             Tile[] tiles = Resources.LoadAll<Tile>($"{tilesResourcesPath}/{tileDirectoryName}");
 
             Array.Sort(tiles, (x, y) => string.Compare(x.name, y.name));
 
-            placeholderTileToTiles.Add(placeholderTile, tiles);
+            placeholderTileToDisplayTiles.Add(placeholderTile, tiles);
         }
 
         neighbourStateToTileState = new()
@@ -74,18 +68,20 @@ public class DualGridTilemap : MonoBehaviour
         RefreshDisplayTilemap();
     }
 
-    private Tile GetWorldTile(Vector2Int position)
+    private TileScriptableObject GetWorldTile(Vector2Int position)
     {
-        return worldTilemap.GetTile<Tile>((Vector3Int)position);
+        Tile placeholderTile = worldTilemap.GetTile<Tile>((Vector3Int)position);
+
+        return TileRegistry.Instance.GetScriptableObjectFromPlaceholderTile(placeholderTile);
     }
 
-    public void SetTile(Vector2Int position, Tile tile)
+    public void SetTile(Vector2Int position, TileScriptableObject tileObj)
     {
-        worldTilemap.SetTile((Vector3Int)position, tile);
-        SetDisplayTile(position, tile);
+        worldTilemap.SetTile((Vector3Int)position, tileObj.placeholderTile);
+        SetDisplayTile(position, tileObj);
     }
 
-    private Tile GetDisplayTile(Vector2Int displayPosition, Tile tile)
+    private Tile GetDisplayTile(Vector2Int displayPosition, TileScriptableObject tile)
     {
         bool topRight = GetWorldTile(displayPosition - neighbours[0]) == tile;
         bool topLeft = GetWorldTile(displayPosition - neighbours[1]) == tile;
@@ -94,17 +90,17 @@ public class DualGridTilemap : MonoBehaviour
 
         Tuple<bool, bool, bool, bool> neighbourState = new(topLeft, topRight, botLeft, botRight);
 
-        Tile[] displayTiles = placeholderTileToTiles[tile];
+        Tile[] displayTiles = placeholderTileToDisplayTiles[tile.placeholderTile];
         int displayTileIndex = (int)neighbourStateToTileState[neighbourState];
 
         return displayTiles[displayTileIndex];
     }
 
-    private void SetDisplayTile(Vector2Int position, Tile tile)
+    private void SetDisplayTile(Vector2Int position, TileScriptableObject tile)
     {
         foreach (Vector2Int neighbourPos in neighbours)
         {
-            int z = Array.FindIndex(tileOrder, x => x == tile); 
+            int z = tile.order;
 
             Vector3Int offsetPos = (Vector3Int)position + new Vector3Int(neighbourPos.x, neighbourPos.y, z);
 
@@ -122,7 +118,7 @@ public class DualGridTilemap : MonoBehaviour
             {
                 Vector2Int pos = new(i, j);
 
-                Tile tile = GetWorldTile(pos);
+                TileScriptableObject tile = GetWorldTile(pos);
 
                 if (tile == null)
                 {
