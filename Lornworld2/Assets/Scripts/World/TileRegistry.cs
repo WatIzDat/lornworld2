@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using System.Reflection;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -8,7 +11,8 @@ public class TileRegistry : MonoBehaviour
 
     public TileScriptableObject[] Tiles { get; private set; }
 
-    private Dictionary<Tile, TileScriptableObject> placeholderTileToTileObjMap = new();
+    private readonly Dictionary<Tile, TileScriptableObject> placeholderTileToTileObjMap = new();
+    private readonly Dictionary<TileIdentifier, TileScriptableObject> tileIdToTileObjMap = new();
 
     [SerializeField]
     private string tileScriptableObjectsPath;
@@ -28,12 +32,27 @@ public class TileRegistry : MonoBehaviour
 
         Tiles = Resources.LoadAll<TileScriptableObject>(tileScriptableObjectsPath);
 
+        Assembly assembly = typeof(TileIds).Assembly;
+
+        Type tileIdsType = assembly.GetType(nameof(TileIds));
+
         foreach (TileScriptableObject tile in Tiles)
         {
             placeholderTileToTileObjMap.Add(tile.placeholderTile, tile);
 
+            TileIdentifier id = new(tile.tileName);
+
+            tileIdsType.GetProperty(tile.tileName).SetValueOptimized(null, id);
+
+            tileIdToTileObjMap.Add(id, tile);
+
             Debug.Log(tile.tileName);
         }
+    }
+
+    public TileScriptableObject GetTile(TileIdentifier id)
+    {
+        return tileIdToTileObjMap[id];
     }
 
     public TileScriptableObject GetScriptableObjectFromPlaceholderTile(Tile placeholderTile)

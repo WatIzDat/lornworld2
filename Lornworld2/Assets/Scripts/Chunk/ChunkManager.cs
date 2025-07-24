@@ -5,6 +5,8 @@ public class ChunkManager : MonoBehaviour
     // change to 16 later
     public const int ChunkSize = 2;
 
+    public const int ChunkArea = ChunkSize * ChunkSize;
+
     [SerializeField]
     private int renderDistance;
 
@@ -34,6 +36,6 @@ public class ChunkManager : MonoBehaviour
 
     public void Generate(IWorldGenerator generator)
     {
-
+        loadedChunks.PopulateChunksWith(generator.Generate);
     }
 }

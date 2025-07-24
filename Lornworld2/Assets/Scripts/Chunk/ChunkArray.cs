@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 public class ChunkArray
 {
@@ -30,10 +29,19 @@ public class ChunkArray
             Debug.Log(pos);
 
             chunks[i] = new Chunk(new ChunkPos(pos));
+
+            // Remember to unsubscribe when chunk gets deloaded
+            chunks[i].ChunkChanged += OnChunkChanged;
         }
     }
 
-    public void PopulateChunksWith(Func<ChunkPos, Tile[], Tile[]> generate)
+    private void OnChunkChanged(int index, TileScriptableObject obj)
+    {
+        Debug.Log(index);
+        Debug.Log(obj.tileName);
+    }
+
+    public void PopulateChunksWith(Func<ChunkPos, TileScriptableObject[]> generate)
     {
         foreach (Chunk chunk in chunks)
         {

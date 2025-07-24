@@ -28,18 +28,6 @@ public class DualGridTilemap : MonoBehaviour
 
     private void Awake()
     {
-        foreach (TileScriptableObject tileObj in TileRegistry.Instance.Tiles)
-        {
-            string tileDirectoryName = tileObj.tileName;
-            Tile placeholderTile = tileObj.placeholderTile;
-
-            Tile[] tiles = Resources.LoadAll<Tile>($"{tilesResourcesPath}/{tileDirectoryName}");
-
-            Array.Sort(tiles, (x, y) => string.Compare(x.name, y.name));
-
-            placeholderTileToDisplayTiles.Add(placeholderTile, tiles);
-        }
-
         neighbourStateToTileState = new()
         {
             {new (true, true, true, true), TileState.Full},
@@ -63,6 +51,18 @@ public class DualGridTilemap : MonoBehaviour
 
     private void Start()
     {
+        foreach (TileScriptableObject tileObj in TileRegistry.Instance.Tiles)
+        {
+            string tileDirectoryName = tileObj.tileName;
+            Tile placeholderTile = tileObj.placeholderTile;
+
+            Tile[] tiles = Resources.LoadAll<Tile>($"{tilesResourcesPath}/{tileDirectoryName}");
+
+            Array.Sort(tiles, (x, y) => string.Compare(x.name, y.name));
+
+            placeholderTileToDisplayTiles.Add(placeholderTile, tiles);
+        }
+
         worldTilemap.GetComponent<TilemapRenderer>().enabled = false;
 
         RefreshDisplayTilemap();
