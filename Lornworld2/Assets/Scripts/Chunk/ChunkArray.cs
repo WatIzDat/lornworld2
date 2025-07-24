@@ -8,6 +8,8 @@ public class ChunkArray
 
     public Chunk Center => chunks[chunks.Length / 2];
 
+    public event Action<ChunkPos, int, TileScriptableObject> ChunkChanged;
+
     public ChunkArray(int renderDistance)
     {
         int side = 1 + (2 * renderDistance);
@@ -29,16 +31,14 @@ public class ChunkArray
             Debug.Log(pos);
 
             chunks[i] = new Chunk(new ChunkPos(pos));
-
-            // Remember to unsubscribe when chunk gets deloaded
-            chunks[i].ChunkChanged += OnChunkChanged;
         }
+
+        Chunk.ChunkChanged += OnChunkChanged;
     }
 
-    private void OnChunkChanged(int index, TileScriptableObject obj)
+    private void OnChunkChanged(ChunkPos chunkPos, int index, TileScriptableObject tile)
     {
-        Debug.Log(index);
-        Debug.Log(obj.tileName);
+        ChunkChanged?.Invoke(chunkPos, index, tile);
     }
 
     public void PopulateChunksWith(Func<ChunkPos, TileScriptableObject[]> generate)

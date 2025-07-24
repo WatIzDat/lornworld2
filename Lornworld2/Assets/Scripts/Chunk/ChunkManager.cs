@@ -13,11 +13,24 @@ public class ChunkManager : MonoBehaviour
     [SerializeField]
     private PlayerInfo player;
 
+    [SerializeField]
+    private DualGridTilemap tilemap;
+
     private ChunkArray loadedChunks;
 
     private void Awake()
     {
         loadedChunks = new ChunkArray(renderDistance);
+    }
+
+    private void OnEnable()
+    {
+        loadedChunks.ChunkChanged += OnChunkChanged;
+    }
+
+    private void OnDisable()
+    {
+        loadedChunks.ChunkChanged -= OnChunkChanged;
     }
 
     // Don't have to check every frame (change later)
@@ -32,6 +45,15 @@ public class ChunkManager : MonoBehaviour
         {
             Debug.Log("y");
         }
+    }
+
+    private void OnChunkChanged(ChunkPos chunkPos, int index, TileScriptableObject tile)
+    {
+        Vector2Int localPos = new(index % ChunkSize, index / ChunkSize);
+
+        Vector2Int pos = localPos + (chunkPos.pos * ChunkSize);
+
+        tilemap.SetTile(pos, tile);
     }
 
     public void Generate(IWorldGenerator generator)

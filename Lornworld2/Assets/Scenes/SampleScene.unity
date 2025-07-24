@@ -628,6 +628,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   renderDistance: 1
   player: {fileID: 514829023}
+  tilemap: {fileID: 306591200}
 --- !u!4 &704853193
 Transform:
   m_ObjectHideFlags: 0

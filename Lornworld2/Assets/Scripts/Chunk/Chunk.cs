@@ -2,15 +2,15 @@ using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Unity.VisualScripting;
-using UnityEngine;
 
 public class Chunk
 {
+    // array is bottom left to top right counting left to right
     private readonly ObservableCollection<TileScriptableObject> tiles = new();
 
     public ChunkPos chunkPos;
 
-    public event Action<int, TileScriptableObject> ChunkChanged;
+    public static event Action<ChunkPos, int, TileScriptableObject> ChunkChanged;
 
     public Chunk(ChunkPos chunkPos)
     {
@@ -23,7 +23,7 @@ public class Chunk
     {
         foreach (TileScriptableObject tile in e.NewItems)
         {
-            ChunkChanged?.Invoke(e.NewStartingIndex, tile);
+            ChunkChanged?.Invoke(chunkPos, e.NewStartingIndex, tile);
         }
     }
 
