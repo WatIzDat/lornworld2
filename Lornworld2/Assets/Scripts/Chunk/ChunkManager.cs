@@ -3,7 +3,7 @@ using UnityEngine;
 public class ChunkManager : MonoBehaviour
 {
     // change to 16 later
-    public const int ChunkSize = 2;
+    public const int ChunkSize = 4;
 
     public const int ChunkArea = ChunkSize * ChunkSize;
 
@@ -38,16 +38,24 @@ public class ChunkManager : MonoBehaviour
     // Don't have to check every frame (change later)
     private void Update()
     {
+        IWorldGenerator generator = new DebugWorldGenerator();
+
         // moved off a chunk
         if (player.ChunkPos.pos.x - loadedChunks.Center.chunkPos.pos.x > 0)
         {
-            loadedChunks.ShiftHorizontal(true, new DebugWorldGenerator().Generate);
+            loadedChunks.ShiftHorizontal(true, generator.Generate);
         }
         else if (player.ChunkPos.pos.x - loadedChunks.Center.chunkPos.pos.x < 0)
         {
+            loadedChunks.ShiftHorizontal(false, generator.Generate);
         }
-        else if (Mathf.Abs(player.ChunkPos.pos.y - loadedChunks.Center.chunkPos.pos.y) > 0)
+        else if (player.ChunkPos.pos.y - loadedChunks.Center.chunkPos.pos.y > 0)
         {
+            loadedChunks.ShiftVertical(true, generator.Generate);
+        }
+        else if (player.ChunkPos.pos.y - loadedChunks.Center.chunkPos.pos.y < 0)
+        {
+            loadedChunks.ShiftVertical(false, generator.Generate);
         }
     }
 
@@ -62,7 +70,7 @@ public class ChunkManager : MonoBehaviour
 
     private void OnChunkUnloaded(ChunkPos chunkPos)
     {
-        Debug.Log(chunkPos.pos);
+        //Debug.Log(chunkPos.pos);
 
         for (int x = 0; x < ChunkSize; x++)
         {

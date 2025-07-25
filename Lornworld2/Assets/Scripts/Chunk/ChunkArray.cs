@@ -71,12 +71,86 @@ public class ChunkArray
                     newChunks[i] = chunks[i + 1];
                 }
             }
+            else
+            {
+                if ((i + 1) % sideLength == 0)
+                {
+                    ChunkUnloaded?.Invoke(chunks[i].chunkPos);
+                }
+
+                if (i % sideLength == 0)
+                {
+                    ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.left);
+
+                    Chunk chunk = new(pos);
+                    chunk.PopulateWith(generate);
+
+                    newChunks[i] = chunk;
+                }
+                else
+                {
+                    newChunks[i] = chunks[i - 1];
+                }
+            }
         }
 
         //foreach (Chunk chunk in newChunks)
         //{
         //    Debug.Log(chunk.chunkPos.pos);
         //}
+
+        chunks = newChunks;
+    }
+
+    public void ShiftVertical(bool shiftDown, Func<ChunkPos, TileScriptableObject[]> generate)
+    {
+        Chunk[] newChunks = new Chunk[chunks.Length];
+
+        for (int i = 0; i < chunks.Length; i++)
+        {
+            if (shiftDown)
+            {
+                if (i / sideLength == 0)
+                {
+                    ChunkUnloaded?.Invoke(chunks[i].chunkPos);
+                }
+
+                if (i / sideLength == sideLength - 1)
+                {
+                    ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.up);
+
+                    Chunk chunk = new(pos);
+                    chunk.PopulateWith(generate);
+
+                    newChunks[i] = chunk;
+                }
+                else
+                {
+                    newChunks[i] = chunks[i + sideLength];
+                }
+            }
+            else
+            {
+                if (i / sideLength == sideLength - 1)
+                {
+                    ChunkUnloaded?.Invoke(chunks[i].chunkPos);
+                }
+
+                if (i / sideLength == 0)
+                {
+                    ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.down);
+
+                    Chunk chunk = new(pos);
+                    chunk.PopulateWith(generate);
+
+                    newChunks[i] = chunk;
+                }
+                else
+                {
+                    newChunks[i] = chunks[i - sideLength];
+                }
+            }
+        }
 
         chunks = newChunks;
     }
