@@ -11,6 +11,9 @@ public class TileRegistry : MonoBehaviour
 
     public TileScriptableObject[] Tiles { get; private set; }
 
+    public int MinOrder { get; private set; }
+    public int MaxOrder { get; private set; }
+
     private readonly Dictionary<Tile, TileScriptableObject> placeholderTileToTileObjMap = new();
     private readonly Dictionary<TileIdentifier, TileScriptableObject> tileIdToTileObjMap = new();
 
@@ -36,6 +39,9 @@ public class TileRegistry : MonoBehaviour
 
         Type tileIdsType = assembly.GetType(nameof(TileIds));
 
+        MinOrder = int.MaxValue;
+        MaxOrder = int.MinValue;
+
         foreach (TileScriptableObject tile in Tiles)
         {
             placeholderTileToTileObjMap.Add(tile.placeholderTile, tile);
@@ -45,6 +51,16 @@ public class TileRegistry : MonoBehaviour
             tileIdsType.GetProperty(tile.tileName).SetValueOptimized(null, id);
 
             tileIdToTileObjMap.Add(id, tile);
+
+            if (tile.order < MinOrder)
+            {
+                MinOrder = tile.order;
+            }
+            
+            if (tile.order > MaxOrder)
+            {
+                MaxOrder = tile.order;
+            }
 
             Debug.Log(tile.tileName);
         }

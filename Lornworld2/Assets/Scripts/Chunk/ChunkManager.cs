@@ -26,24 +26,28 @@ public class ChunkManager : MonoBehaviour
     private void OnEnable()
     {
         loadedChunks.ChunkChanged += OnChunkChanged;
+        loadedChunks.ChunkUnloaded += OnChunkUnloaded;
     }
 
     private void OnDisable()
     {
         loadedChunks.ChunkChanged -= OnChunkChanged;
+        loadedChunks.ChunkUnloaded -= OnChunkUnloaded;
     }
 
     // Don't have to check every frame (change later)
     private void Update()
     {
         // moved off a chunk
-        if (Mathf.Abs(player.ChunkPos.pos.x - loadedChunks.Center.chunkPos.pos.x) > 0)
+        if (player.ChunkPos.pos.x - loadedChunks.Center.chunkPos.pos.x > 0)
         {
-            Debug.Log("x");
+            loadedChunks.ShiftHorizontal(true, new DebugWorldGenerator().Generate);
+        }
+        else if (player.ChunkPos.pos.x - loadedChunks.Center.chunkPos.pos.x < 0)
+        {
         }
         else if (Mathf.Abs(player.ChunkPos.pos.y - loadedChunks.Center.chunkPos.pos.y) > 0)
         {
-            Debug.Log("y");
         }
     }
 
@@ -54,6 +58,23 @@ public class ChunkManager : MonoBehaviour
         Vector2Int pos = localPos + (chunkPos.pos * ChunkSize);
 
         tilemap.SetTile(pos, tile);
+    }
+
+    private void OnChunkUnloaded(ChunkPos chunkPos)
+    {
+        Debug.Log(chunkPos.pos);
+
+        for (int x = 0; x < ChunkSize; x++)
+        {
+            for (int y = 0; y < ChunkSize; y++)
+            {
+                Vector2Int localPos = new(x, y);
+
+                Vector2Int pos = localPos + (chunkPos.pos * ChunkSize);
+
+                tilemap.DeleteTile(pos);
+            }
+        }
     }
 
     public void Generate(IWorldGenerator generator)

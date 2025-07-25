@@ -81,6 +81,12 @@ public class DualGridTilemap : MonoBehaviour
         SetDisplayTile(position, tileObj);
     }
 
+    public void DeleteTile(Vector2Int position)
+    {
+        worldTilemap.SetTile((Vector3Int)position, null);
+        DeleteDisplayTile(position);
+    }
+
     private Tile GetDisplayTile(Vector2Int displayPosition, TileScriptableObject tile)
     {
         bool topRight = GetWorldTile(displayPosition - neighbours[0]) == tile;
@@ -107,6 +113,19 @@ public class DualGridTilemap : MonoBehaviour
             displayTilemap.SetTile(
                 offsetPos,
                 GetDisplayTile((Vector2Int)offsetPos, tile));
+        }
+    }
+
+    private void DeleteDisplayTile(Vector2Int position)
+    {
+        foreach (Vector2Int neighbourPos in neighbours)
+        {
+            for (int z = TileRegistry.Instance.MinOrder; z < TileRegistry.Instance.MaxOrder; z++)
+            {
+                Vector3Int offsetPos = (Vector3Int)position + new Vector3Int(neighbourPos.x, neighbourPos.y, z);
+
+                displayTilemap.SetTile(offsetPos, null);
+            }
         }
     }
 
