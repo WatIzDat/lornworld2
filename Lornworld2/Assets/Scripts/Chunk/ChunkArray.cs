@@ -1,10 +1,13 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ChunkArray : MonoBehaviour
 {
     // array is bottom left to top right (q3 to q1) counting left to right
     private Chunk[] chunks;
+
+    private Queue<GameObject> unloadedChunks = new();
 
     private int sideLength;
 
@@ -86,6 +89,8 @@ public class ChunkArray : MonoBehaviour
     private void OnChunkUnloaded(int index)
     {
         chunks[index].gameObject.SetActive(false);
+
+        unloadedChunks.Enqueue(chunks[index].gameObject);
     }
 
     private void OnChunkChanged(ChunkPos chunkPos, int index, TileScriptableObject tile)
@@ -93,6 +98,21 @@ public class ChunkArray : MonoBehaviour
         ChunkChanged?.Invoke(chunkPos, index, tile);
     }
 
+    private Chunk PoolOrCreate(ChunkPos pos)
+    {
+        bool unloadedChunkExists = unloadedChunks.TryDequeue(out GameObject unloadedChunk);
+
+        if (!unloadedChunkExists)
+        {
+            Debug.LogWarning("Unloaded chunk doesn't exist, instantiating chunk instead");
+
+            return Chunk.Create(pos, chunkPrefab, chunkParent);
+        }
+
+        return Chunk.Pool(pos, unloadedChunk);
+    }
+
+    // TODO: make shifting right and shifting down iterate backwards to avoid instantiating chunks
     public void ShiftHorizontal(bool shiftLeft, Func<ChunkPos, TileScriptableObject[]> generate)
     {
         Chunk[] newChunks = new Chunk[chunks.Length];
@@ -110,7 +130,7 @@ public class ChunkArray : MonoBehaviour
                 {
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.right);
 
-                    Chunk chunk = Chunk.Create(pos, chunkPrefab, chunkParent);
+                    Chunk chunk = PoolOrCreate(pos);
                     chunk.PopulateWith(generate);
 
                     newChunks[i] = chunk;
@@ -131,7 +151,7 @@ public class ChunkArray : MonoBehaviour
                 {
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.left);
 
-                    Chunk chunk = Chunk.Create(pos, chunkPrefab, chunkParent);
+                    Chunk chunk = PoolOrCreate(pos);
                     chunk.PopulateWith(generate);
 
                     newChunks[i] = chunk;
@@ -168,7 +188,7 @@ public class ChunkArray : MonoBehaviour
                 {
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.up);
 
-                    Chunk chunk = Chunk.Create(pos, chunkPrefab, chunkParent);
+                    Chunk chunk = PoolOrCreate(pos);
                     chunk.PopulateWith(generate);
 
                     newChunks[i] = chunk;
@@ -189,7 +209,7 @@ public class ChunkArray : MonoBehaviour
                 {
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.down);
 
-                    Chunk chunk = Chunk.Create(pos, chunkPrefab, chunkParent);
+                    Chunk chunk = PoolOrCreate(pos);
                     chunk.PopulateWith(generate);
 
                     newChunks[i] = chunk;

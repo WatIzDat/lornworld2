@@ -39,6 +39,21 @@ public class Chunk : MonoBehaviour
         return chunk;
     }
 
+    public static Chunk Pool(ChunkPos chunkPos, GameObject unusedChunk)
+    {
+        unusedChunk.transform.position = new Vector3(chunkPos.pos.x, chunkPos.pos.y, 0) * ChunkManager.ChunkSize;
+        unusedChunk.SetActive(true);
+
+        Chunk chunk = unusedChunk.GetComponent<Chunk>();
+
+        chunk.chunkPos = chunkPos;
+
+        chunk.tilemap.ClearAllTiles();
+        chunk.tiles.Clear();
+
+        return chunk;
+    }
+
     private void Awake()
     {
         tilemap = GetComponentInChildren<DualGridTilemap>();
@@ -46,12 +61,18 @@ public class Chunk : MonoBehaviour
 
     private void OnTilesChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
+        if (e.NewItems == null)
+        {
+            return;
+        }
+
         foreach (TileScriptableObject tile in e.NewItems)
         {
             Vector2Int pos = new(
                 e.NewStartingIndex % ChunkManager.ChunkSize,
                 e.NewStartingIndex / ChunkManager.ChunkSize);
 
+            // TODO: use SetTileBlock instead of SetTile for performance
             tilemap.SetTile(pos, tile);
 
             ChunkChanged?.Invoke(chunkPos, e.NewStartingIndex, tile);

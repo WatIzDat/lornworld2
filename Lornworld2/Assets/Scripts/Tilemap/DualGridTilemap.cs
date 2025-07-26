@@ -88,6 +88,12 @@ public class DualGridTilemap : MonoBehaviour
         SetDisplayTile(position, tile);
     }
 
+    public void ClearAllTiles()
+    {
+        worldTilemap.ClearAllTiles();
+        displayTilemap.ClearAllTiles();
+    }
+
     private Tile GetDisplayTile(Vector2Int displayPosition, TileScriptableObject tile)
     {
         bool topRight = GetWorldTile(displayPosition - neighbours[0]) == tile;
