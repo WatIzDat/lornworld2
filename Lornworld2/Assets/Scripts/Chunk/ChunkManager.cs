@@ -7,7 +7,11 @@ public class ChunkManager : MonoBehaviour
 
     public const int ChunkArea = ChunkSize * ChunkSize;
 
-    public GameObject chunkPrefab;
+    [SerializeField]
+    private GameObject chunkPrefab;
+
+    [SerializeField]
+    private Transform chunkParent;
 
     [SerializeField]
     private int renderDistance;
@@ -22,19 +26,19 @@ public class ChunkManager : MonoBehaviour
 
     private void Awake()
     {
-        loadedChunks = ChunkArray.AddChunkArrayComponent(gameObject, renderDistance, chunkPrefab);
+        loadedChunks = ChunkArray.AddChunkArrayComponent(gameObject, renderDistance, chunkPrefab, chunkParent);
     }
 
     private void OnEnable()
     {
         loadedChunks.ChunkChanged += OnChunkChanged;
-        loadedChunks.ChunkUnloaded += OnChunkUnloaded;
+        //loadedChunks.ChunkUnloaded += OnChunkUnloaded;
     }
 
     private void OnDisable()
     {
         loadedChunks.ChunkChanged -= OnChunkChanged;
-        loadedChunks.ChunkUnloaded -= OnChunkUnloaded;
+        //loadedChunks.ChunkUnloaded -= OnChunkUnloaded;
     }
 
     // Don't have to check every frame (change later)
@@ -70,22 +74,22 @@ public class ChunkManager : MonoBehaviour
         //tilemap.SetTile(pos, tile);
     }
 
-    private void OnChunkUnloaded(ChunkPos chunkPos)
-    {
-        //Debug.Log(chunkPos.pos);
+    //private void OnChunkUnloaded(ChunkPos chunkPos)
+    //{
+    //    //Debug.Log(chunkPos.pos);
 
-        for (int x = 0; x < ChunkSize; x++)
-        {
-            for (int y = 0; y < ChunkSize; y++)
-            {
-                Vector2Int localPos = new(x, y);
+    //    for (int x = 0; x < ChunkSize; x++)
+    //    {
+    //        for (int y = 0; y < ChunkSize; y++)
+    //        {
+    //            Vector2Int localPos = new(x, y);
 
-                Vector2Int pos = localPos + (chunkPos.pos * ChunkSize);
+    //            Vector2Int pos = localPos + (chunkPos.pos * ChunkSize);
 
-                tilemap.DeleteTile(pos);
-            }
-        }
-    }
+    //            tilemap.DeleteTile(pos);
+    //        }
+    //    }
+    //}
 
     public void Generate(IWorldGenerator generator)
     {

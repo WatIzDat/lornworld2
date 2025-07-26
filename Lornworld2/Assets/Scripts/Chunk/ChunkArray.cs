@@ -10,11 +10,12 @@ public class ChunkArray : MonoBehaviour
 
     //[SerializeField]
     private GameObject chunkPrefab;
+    private Transform chunkParent;
 
     public Chunk Center => chunks[chunks.Length / 2];
 
     public event Action<ChunkPos, int, TileScriptableObject> ChunkChanged;
-    public event Action<ChunkPos> ChunkUnloaded;
+    public event Action<int> ChunkUnloaded;
 
     //public ChunkArray(int renderDistance)
     //{
@@ -46,7 +47,7 @@ public class ChunkArray : MonoBehaviour
     //    Chunk.ChunkChanged += OnChunkChanged;
     //}
 
-    public static ChunkArray AddChunkArrayComponent(GameObject gameObject, int renderDistance, GameObject chunkPrefab)
+    public static ChunkArray AddChunkArrayComponent(GameObject gameObject, int renderDistance, GameObject chunkPrefab, Transform chunkParent)
     {
         ChunkArray chunkArray = gameObject.AddComponent<ChunkArray>();
 
@@ -69,14 +70,22 @@ public class ChunkArray : MonoBehaviour
             Debug.Log(pos);
 
             //chunks[i] = new Chunk(new ChunkPos(pos));
-            chunkArray.chunks[i] = Chunk.Create(new ChunkPos(pos), chunkPrefab);
+            chunkArray.chunks[i] = Chunk.Create(new ChunkPos(pos), chunkPrefab, chunkParent);
         }
 
         Chunk.ChunkChanged += chunkArray.OnChunkChanged;
 
+        chunkArray.ChunkUnloaded += chunkArray.OnChunkUnloaded;
+
         chunkArray.chunkPrefab = chunkPrefab;
+        chunkArray.chunkParent = chunkParent;
 
         return chunkArray;
+    }
+
+    private void OnChunkUnloaded(int index)
+    {
+        chunks[index].gameObject.SetActive(false);
     }
 
     private void OnChunkChanged(ChunkPos chunkPos, int index, TileScriptableObject tile)
@@ -94,14 +103,14 @@ public class ChunkArray : MonoBehaviour
             {
                 if (i % sideLength == 0)
                 {
-                    ChunkUnloaded?.Invoke(chunks[i].chunkPos);
+                    ChunkUnloaded?.Invoke(i);
                 }
 
                 if ((i + 1) % sideLength == 0)
                 {
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.right);
 
-                    Chunk chunk = Chunk.Create(pos, chunkPrefab);
+                    Chunk chunk = Chunk.Create(pos, chunkPrefab, chunkParent);
                     chunk.PopulateWith(generate);
 
                     newChunks[i] = chunk;
@@ -115,14 +124,14 @@ public class ChunkArray : MonoBehaviour
             {
                 if ((i + 1) % sideLength == 0)
                 {
-                    ChunkUnloaded?.Invoke(chunks[i].chunkPos);
+                    ChunkUnloaded?.Invoke(i);
                 }
 
                 if (i % sideLength == 0)
                 {
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.left);
 
-                    Chunk chunk = Chunk.Create(pos, chunkPrefab);
+                    Chunk chunk = Chunk.Create(pos, chunkPrefab, chunkParent);
                     chunk.PopulateWith(generate);
 
                     newChunks[i] = chunk;
@@ -152,14 +161,14 @@ public class ChunkArray : MonoBehaviour
             {
                 if (i / sideLength == 0)
                 {
-                    ChunkUnloaded?.Invoke(chunks[i].chunkPos);
+                    ChunkUnloaded?.Invoke(i);
                 }
 
                 if (i / sideLength == sideLength - 1)
                 {
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.up);
 
-                    Chunk chunk = Chunk.Create(pos, chunkPrefab);
+                    Chunk chunk = Chunk.Create(pos, chunkPrefab, chunkParent);
                     chunk.PopulateWith(generate);
 
                     newChunks[i] = chunk;
@@ -173,14 +182,14 @@ public class ChunkArray : MonoBehaviour
             {
                 if (i / sideLength == sideLength - 1)
                 {
-                    ChunkUnloaded?.Invoke(chunks[i].chunkPos);
+                    ChunkUnloaded?.Invoke(i);
                 }
 
                 if (i / sideLength == 0)
                 {
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.down);
 
-                    Chunk chunk = Chunk.Create(pos, chunkPrefab);
+                    Chunk chunk = Chunk.Create(pos, chunkPrefab, chunkParent);
                     chunk.PopulateWith(generate);
 
                     newChunks[i] = chunk;

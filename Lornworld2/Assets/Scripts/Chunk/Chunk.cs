@@ -22,12 +22,15 @@ public class Chunk : MonoBehaviour
     //    tiles.CollectionChanged += OnTilesChanged;
     //}
 
-    public static Chunk Create(ChunkPos chunkPos, GameObject chunkPrefab)
+    public static Chunk Create(ChunkPos chunkPos, GameObject chunkPrefab, Transform chunkParent)
     {
-        Chunk chunk = Instantiate(
-            chunkPrefab,
-            new Vector3(chunkPos.pos.x, chunkPos.pos.y, 0) * ChunkManager.ChunkSize,
-            Quaternion.identity).GetComponent<Chunk>();
+        Chunk chunk = 
+            Instantiate(
+                chunkPrefab,
+                new Vector3(chunkPos.pos.x, chunkPos.pos.y, 0) * ChunkManager.ChunkSize,
+                Quaternion.identity,
+                chunkParent)
+            .GetComponent<Chunk>();
 
         chunk.chunkPos = chunkPos;
 

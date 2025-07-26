@@ -16,9 +16,13 @@ public class TileRegistry : MonoBehaviour
 
     private readonly Dictionary<Tile, TileScriptableObject> placeholderTileToTileObjMap = new();
     private readonly Dictionary<TileIdentifier, TileScriptableObject> tileIdToTileObjMap = new();
+    private readonly Dictionary<Tile, Tile[]> placeholderTileToDisplayTilesMap = new();
 
     [SerializeField]
     private string tileScriptableObjectsPath;
+
+    [SerializeField]
+    private string tilesResourcesPath = "Tiles";
 
     private void Awake()
     {
@@ -62,6 +66,15 @@ public class TileRegistry : MonoBehaviour
                 MaxOrder = tile.order;
             }
 
+            string displayTilesDirectoryName = tile.tileName;
+            Tile placeholderTile = tile.placeholderTile;
+
+            Tile[] tiles = Resources.LoadAll<Tile>($"{tilesResourcesPath}/{displayTilesDirectoryName}");
+
+            Array.Sort(tiles, (x, y) => string.Compare(x.name, y.name));
+
+            placeholderTileToDisplayTilesMap.Add(placeholderTile, tiles);
+
             Debug.Log(tile.tileName);
         }
     }
@@ -79,5 +92,10 @@ public class TileRegistry : MonoBehaviour
         }
 
         return placeholderTileToTileObjMap[placeholderTile];
+    }
+
+    public Tile[] GetDisplayTilesFromPlaceholderTile(Tile placeholderTile)
+    {
+        return placeholderTileToDisplayTilesMap[placeholderTile];
     }
 }

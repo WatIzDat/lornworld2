@@ -21,10 +21,10 @@ public class DualGridTilemap : MonoBehaviour
     [SerializeField]
     private Tilemap displayTilemap;
 
-    [SerializeField]
-    private string tilesResourcesPath = "Tiles";
+    //[SerializeField]
+    //private string tilesResourcesPath = "Tiles";
 
-    private readonly Dictionary<Tile, Tile[]> placeholderTileToDisplayTiles = new();
+    //private readonly Dictionary<Tile, Tile[]> placeholderTileToDisplayTiles = new();
 
     private void Awake()
     {
@@ -51,17 +51,17 @@ public class DualGridTilemap : MonoBehaviour
 
     private void Start()
     {
-        foreach (TileScriptableObject tileObj in TileRegistry.Instance.Tiles)
-        {
-            string tileDirectoryName = tileObj.tileName;
-            Tile placeholderTile = tileObj.placeholderTile;
+        //foreach (TileScriptableObject tileObj in TileRegistry.Instance.Tiles)
+        //{
+        //    string tileDirectoryName = tileObj.tileName;
+        //    Tile placeholderTile = tileObj.placeholderTile;
 
-            Tile[] tiles = Resources.LoadAll<Tile>($"{tilesResourcesPath}/{tileDirectoryName}");
+        //    Tile[] tiles = Resources.LoadAll<Tile>($"{tilesResourcesPath}/{tileDirectoryName}");
 
-            Array.Sort(tiles, (x, y) => string.Compare(x.name, y.name));
+        //    Array.Sort(tiles, (x, y) => string.Compare(x.name, y.name));
 
-            placeholderTileToDisplayTiles.Add(placeholderTile, tiles);
-        }
+        //    placeholderTileToDisplayTiles.Add(placeholderTile, tiles);
+        //}
 
         worldTilemap.GetComponent<TilemapRenderer>().enabled = false;
 
@@ -97,7 +97,7 @@ public class DualGridTilemap : MonoBehaviour
 
         Tuple<bool, bool, bool, bool> neighbourState = new(topLeft, topRight, botLeft, botRight);
 
-        Tile[] displayTiles = placeholderTileToDisplayTiles[tile.placeholderTile];
+        Tile[] displayTiles = TileRegistry.Instance.GetDisplayTilesFromPlaceholderTile(tile.placeholderTile);
         int displayTileIndex = (int)neighbourStateToTileState[neighbourState];
 
         return displayTiles[displayTileIndex];

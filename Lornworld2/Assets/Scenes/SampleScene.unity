@@ -415,7 +415,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chunkPrefab: {fileID: 604306383070667801, guid: 30cac57e1a957b946b45e82bfd070d5a, type: 3}
-  renderDistance: 2
+  chunkParent: {fileID: 1070029687}
+  renderDistance: 1
   player: {fileID: 514829023}
   tilemap: {fileID: 0}
 --- !u!4 &704853193
@@ -554,6 +555,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tileScriptableObjectsPath: ScriptableObjects/Tiles
+  tilesResourcesPath: Tiles
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
