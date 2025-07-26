@@ -7,6 +7,8 @@ public class ChunkManager : MonoBehaviour
 
     public const int ChunkArea = ChunkSize * ChunkSize;
 
+    public GameObject chunkPrefab;
+
     [SerializeField]
     private int renderDistance;
 
@@ -20,7 +22,7 @@ public class ChunkManager : MonoBehaviour
 
     private void Awake()
     {
-        loadedChunks = new ChunkArray(renderDistance);
+        loadedChunks = ChunkArray.AddChunkArrayComponent(gameObject, renderDistance, chunkPrefab);
     }
 
     private void OnEnable()
@@ -61,11 +63,11 @@ public class ChunkManager : MonoBehaviour
 
     private void OnChunkChanged(ChunkPos chunkPos, int index, TileScriptableObject tile)
     {
-        Vector2Int localPos = new(index % ChunkSize, index / ChunkSize);
+        //Vector2Int localPos = new(index % ChunkSize, index / ChunkSize);
 
-        Vector2Int pos = localPos + (chunkPos.pos * ChunkSize);
+        //Vector2Int pos = localPos + (chunkPos.pos * ChunkSize);
 
-        tilemap.SetTile(pos, tile);
+        //tilemap.SetTile(pos, tile);
     }
 
     private void OnChunkUnloaded(ChunkPos chunkPos)

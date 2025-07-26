@@ -1,42 +1,82 @@
 using System;
 using UnityEngine;
 
-public class ChunkArray
+public class ChunkArray : MonoBehaviour
 {
     // array is bottom left to top right (q3 to q1) counting left to right
     private Chunk[] chunks;
 
-    private readonly int sideLength;
+    private int sideLength;
+
+    //[SerializeField]
+    private GameObject chunkPrefab;
 
     public Chunk Center => chunks[chunks.Length / 2];
 
     public event Action<ChunkPos, int, TileScriptableObject> ChunkChanged;
     public event Action<ChunkPos> ChunkUnloaded;
 
-    public ChunkArray(int renderDistance)
+    //public ChunkArray(int renderDistance)
+    //{
+    //    sideLength = 1 + (2 * renderDistance);
+
+    //    chunks = new Chunk[sideLength * sideLength];
+
+    //    int[] vals = new int[sideLength];
+
+    //    for (int i = 0; i < sideLength; i++)
+    //    {
+    //        vals[i] = i - renderDistance;
+    //    }
+
+    //    for (int i = 0; i < chunks.Length; i++)
+    //    {
+    //        // confusing but modulus changes for every column and divide changes for every row
+    //        Vector2Int pos = new(vals[i % sideLength], vals[i / sideLength]);
+
+    //        Debug.Log(pos);
+
+    //        //chunks[i] = new Chunk(new ChunkPos(pos));
+    //        chunks[i] = Instantiate(
+    //            chunkPrefab,
+    //            new Vector3(pos.x, pos.y, 0) * ChunkManager.ChunkSize,
+    //            Quaternion.identity);
+    //    }
+
+    //    Chunk.ChunkChanged += OnChunkChanged;
+    //}
+
+    public static ChunkArray AddChunkArrayComponent(GameObject gameObject, int renderDistance, GameObject chunkPrefab)
     {
-        sideLength = 1 + (2 * renderDistance);
+        ChunkArray chunkArray = gameObject.AddComponent<ChunkArray>();
 
-        chunks = new Chunk[sideLength * sideLength];
+        chunkArray.sideLength = 1 + (2 * renderDistance);
 
-        int[] vals = new int[sideLength];
+        chunkArray.chunks = new Chunk[chunkArray.sideLength * chunkArray.sideLength];
 
-        for (int i = 0; i < sideLength; i++)
+        int[] vals = new int[chunkArray.sideLength];
+
+        for (int i = 0; i < chunkArray.sideLength; i++)
         {
             vals[i] = i - renderDistance;
         }
 
-        for (int i = 0; i < chunks.Length; i++)
+        for (int i = 0; i < chunkArray.chunks.Length; i++)
         {
             // confusing but modulus changes for every column and divide changes for every row
-            Vector2Int pos = new(vals[i % sideLength], vals[i / sideLength]);
+            Vector2Int pos = new(vals[i % chunkArray.sideLength], vals[i / chunkArray.sideLength]);
 
             Debug.Log(pos);
 
-            chunks[i] = new Chunk(new ChunkPos(pos));
+            //chunks[i] = new Chunk(new ChunkPos(pos));
+            chunkArray.chunks[i] = Chunk.Create(new ChunkPos(pos), chunkPrefab);
         }
 
-        Chunk.ChunkChanged += OnChunkChanged;
+        Chunk.ChunkChanged += chunkArray.OnChunkChanged;
+
+        chunkArray.chunkPrefab = chunkPrefab;
+
+        return chunkArray;
     }
 
     private void OnChunkChanged(ChunkPos chunkPos, int index, TileScriptableObject tile)
@@ -61,7 +101,7 @@ public class ChunkArray
                 {
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.right);
 
-                    Chunk chunk = new(pos);
+                    Chunk chunk = Chunk.Create(pos, chunkPrefab);
                     chunk.PopulateWith(generate);
 
                     newChunks[i] = chunk;
@@ -82,7 +122,7 @@ public class ChunkArray
                 {
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.left);
 
-                    Chunk chunk = new(pos);
+                    Chunk chunk = Chunk.Create(pos, chunkPrefab);
                     chunk.PopulateWith(generate);
 
                     newChunks[i] = chunk;
@@ -119,7 +159,7 @@ public class ChunkArray
                 {
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.up);
 
-                    Chunk chunk = new(pos);
+                    Chunk chunk = Chunk.Create(pos, chunkPrefab);
                     chunk.PopulateWith(generate);
 
                     newChunks[i] = chunk;
@@ -140,7 +180,7 @@ public class ChunkArray
                 {
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.down);
 
-                    Chunk chunk = new(pos);
+                    Chunk chunk = Chunk.Create(pos, chunkPrefab);
                     chunk.PopulateWith(generate);
 
                     newChunks[i] = chunk;
