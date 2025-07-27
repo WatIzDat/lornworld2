@@ -81,6 +81,20 @@ public class DualGridTilemap : MonoBehaviour
         SetDisplayTile(position, tileObj);
     }
 
+    public void SetTilesBlock(BoundsInt bounds, TileScriptableObject[] tileObjs)
+    {
+        TileBase[] tiles = new TileBase[bounds.size.x * bounds.size.y];
+
+        for (int i = 0; i < tileObjs.Length; i++)
+        {
+            tiles[i] = tileObjs[i].placeholderTile;
+        }
+
+        worldTilemap.SetTilesBlock(bounds, tiles);
+        SetDisplayTilesBlock(bounds, tileObjs);
+        //displayTilemap.SetTile(new Vector3Int(0, 0, 0), TileRegistry.Instance.GetTile(TileIds.Grass).placeholderTile);
+    }
+
     public void DeleteTile(Vector2Int position)
     {
         TileScriptableObject tile = GetWorldTile(position);
@@ -94,7 +108,7 @@ public class DualGridTilemap : MonoBehaviour
         displayTilemap.ClearAllTiles();
     }
 
-    private Tile GetDisplayTile(Vector2Int displayPosition, TileScriptableObject tile)
+    private (Tile tile, TileState tileState) GetDisplayTile(Vector2Int displayPosition, TileScriptableObject tile)
     {
         bool topRight = GetWorldTile(displayPosition - neighbours[0]) == tile;
         bool topLeft = GetWorldTile(displayPosition - neighbours[1]) == tile;
@@ -104,9 +118,10 @@ public class DualGridTilemap : MonoBehaviour
         Tuple<bool, bool, bool, bool> neighbourState = new(topLeft, topRight, botLeft, botRight);
 
         Tile[] displayTiles = TileRegistry.Instance.GetDisplayTilesFromPlaceholderTile(tile.placeholderTile);
-        int displayTileIndex = (int)neighbourStateToTileState[neighbourState];
+        TileState tileState = neighbourStateToTileState[neighbourState];
+        int displayTileIndex = (int)tileState;
 
-        return displayTiles[displayTileIndex];
+        return (displayTiles[displayTileIndex], tileState);
     }
 
     private void SetDisplayTile(Vector2Int position, TileScriptableObject tile)
@@ -119,8 +134,50 @@ public class DualGridTilemap : MonoBehaviour
 
             displayTilemap.SetTile(
                 offsetPos,
-                GetDisplayTile((Vector2Int)offsetPos, tile));
+                GetDisplayTile((Vector2Int)offsetPos, tile).tile);
         }
+    }
+
+    private void SetDisplayTilesBlock(BoundsInt bounds, TileScriptableObject[] tiles)
+    {
+        // make the z bound change also
+        BoundsInt newBounds = new(0, 0, 0, bounds.size.x + 1, bounds.size.y + 1, 1);
+
+        Tile[] pendingDisplayTileChanges = new Tile[newBounds.size.x * newBounds.size.y];
+
+        int j = 0;
+
+        for (int i = 0; i < tiles.Length; i++)
+        {
+            int z = tiles[i].order;
+            //Debug.Log(position);
+
+            if ((j - (j / newBounds.size.x)) % bounds.size.x == 0 && j != 0)
+            {
+                j++;
+            }
+
+            Vector3Int position = new(j % newBounds.size.x, j / newBounds.size.y, z);
+            //Debug.Log(j + " " + i);
+
+            foreach (Vector2Int neighbourPos in neighbours)
+            {
+                Vector3Int offsetPos = position + new Vector3Int(neighbourPos.x, neighbourPos.y, z);
+
+
+                int index = (j + neighbourPos.x) + (neighbourPos.y * newBounds.size.x);
+
+                (Tile, TileState) test = GetDisplayTile((Vector2Int)offsetPos, tiles[i]);
+
+                pendingDisplayTileChanges[index] = test.Item1;
+
+                //Debug.Log(index + " " + j + " " + test.Item2 + " " + position);
+            }
+
+            j++;
+        }
+
+        displayTilemap.SetTilesBlock(newBounds, pendingDisplayTileChanges);
     }
 
     private void RefreshDisplayTilemap()

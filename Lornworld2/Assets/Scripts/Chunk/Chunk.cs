@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class Chunk : MonoBehaviour
 {
@@ -42,7 +43,8 @@ public class Chunk : MonoBehaviour
     public static Chunk Pool(ChunkPos chunkPos, GameObject unusedChunk)
     {
         unusedChunk.transform.position = new Vector3(chunkPos.pos.x, chunkPos.pos.y, 0) * ChunkManager.ChunkSize;
-        unusedChunk.SetActive(true);
+        //unusedChunk.SetActive(true);
+        unusedChunk.transform.GetChild(0).GetChild(1).GetComponent<TilemapRenderer>().enabled = true;
 
         Chunk chunk = unusedChunk.GetComponent<Chunk>();
 
@@ -61,22 +63,22 @@ public class Chunk : MonoBehaviour
 
     private void OnTilesChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
-        if (e.NewItems == null)
-        {
-            return;
-        }
+        //if (e.NewItems == null)
+        //{
+        //    return;
+        //}
 
-        foreach (TileScriptableObject tile in e.NewItems)
-        {
-            Vector2Int pos = new(
-                e.NewStartingIndex % ChunkManager.ChunkSize,
-                e.NewStartingIndex / ChunkManager.ChunkSize);
+        //foreach (TileScriptableObject tile in e.NewItems)
+        //{
+        //    Vector2Int pos = new(
+        //        e.NewStartingIndex % ChunkManager.ChunkSize,
+        //        e.NewStartingIndex / ChunkManager.ChunkSize);
 
-            // TODO: use SetTileBlock instead of SetTile for performance
-            tilemap.SetTile(pos, tile);
+        //    // TODO: use SetTileBlock instead of SetTile for performance
+        //    tilemap.SetTile(pos, tile);
 
-            ChunkChanged?.Invoke(chunkPos, e.NewStartingIndex, tile);
-        }
+        //    ChunkChanged?.Invoke(chunkPos, e.NewStartingIndex, tile);
+        //}
     }
 
     public void PopulateWith(Func<ChunkPos, TileScriptableObject[]> generate)
@@ -84,5 +86,9 @@ public class Chunk : MonoBehaviour
         TileScriptableObject[] generatedTiles = generate(chunkPos);
 
         tiles.AddRange(generatedTiles);
+
+        BoundsInt bounds = new(0, 0, 0, ChunkManager.ChunkSize, ChunkManager.ChunkSize, 1);
+
+        tilemap.SetTilesBlock(bounds, generatedTiles);
     }
 }

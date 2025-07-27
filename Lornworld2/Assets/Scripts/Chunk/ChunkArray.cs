@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class ChunkArray : MonoBehaviour
 {
@@ -88,7 +89,8 @@ public class ChunkArray : MonoBehaviour
 
     private void OnChunkUnloaded(int index)
     {
-        chunks[index].gameObject.SetActive(false);
+        //chunks[index].gameObject.SetActive(false);
+        chunks[index].transform.GetChild(0).GetChild(1).GetComponent<TilemapRenderer>().enabled = false;
 
         unloadedChunks.Enqueue(chunks[index].gameObject);
     }
