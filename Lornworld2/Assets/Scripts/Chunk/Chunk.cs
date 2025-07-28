@@ -120,4 +120,10 @@ public class Chunk : MonoBehaviour
 
         tilemap.SetDisplayTilesBlock(bounds, tiles.ToArray());
     }
+
+    public void SetDisplayOrder(int displayOrder)
+    {
+        // TODO: get component in awake
+        tilemap.transform.GetChild(1).GetComponent<TilemapRenderer>().sortingOrder = displayOrder;
+    }
 }

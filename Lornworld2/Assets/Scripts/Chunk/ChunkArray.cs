@@ -14,6 +14,8 @@ public class ChunkArray : MonoBehaviour
 
     private int sideLength;
 
+    private int maxDisplayOrder;
+
     //[SerializeField]
     private GameObject chunkPrefab;
     private Transform chunkParent;
@@ -131,6 +133,19 @@ public class ChunkArray : MonoBehaviour
         return Chunk.Pool(pos, unloadedChunk);
     }
 
+    private Chunk GenerateNewChunk(ChunkPos pos, Func<ChunkPos, TileScriptableObject[]> generate)
+    {
+        Chunk chunk = PoolOrCreate(pos);
+        chunk.PopulateAndSetDisplayTilesWith(generate);
+
+        // hacky solution to avoid recalculating chunk boundaries twice by drawing new chunk boundaries on top of old one
+        // however, TODO: decrease ALL display orders when it hits the max of short max value
+        maxDisplayOrder++;
+        chunk.SetDisplayOrder(maxDisplayOrder);
+
+        return chunk;
+    }
+
     // TODO: make shifting right and shifting down iterate backwards to avoid instantiating chunks
     public void ShiftHorizontal(bool shiftLeft, Func<ChunkPos, TileScriptableObject[]> generate)
     {
@@ -149,10 +164,14 @@ public class ChunkArray : MonoBehaviour
                 {
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.right);
 
-                    Chunk chunk = PoolOrCreate(pos);
-                    chunk.PopulateAndSetDisplayTilesWith(generate);
+                    //Chunk chunk = PoolOrCreate(pos);
+                    //chunk.PopulateAndSetDisplayTilesWith(generate);
 
-                    newChunks[i] = chunk;
+                    //maxDisplayOrder++;
+                    ////chunk.transform.position = new Vector3(chunk.transform.position.x, chunk.transform.position.y, maxZ);
+                    //chunk.SetDisplayOrder(maxDisplayOrder);
+
+                    newChunks[i] = GenerateNewChunk(pos, generate);
                 }
                 else
                 {
@@ -170,10 +189,10 @@ public class ChunkArray : MonoBehaviour
                 {
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.left);
 
-                    Chunk chunk = PoolOrCreate(pos);
-                    chunk.PopulateAndSetDisplayTilesWith(generate);
+                    //Chunk chunk = PoolOrCreate(pos);
+                    //chunk.PopulateAndSetDisplayTilesWith(generate);
 
-                    newChunks[i] = chunk;
+                    newChunks[i] = GenerateNewChunk(pos, generate);
                 }
                 else
                 {
@@ -207,10 +226,10 @@ public class ChunkArray : MonoBehaviour
                 {
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.up);
 
-                    Chunk chunk = PoolOrCreate(pos);
-                    chunk.PopulateAndSetDisplayTilesWith(generate);
+                    //Chunk chunk = PoolOrCreate(pos);
+                    //chunk.PopulateAndSetDisplayTilesWith(generate);
 
-                    newChunks[i] = chunk;
+                    newChunks[i] = GenerateNewChunk(pos, generate);
                 }
                 else
                 {
@@ -228,10 +247,10 @@ public class ChunkArray : MonoBehaviour
                 {
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.down);
 
-                    Chunk chunk = PoolOrCreate(pos);
-                    chunk.PopulateAndSetDisplayTilesWith(generate);
+                    //Chunk chunk = PoolOrCreate(pos);
+                    //chunk.PopulateAndSetDisplayTilesWith(generate);
 
-                    newChunks[i] = chunk;
+                    newChunks[i] = GenerateNewChunk(pos, generate);
                 }
                 else
                 {
