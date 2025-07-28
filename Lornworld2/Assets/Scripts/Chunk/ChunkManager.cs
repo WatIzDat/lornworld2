@@ -26,7 +26,7 @@ public class ChunkManager : MonoBehaviour
 
     private void Awake()
     {
-        loadedChunks = ChunkArray.AddChunkArrayComponent(gameObject, renderDistance, chunkPrefab, chunkParent);
+        loadedChunks = ChunkArray.AddChunkArrayComponent(gameObject, renderDistance, chunkPrefab, chunkParent, this);
     }
 
     private void OnEnable()
@@ -91,8 +91,25 @@ public class ChunkManager : MonoBehaviour
     //    }
     //}
 
-    public void Generate(IWorldGenerator generator)
+    public TileScriptableObject GetTileInChunkAt(ChunkPos chunkPos, Vector2Int tilePos)
     {
-        loadedChunks.PopulateChunksWith(generator.Generate);
+        Chunk chunk = FindChunkAt(chunkPos);
+
+        if (chunk == null)
+        {
+            return null;
+        }
+
+        return chunk.GetTile(tilePos);
+    }
+
+    public Chunk FindChunkAt(ChunkPos chunkPos)
+    {
+        return loadedChunks.FindChunkAt(chunkPos);
+    }
+
+    public TileScriptableObject[][] Generate(IWorldGenerator generator)
+    {
+        return loadedChunks.PopulateChunksWith(generator.Generate);
     }
 }

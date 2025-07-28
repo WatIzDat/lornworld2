@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ChunkPos
+public record ChunkPos
 {
     public Vector2Int pos;
 

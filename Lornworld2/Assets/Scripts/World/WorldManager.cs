@@ -1,9 +1,12 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class WorldManager : MonoBehaviour
 {
     [SerializeField]
     private ChunkManager chunkManager;
+
+    private TileScriptableObject[] loadedTiles;
 
     private void Start()
     {
@@ -12,6 +15,11 @@ public class WorldManager : MonoBehaviour
 
     public void Generate(IWorldGenerator generator)
     {
-        chunkManager.Generate(generator);
+        TileScriptableObject[][] tilesInChunks = chunkManager.Generate(generator);
+
+        //foreach (TileScriptableObject[] tiles in tilesInChunks)
+        //{
+        //    loadedTiles.AddRange(tiles);
+        //}
     }
 }

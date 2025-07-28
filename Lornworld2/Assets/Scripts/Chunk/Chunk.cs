@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -16,6 +17,8 @@ public class Chunk : MonoBehaviour
 
     public static event Action<ChunkPos, int, TileScriptableObject> ChunkChanged;
 
+    private ChunkManager chunkManager;
+
     //public Chunk(ChunkPos chunkPos)
     //{
     //    this.chunkPos = chunkPos;
@@ -23,7 +26,7 @@ public class Chunk : MonoBehaviour
     //    tiles.CollectionChanged += OnTilesChanged;
     //}
 
-    public static Chunk Create(ChunkPos chunkPos, GameObject chunkPrefab, Transform chunkParent)
+    public static Chunk Create(ChunkPos chunkPos, GameObject chunkPrefab, Transform chunkParent, ChunkManager chunkManager)
     {
         Chunk chunk = 
             Instantiate(
@@ -32,6 +35,11 @@ public class Chunk : MonoBehaviour
                 Quaternion.identity,
                 chunkParent)
             .GetComponent<Chunk>();
+
+        chunk.chunkManager = chunkManager;
+
+        chunk.tilemap.chunkManager = chunkManager;
+        chunk.tilemap.chunk = chunk;
 
         chunk.chunkPos = chunkPos;
 
@@ -43,8 +51,8 @@ public class Chunk : MonoBehaviour
     public static Chunk Pool(ChunkPos chunkPos, GameObject unusedChunk)
     {
         unusedChunk.transform.position = new Vector3(chunkPos.pos.x, chunkPos.pos.y, 0) * ChunkManager.ChunkSize;
-        //unusedChunk.SetActive(true);
-        unusedChunk.transform.GetChild(0).GetChild(1).GetComponent<TilemapRenderer>().enabled = true;
+        unusedChunk.SetActive(true);
+        //unusedChunk.transform.GetChild(0).GetChild(1).GetComponent<TilemapRenderer>().enabled = true;
 
         Chunk chunk = unusedChunk.GetComponent<Chunk>();
 
@@ -54,6 +62,11 @@ public class Chunk : MonoBehaviour
         chunk.tiles.Clear();
 
         return chunk;
+    }
+
+    public TileScriptableObject GetTile(Vector2Int pos)
+    {
+        return tilemap.GetWorldTile(pos);
     }
 
     private void Awake()
@@ -81,7 +94,7 @@ public class Chunk : MonoBehaviour
         //}
     }
 
-    public void PopulateWith(Func<ChunkPos, TileScriptableObject[]> generate)
+    public TileScriptableObject[] PopulateWith(Func<ChunkPos, TileScriptableObject[]> generate)
     {
         TileScriptableObject[] generatedTiles = generate(chunkPos);
 
@@ -89,6 +102,22 @@ public class Chunk : MonoBehaviour
 
         BoundsInt bounds = new(0, 0, 0, ChunkManager.ChunkSize, ChunkManager.ChunkSize, 1);
 
-        tilemap.SetTilesBlock(bounds, generatedTiles);
+        tilemap.SetWorldTilesBlock(bounds, generatedTiles);
+
+        return generatedTiles;
+    }
+
+    public void PopulateAndSetDisplayTilesWith(Func<ChunkPos, TileScriptableObject[]> generate)
+    {
+        PopulateWith(generate);
+
+        SetDisplayTiles();
+    }
+
+    public void SetDisplayTiles()
+    {
+        BoundsInt bounds = new(0, 0, 0, ChunkManager.ChunkSize, ChunkManager.ChunkSize, 1);
+
+        tilemap.SetDisplayTilesBlock(bounds, tiles.ToArray());
     }
 }

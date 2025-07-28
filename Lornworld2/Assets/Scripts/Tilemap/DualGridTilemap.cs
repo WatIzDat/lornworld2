@@ -21,6 +21,12 @@ public class DualGridTilemap : MonoBehaviour
     [SerializeField]
     private Tilemap displayTilemap;
 
+    [HideInInspector]
+    public ChunkManager chunkManager;
+
+    [HideInInspector]
+    public Chunk chunk;
+
     //[SerializeField]
     //private string tilesResourcesPath = "Tiles";
 
@@ -68,7 +74,7 @@ public class DualGridTilemap : MonoBehaviour
         RefreshDisplayTilemap();
     }
 
-    private TileScriptableObject GetWorldTile(Vector2Int position)
+    public TileScriptableObject GetWorldTile(Vector2Int position)
     {
         Tile placeholderTile = worldTilemap.GetTile<Tile>((Vector3Int)position);
 
@@ -81,7 +87,7 @@ public class DualGridTilemap : MonoBehaviour
         SetDisplayTile(position, tileObj);
     }
 
-    public void SetTilesBlock(BoundsInt bounds, TileScriptableObject[] tileObjs)
+    public void SetWorldTilesBlock(BoundsInt bounds, TileScriptableObject[] tileObjs)
     {
         TileBase[] tiles = new TileBase[bounds.size.x * bounds.size.y];
 
@@ -91,7 +97,7 @@ public class DualGridTilemap : MonoBehaviour
         }
 
         worldTilemap.SetTilesBlock(bounds, tiles);
-        SetDisplayTilesBlock(bounds, tileObjs);
+        //SetDisplayTilesBlock(bounds, tileObjs);
         //displayTilemap.SetTile(new Vector3Int(0, 0, 0), TileRegistry.Instance.GetTile(TileIds.Grass).placeholderTile);
     }
 
@@ -114,6 +120,72 @@ public class DualGridTilemap : MonoBehaviour
         bool topLeft = GetWorldTile(displayPosition - neighbours[1]) == tile;
         bool botRight = GetWorldTile(displayPosition - neighbours[2]) == tile;
         bool botLeft = GetWorldTile(displayPosition - neighbours[3]) == tile;
+
+        if (GetWorldTile(displayPosition - neighbours[0]) == null)
+        {
+            //Debug.Log(displayPosition + "  " + neighbours[0]);
+
+            if (displayPosition.x == ChunkManager.ChunkSize)
+            {
+                if (displayPosition.y == ChunkManager.ChunkSize)
+                {
+                    topRight = chunkManager.GetTileInChunkAt(
+                        new ChunkPos(new Vector2Int(chunk.chunkPos.pos.x + 1, chunk.chunkPos.pos.y + 1)),
+                        new Vector2Int(0, ChunkManager.ChunkSize - displayPosition.y) - neighbours[0]) == tile;
+                }
+                else
+                {
+                    topRight = chunkManager.GetTileInChunkAt(
+                        new ChunkPos(new Vector2Int(chunk.chunkPos.pos.x + 1, chunk.chunkPos.pos.y)),
+                        new Vector2Int(0, displayPosition.y) - neighbours[0]) == tile;
+                }
+            }
+        }
+        if (GetWorldTile(displayPosition - neighbours[1]) == null)
+        {
+            //Debug.Log(displayPosition + "  " + neighbours[1]);
+
+            if (displayPosition.x == 0)
+            {
+                if (displayPosition.y == ChunkManager.ChunkSize)
+                {
+                    topLeft = chunkManager.GetTileInChunkAt(
+                        new ChunkPos(new Vector2Int(chunk.chunkPos.pos.x - 1, chunk.chunkPos.pos.y + 1)),
+                        new Vector2Int(ChunkManager.ChunkSize, 0) - neighbours[1]) == tile;
+                }
+            }
+        }
+        if (GetWorldTile(displayPosition - neighbours[2]) == null)
+        {
+            //Debug.Log(displayPosition + "  " + neighbours[2]);
+
+            if (displayPosition.x == ChunkManager.ChunkSize && displayPosition.y == 0)
+            {
+                botRight = chunkManager.GetTileInChunkAt(
+                    new ChunkPos(new Vector2Int(chunk.chunkPos.pos.x + 1, chunk.chunkPos.pos.y - 1)),
+                    new Vector2Int(0, ChunkManager.ChunkSize - displayPosition.y) - neighbours[2]) == tile;
+
+                //Debug.Log(chunkManager.GetTileInChunkAt(
+                //    new ChunkPos(new Vector2Int(chunk.chunkPos.pos.x + 1, chunk.chunkPos.pos.y - 1)),
+                //    new Vector2Int(0, ChunkManager.ChunkSize - displayPosition.y) - neighbours[2]));
+
+                //Debug.Log(botRight);
+            }
+        }
+        if (GetWorldTile(displayPosition - neighbours[3]) == null)
+        {
+            //Debug.Log(displayPosition + "  " + neighbours[3]);
+
+            if (displayPosition.x == 0)
+            {
+                if (displayPosition.y == 0)
+                {
+                    botLeft = chunkManager.GetTileInChunkAt(
+                        new ChunkPos(new Vector2Int(chunk.chunkPos.pos.x - 1, chunk.chunkPos.pos.y - 1)),
+                        new Vector2Int(ChunkManager.ChunkSize, ChunkManager.ChunkSize - displayPosition.y) - neighbours[3]) == tile;
+                }
+            }
+        }
 
         Tuple<bool, bool, bool, bool> neighbourState = new(topLeft, topRight, botLeft, botRight);
 
@@ -138,7 +210,7 @@ public class DualGridTilemap : MonoBehaviour
         }
     }
 
-    private void SetDisplayTilesBlock(BoundsInt bounds, TileScriptableObject[] tiles)
+    public void SetDisplayTilesBlock(BoundsInt bounds, TileScriptableObject[] tiles)
     {
         // make the z bound change also
         BoundsInt newBounds = new(0, 0, 0, bounds.size.x + 1, bounds.size.y + 1, 1);
@@ -180,6 +252,7 @@ public class DualGridTilemap : MonoBehaviour
         displayTilemap.SetTilesBlock(newBounds, pendingDisplayTileChanges);
     }
 
+    // use this in generation since SetDisplayTilesBlock wouldn't work without chunks already generated
     private void RefreshDisplayTilemap()
     {
         for (int i = -50; i < 50; i++)

@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -8,13 +10,14 @@ public class ChunkArray : MonoBehaviour
     // array is bottom left to top right (q3 to q1) counting left to right
     private Chunk[] chunks;
 
-    private Queue<GameObject> unloadedChunks = new();
+    private readonly Queue<GameObject> unloadedChunks = new();
 
     private int sideLength;
 
     //[SerializeField]
     private GameObject chunkPrefab;
     private Transform chunkParent;
+    private ChunkManager chunkManager;
 
     public Chunk Center => chunks[chunks.Length / 2];
 
@@ -51,7 +54,7 @@ public class ChunkArray : MonoBehaviour
     //    Chunk.ChunkChanged += OnChunkChanged;
     //}
 
-    public static ChunkArray AddChunkArrayComponent(GameObject gameObject, int renderDistance, GameObject chunkPrefab, Transform chunkParent)
+    public static ChunkArray AddChunkArrayComponent(GameObject gameObject, int renderDistance, GameObject chunkPrefab, Transform chunkParent, ChunkManager chunkManager)
     {
         ChunkArray chunkArray = gameObject.AddComponent<ChunkArray>();
 
@@ -71,10 +74,10 @@ public class ChunkArray : MonoBehaviour
             // confusing but modulus changes for every column and divide changes for every row
             Vector2Int pos = new(vals[i % chunkArray.sideLength], vals[i / chunkArray.sideLength]);
 
-            Debug.Log(pos);
+            //Debug.Log(pos);
 
             //chunks[i] = new Chunk(new ChunkPos(pos));
-            chunkArray.chunks[i] = Chunk.Create(new ChunkPos(pos), chunkPrefab, chunkParent);
+            chunkArray.chunks[i] = Chunk.Create(new ChunkPos(pos), chunkPrefab, chunkParent, chunkManager);
         }
 
         Chunk.ChunkChanged += chunkArray.OnChunkChanged;
@@ -83,14 +86,28 @@ public class ChunkArray : MonoBehaviour
 
         chunkArray.chunkPrefab = chunkPrefab;
         chunkArray.chunkParent = chunkParent;
+        chunkArray.chunkManager = chunkManager;
 
         return chunkArray;
     }
 
+    public Chunk FindChunkAt(ChunkPos chunkPos)
+    {
+        foreach (Chunk chunk in chunks)
+        {
+            if (chunk.chunkPos == chunkPos)
+            {
+                return chunk;
+            }
+        }
+
+        return null;
+    }
+
     private void OnChunkUnloaded(int index)
     {
-        //chunks[index].gameObject.SetActive(false);
-        chunks[index].transform.GetChild(0).GetChild(1).GetComponent<TilemapRenderer>().enabled = false;
+        chunks[index].gameObject.SetActive(false);
+        //chunks[index].transform.GetChild(0).GetChild(1).GetComponent<TilemapRenderer>().enabled = false;
 
         unloadedChunks.Enqueue(chunks[index].gameObject);
     }
@@ -108,7 +125,7 @@ public class ChunkArray : MonoBehaviour
         {
             Debug.LogWarning("Unloaded chunk doesn't exist, instantiating chunk instead");
 
-            return Chunk.Create(pos, chunkPrefab, chunkParent);
+            return Chunk.Create(pos, chunkPrefab, chunkParent, chunkManager);
         }
 
         return Chunk.Pool(pos, unloadedChunk);
@@ -133,7 +150,7 @@ public class ChunkArray : MonoBehaviour
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.right);
 
                     Chunk chunk = PoolOrCreate(pos);
-                    chunk.PopulateWith(generate);
+                    chunk.PopulateAndSetDisplayTilesWith(generate);
 
                     newChunks[i] = chunk;
                 }
@@ -154,7 +171,7 @@ public class ChunkArray : MonoBehaviour
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.left);
 
                     Chunk chunk = PoolOrCreate(pos);
-                    chunk.PopulateWith(generate);
+                    chunk.PopulateAndSetDisplayTilesWith(generate);
 
                     newChunks[i] = chunk;
                 }
@@ -191,7 +208,7 @@ public class ChunkArray : MonoBehaviour
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.up);
 
                     Chunk chunk = PoolOrCreate(pos);
-                    chunk.PopulateWith(generate);
+                    chunk.PopulateAndSetDisplayTilesWith(generate);
 
                     newChunks[i] = chunk;
                 }
@@ -212,7 +229,7 @@ public class ChunkArray : MonoBehaviour
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.down);
 
                     Chunk chunk = PoolOrCreate(pos);
-                    chunk.PopulateWith(generate);
+                    chunk.PopulateAndSetDisplayTilesWith(generate);
 
                     newChunks[i] = chunk;
                 }
@@ -226,11 +243,22 @@ public class ChunkArray : MonoBehaviour
         chunks = newChunks;
     }
 
-    public void PopulateChunksWith(Func<ChunkPos, TileScriptableObject[]> generate)
+    public TileScriptableObject[][] PopulateChunksWith(Func<ChunkPos, TileScriptableObject[]> generate)
     {
+        TileScriptableObject[][] tilesInChunks = new TileScriptableObject[chunks.Length][];
+
+        for (int i = 0; i < chunks.Length; i++)
+        {
+            TileScriptableObject[] tiles = chunks[i].PopulateWith(generate);
+
+            tilesInChunks[i] = tiles;
+        }
+
         foreach (Chunk chunk in chunks)
         {
-            chunk.PopulateWith(generate);
+            chunk.SetDisplayTiles();
         }
+
+        return tilesInChunks;
     }
 }
