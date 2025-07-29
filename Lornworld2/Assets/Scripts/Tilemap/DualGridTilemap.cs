@@ -114,6 +114,67 @@ public class DualGridTilemap : MonoBehaviour
         displayTilemap.ClearAllTiles();
     }
 
+    private bool TryGetNeighbourStateAtChunkBoundary(Vector2Int displayPosition, Vector2Int cornerPos, Vector2Int neighbourOffset, TileScriptableObject tile, out bool neighbourState)
+    {
+        Vector2Int chunkOffset;
+
+        if (neighbourOffset == neighbours[0])
+        {
+            chunkOffset = new(1, 1);
+        }
+        else if (neighbourOffset == neighbours[1])
+        {
+            chunkOffset = new(-1, 1);
+        }
+        else if (neighbourOffset == neighbours[2])
+        {
+            chunkOffset = new(1, -1);
+        }
+        else if (neighbourOffset == neighbours[3])
+        {
+            chunkOffset = new(-1, -1);
+        }
+        else
+        {
+            throw new ArgumentOutOfRangeException("neighbourOffset must be between 0, 0 and 1, 1");
+        }
+
+        int x = cornerPos.x == ChunkManager.ChunkSize ? 0 : ChunkManager.ChunkSize;
+        int y = cornerPos.y == ChunkManager.ChunkSize ? 0 : ChunkManager.ChunkSize;
+
+        if (displayPosition.x == cornerPos.x)
+        {
+            if (displayPosition.y == cornerPos.y)
+            {
+                neighbourState = chunkManager.GetTileInChunkAt(
+                    new ChunkPos(new Vector2Int(chunk.chunkPos.pos.x, chunk.chunkPos.pos.y) + chunkOffset),
+                    new Vector2Int(x, ChunkManager.ChunkSize - displayPosition.y) - neighbourOffset) == tile;
+
+                return true;
+            }
+            else
+            {
+                neighbourState = chunkManager.GetTileInChunkAt(
+                    new ChunkPos(new Vector2Int(chunk.chunkPos.pos.x + chunkOffset.x, chunk.chunkPos.pos.y)),
+                    new Vector2Int(x, displayPosition.y) - neighbourOffset) == tile;
+
+                return true;
+            }
+        }
+        else if (displayPosition.y == cornerPos.y)
+        {
+            neighbourState = chunkManager.GetTileInChunkAt(
+                new ChunkPos(new Vector2Int(chunk.chunkPos.pos.x, chunk.chunkPos.pos.y + chunkOffset.y)),
+                new Vector2Int(displayPosition.x, y) - neighbourOffset) == tile;
+
+            return true;
+        }
+
+        neighbourState = false;
+
+        return false;
+    }
+
     private (Tile tile, TileState tileState) GetDisplayTile(Vector2Int displayPosition, TileScriptableObject tile)
     {
         bool topRight = GetWorldTile(displayPosition - neighbours[0]) == tile;
@@ -124,113 +185,39 @@ public class DualGridTilemap : MonoBehaviour
         // Handle chunk boundaries
         if (GetWorldTile(displayPosition - neighbours[0]) == null)
         {
-            //Debug.Log(displayPosition + "  " + neighbours[0]);
-
-            if (displayPosition.x == ChunkManager.ChunkSize)
-            {
-                if (displayPosition.y == ChunkManager.ChunkSize)
-                {
-                    topRight = chunkManager.GetTileInChunkAt(
-                        new ChunkPos(new Vector2Int(chunk.chunkPos.pos.x + 1, chunk.chunkPos.pos.y + 1)),
-                        new Vector2Int(0, ChunkManager.ChunkSize - displayPosition.y) - neighbours[0]) == tile;
-                }
-                else
-                {
-                    topRight = chunkManager.GetTileInChunkAt(
-                        new ChunkPos(new Vector2Int(chunk.chunkPos.pos.x + 1, chunk.chunkPos.pos.y)),
-                        new Vector2Int(0, displayPosition.y) - neighbours[0]) == tile;
-                }
-            }
-            else if (displayPosition.y == ChunkManager.ChunkSize)
-            {
-                topRight = chunkManager.GetTileInChunkAt(
-                    new ChunkPos(new Vector2Int(chunk.chunkPos.pos.x, chunk.chunkPos.pos.y + 1)),
-                    new Vector2Int(displayPosition.x, 0) - neighbours[0]) == tile;
-            }
+            TryGetNeighbourStateAtChunkBoundary(
+                displayPosition,
+                new Vector2Int(ChunkManager.ChunkSize, ChunkManager.ChunkSize),
+                neighbours[0],
+                tile,
+                out topRight);
         }
         if (GetWorldTile(displayPosition - neighbours[1]) == null)
         {
-            //Debug.Log(displayPosition + "  " + neighbours[1]);
-
-            if (displayPosition.x == 0)
-            {
-                if (displayPosition.y == ChunkManager.ChunkSize)
-                {
-                    topLeft = chunkManager.GetTileInChunkAt(
-                        new ChunkPos(new Vector2Int(chunk.chunkPos.pos.x - 1, chunk.chunkPos.pos.y + 1)),
-                        new Vector2Int(ChunkManager.ChunkSize, 0) - neighbours[1]) == tile;
-                }
-                else
-                {
-                    topLeft = chunkManager.GetTileInChunkAt(
-                        new ChunkPos(new Vector2Int(chunk.chunkPos.pos.x - 1, chunk.chunkPos.pos.y)),
-                        new Vector2Int(ChunkManager.ChunkSize, displayPosition.y) - neighbours[1]) == tile;
-                }
-            }
-            else if (displayPosition.y == ChunkManager.ChunkSize)
-            {
-                topLeft = chunkManager.GetTileInChunkAt(
-                    new ChunkPos(new Vector2Int(chunk.chunkPos.pos.x, chunk.chunkPos.pos.y + 1)),
-                    new Vector2Int(displayPosition.x, 0) - neighbours[1]) == tile;
-            }
+            TryGetNeighbourStateAtChunkBoundary(
+                displayPosition,
+                new Vector2Int(0, ChunkManager.ChunkSize),
+                neighbours[1],
+                tile,
+                out topLeft);
         }
         if (GetWorldTile(displayPosition - neighbours[2]) == null)
         {
-            //Debug.Log(displayPosition + "  " + neighbours[2]);
-
-            if (displayPosition.x == ChunkManager.ChunkSize)
-            {
-                if (displayPosition.y == 0)
-                {
-                    botRight = chunkManager.GetTileInChunkAt(
-                        new ChunkPos(new Vector2Int(chunk.chunkPos.pos.x + 1, chunk.chunkPos.pos.y - 1)),
-                        new Vector2Int(0, ChunkManager.ChunkSize - displayPosition.y) - neighbours[2]) == tile;
-                }
-                else
-                {
-                    botRight = chunkManager.GetTileInChunkAt(
-                        new ChunkPos(new Vector2Int(chunk.chunkPos.pos.x + 1, chunk.chunkPos.pos.y)),
-                        new Vector2Int(0, displayPosition.y) - neighbours[2]) == tile;
-                }
-
-                //Debug.Log(chunkManager.GetTileInChunkAt(
-                //    new ChunkPos(new Vector2Int(chunk.chunkPos.pos.x + 1, chunk.chunkPos.pos.y - 1)),
-                //    new Vector2Int(0, ChunkManager.ChunkSize - displayPosition.y) - neighbours[2]));
-
-                //Debug.Log(botRight);
-            }
-            else if (displayPosition.y == 0)
-            {
-                botRight = chunkManager.GetTileInChunkAt(
-                    new ChunkPos(new Vector2Int(chunk.chunkPos.pos.x, chunk.chunkPos.pos.y - 1)),
-                    new Vector2Int(displayPosition.x, ChunkManager.ChunkSize) - neighbours[2]) == tile;
-            }
+            TryGetNeighbourStateAtChunkBoundary(
+                displayPosition,
+                new Vector2Int(ChunkManager.ChunkSize, 0),
+                neighbours[2],
+                tile,
+                out botRight);
         }
         if (GetWorldTile(displayPosition - neighbours[3]) == null)
         {
-            //Debug.Log(displayPosition + "  " + neighbours[3]);
-
-            if (displayPosition.x == 0)
-            {
-                if (displayPosition.y == 0)
-                {
-                    botLeft = chunkManager.GetTileInChunkAt(
-                        new ChunkPos(new Vector2Int(chunk.chunkPos.pos.x - 1, chunk.chunkPos.pos.y - 1)),
-                        new Vector2Int(ChunkManager.ChunkSize, ChunkManager.ChunkSize - displayPosition.y) - neighbours[3]) == tile;
-                }
-                else
-                {
-                    botLeft = chunkManager.GetTileInChunkAt(
-                        new ChunkPos(new Vector2Int(chunk.chunkPos.pos.x - 1, chunk.chunkPos.pos.y)),
-                        new Vector2Int(ChunkManager.ChunkSize, displayPosition.y) - neighbours[3]) == tile;
-                }
-            }
-            else if (displayPosition.y == 0)
-            {
-                botLeft = chunkManager.GetTileInChunkAt(
-                    new ChunkPos(new Vector2Int(chunk.chunkPos.pos.x, chunk.chunkPos.pos.y - 1)),
-                    new Vector2Int(displayPosition.x, ChunkManager.ChunkSize) - neighbours[3]) == tile;
-            }
+            TryGetNeighbourStateAtChunkBoundary(
+                displayPosition,
+                new Vector2Int(0, 0),
+                neighbours[3],
+                tile,
+                out botLeft);
         }
 
         Tuple<bool, bool, bool, bool> neighbourState = new(topLeft, topRight, botLeft, botRight);
