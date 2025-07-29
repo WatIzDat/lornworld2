@@ -259,9 +259,30 @@ public class DualGridTilemap : MonoBehaviour
     public void SetDisplayTilesBlock(BoundsInt bounds, TileScriptableObject[] tiles)
     {
         // make the z bound change also
-        BoundsInt newBounds = new(0, 0, 0, bounds.size.x + 1, bounds.size.y + 1, 1);
+        HashSet<int> uniqueOrders = new();
 
-        Tile[] pendingDisplayTileChanges = new Tile[newBounds.size.x * newBounds.size.y];
+        foreach (TileScriptableObject tile in tiles)
+        {
+            uniqueOrders.Add(tile.order);
+        }
+
+        Dictionary<int, (BoundsInt newBound, Tile[] tileChanges)> newBoundsAndTileChanges = new(uniqueOrders.Count);
+        //Dictionary<int, Tile[]> pendingDisplayTileChanges = new(uniqueOrders.Count);
+
+        foreach (int order in uniqueOrders)
+        {
+            newBoundsAndTileChanges.Add(
+                order,
+                (new(0, 0, order, bounds.size.x + 1, bounds.size.y + 1, 1), 
+                 new Tile[(bounds.size.x + 1) * (bounds.size.y + 1)]));
+
+
+            //pendingDisplayTileChanges.Add(order, new Tile[(bounds.size.x + 1) * (bounds.size.y + 1)]);
+        }
+
+        //BoundsInt newBounds = new(0, 0, 0, bounds.size.x + 1, bounds.size.y + 1, 1);
+
+        //Tile[] pendingDisplayTileChanges = new Tile[newBounds.size.x * newBounds.size.y];
 
         int j = 0;
 
@@ -270,12 +291,12 @@ public class DualGridTilemap : MonoBehaviour
             int z = tiles[i].order;
             //Debug.Log(position);
 
-            if ((j - (j / newBounds.size.x)) % bounds.size.x == 0 && j != 0)
+            if ((j - (j / newBoundsAndTileChanges[z].newBound.size.x)) % bounds.size.x == 0 && j != 0)
             {
                 j++;
             }
 
-            Vector3Int position = new(j % newBounds.size.x, j / newBounds.size.y, z);
+            Vector3Int position = new(j % newBoundsAndTileChanges[z].newBound.size.x, j / newBoundsAndTileChanges[z].newBound.size.y, z);
             //Debug.Log(j + " " + i);
 
             foreach (Vector2Int neighbourPos in neighbours)
@@ -283,11 +304,11 @@ public class DualGridTilemap : MonoBehaviour
                 Vector3Int offsetPos = position + new Vector3Int(neighbourPos.x, neighbourPos.y, z);
 
 
-                int index = (j + neighbourPos.x) + (neighbourPos.y * newBounds.size.x);
+                int index = (j + neighbourPos.x) + (neighbourPos.y * newBoundsAndTileChanges[z].newBound.size.x);
 
                 (Tile, TileState) test = GetDisplayTile((Vector2Int)offsetPos, tiles[i]);
 
-                pendingDisplayTileChanges[index] = test.Item1;
+                newBoundsAndTileChanges[z].tileChanges[index] = test.Item1;
 
                 //Debug.Log(index + " " + j + " " + test.Item2 + " " + position);
             }
@@ -295,10 +316,13 @@ public class DualGridTilemap : MonoBehaviour
             j++;
         }
 
-        displayTilemap.SetTilesBlock(newBounds, pendingDisplayTileChanges);
+        foreach ((BoundsInt bounds, Tile[] tiles) 
+            boundsTiles in newBoundsAndTileChanges.Values)
+        {
+            displayTilemap.SetTilesBlock(boundsTiles.bounds, boundsTiles.tiles);
+        }
     }
 
-    // use this in generation since SetDisplayTilesBlock wouldn't work without chunks already generated
     private void RefreshDisplayTilemap()
     {
         for (int i = -50; i < 50; i++)
