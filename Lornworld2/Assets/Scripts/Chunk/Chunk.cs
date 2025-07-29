@@ -13,6 +13,8 @@ public class Chunk : MonoBehaviour
 
     private DualGridTilemap tilemap;
 
+    private TilemapRenderer displayTilemapRenderer;
+
     public ChunkPos chunkPos;
 
     public static event Action<ChunkPos, int, TileScriptableObject> ChunkChanged;
@@ -72,6 +74,8 @@ public class Chunk : MonoBehaviour
     private void Awake()
     {
         tilemap = GetComponentInChildren<DualGridTilemap>();
+
+        displayTilemapRenderer = tilemap.transform.GetChild(1).GetComponent<TilemapRenderer>();
     }
 
     private void OnTilesChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -123,7 +127,6 @@ public class Chunk : MonoBehaviour
 
     public void SetDisplayOrder(int displayOrder)
     {
-        // TODO: get component in awake
-        tilemap.transform.GetChild(1).GetComponent<TilemapRenderer>().sortingOrder = displayOrder;
+        displayTilemapRenderer.sortingOrder = displayOrder;
     }
 }

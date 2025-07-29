@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class ChunkManager : MonoBehaviour
 {
-    // change to 16 later
     public const int ChunkSize = 16;
 
     public const int ChunkArea = ChunkSize * ChunkSize;

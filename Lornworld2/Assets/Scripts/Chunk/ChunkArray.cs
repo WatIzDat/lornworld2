@@ -1,9 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 public class ChunkArray : MonoBehaviour
 {
@@ -25,36 +22,6 @@ public class ChunkArray : MonoBehaviour
 
     public event Action<ChunkPos, int, TileScriptableObject> ChunkChanged;
     public event Action<int> ChunkUnloaded;
-
-    //public ChunkArray(int renderDistance)
-    //{
-    //    sideLength = 1 + (2 * renderDistance);
-
-    //    chunks = new Chunk[sideLength * sideLength];
-
-    //    int[] vals = new int[sideLength];
-
-    //    for (int i = 0; i < sideLength; i++)
-    //    {
-    //        vals[i] = i - renderDistance;
-    //    }
-
-    //    for (int i = 0; i < chunks.Length; i++)
-    //    {
-    //        // confusing but modulus changes for every column and divide changes for every row
-    //        Vector2Int pos = new(vals[i % sideLength], vals[i / sideLength]);
-
-    //        Debug.Log(pos);
-
-    //        //chunks[i] = new Chunk(new ChunkPos(pos));
-    //        chunks[i] = Instantiate(
-    //            chunkPrefab,
-    //            new Vector3(pos.x, pos.y, 0) * ChunkManager.ChunkSize,
-    //            Quaternion.identity);
-    //    }
-
-    //    Chunk.ChunkChanged += OnChunkChanged;
-    //}
 
     public static ChunkArray AddChunkArrayComponent(GameObject gameObject, int renderDistance, GameObject chunkPrefab, Transform chunkParent, ChunkManager chunkManager)
     {
@@ -136,7 +103,6 @@ public class ChunkArray : MonoBehaviour
     private Chunk PopulateNewChunk(ChunkPos pos, Func<ChunkPos, TileScriptableObject[]> generate)
     {
         Chunk chunk = PoolOrCreate(pos);
-        //chunk.PopulateAndSetDisplayTilesWith(generate);
         chunk.PopulateWith(generate);
 
         // hacky solution to avoid recalculating chunk boundaries twice by drawing new chunk boundaries on top of old one
@@ -166,19 +132,10 @@ public class ChunkArray : MonoBehaviour
                 {
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.right);
 
-                    //Chunk chunk = PoolOrCreate(pos);
-                    //chunk.PopulateAndSetDisplayTilesWith(generate);
-
-                    //maxDisplayOrder++;
-                    ////chunk.transform.position = new Vector3(chunk.transform.position.x, chunk.transform.position.y, maxZ);
-                    //chunk.SetDisplayOrder(maxDisplayOrder);
-
                     Chunk chunk = PopulateNewChunk(pos, generate);
 
                     newChunks[i] = chunk;
                     pendingChunkUpdateIndices.Add(i);
-
-                    //newChunks[i] = GenerateNewChunk(pos, generate);
                 }
                 else
                 {
@@ -196,15 +153,10 @@ public class ChunkArray : MonoBehaviour
                 {
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.left);
 
-                    //Chunk chunk = PoolOrCreate(pos);
-                    //chunk.PopulateAndSetDisplayTilesWith(generate);
-
                     Chunk chunk = PopulateNewChunk(pos, generate);
 
                     newChunks[i] = chunk;
                     pendingChunkUpdateIndices.Add(i);
-
-                    //newChunks[i] = GenerateNewChunk(pos, generate);
                 }
                 else
                 {
@@ -212,11 +164,6 @@ public class ChunkArray : MonoBehaviour
                 }
             }
         }
-
-        //foreach (Chunk chunk in newChunks)
-        //{
-        //    Debug.Log(chunk.chunkPos.pos);
-        //}
 
         chunks = newChunks;
 
@@ -248,8 +195,6 @@ public class ChunkArray : MonoBehaviour
 
                     newChunks[i] = chunk;
                     pendingChunkUpdateIndices.Add(i);
-
-                    //newChunks[i] = GenerateNewChunk(pos, generate);
                 }
                 else
                 {
@@ -267,15 +212,10 @@ public class ChunkArray : MonoBehaviour
                 {
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.down);
 
-                    //Chunk chunk = PoolOrCreate(pos);
-                    //chunk.PopulateAndSetDisplayTilesWith(generate);
-
                     Chunk chunk = PopulateNewChunk(pos, generate);
 
                     newChunks[i] = chunk;
                     pendingChunkUpdateIndices.Add(i);
-
-                    //newChunks[i] = GenerateNewChunk(pos, generate);
                 }
                 else
                 {
