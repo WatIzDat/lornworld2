@@ -133,10 +133,11 @@ public class ChunkArray : MonoBehaviour
         return Chunk.Pool(pos, unloadedChunk);
     }
 
-    private Chunk GenerateNewChunk(ChunkPos pos, Func<ChunkPos, TileScriptableObject[]> generate)
+    private Chunk PopulateNewChunk(ChunkPos pos, Func<ChunkPos, TileScriptableObject[]> generate)
     {
         Chunk chunk = PoolOrCreate(pos);
-        chunk.PopulateAndSetDisplayTilesWith(generate);
+        //chunk.PopulateAndSetDisplayTilesWith(generate);
+        chunk.PopulateWith(generate);
 
         // hacky solution to avoid recalculating chunk boundaries twice by drawing new chunk boundaries on top of old one
         // however, TODO: decrease ALL display orders when it hits the max of short max value
@@ -150,6 +151,7 @@ public class ChunkArray : MonoBehaviour
     public void ShiftHorizontal(bool shiftLeft, Func<ChunkPos, TileScriptableObject[]> generate)
     {
         Chunk[] newChunks = new Chunk[chunks.Length];
+        List<int> pendingChunkUpdateIndices = new(sideLength);
 
         for (int i = 0; i < chunks.Length; i++)
         {
@@ -171,7 +173,12 @@ public class ChunkArray : MonoBehaviour
                     ////chunk.transform.position = new Vector3(chunk.transform.position.x, chunk.transform.position.y, maxZ);
                     //chunk.SetDisplayOrder(maxDisplayOrder);
 
-                    newChunks[i] = GenerateNewChunk(pos, generate);
+                    Chunk chunk = PopulateNewChunk(pos, generate);
+
+                    newChunks[i] = chunk;
+                    pendingChunkUpdateIndices.Add(i);
+
+                    //newChunks[i] = GenerateNewChunk(pos, generate);
                 }
                 else
                 {
@@ -192,7 +199,12 @@ public class ChunkArray : MonoBehaviour
                     //Chunk chunk = PoolOrCreate(pos);
                     //chunk.PopulateAndSetDisplayTilesWith(generate);
 
-                    newChunks[i] = GenerateNewChunk(pos, generate);
+                    Chunk chunk = PopulateNewChunk(pos, generate);
+
+                    newChunks[i] = chunk;
+                    pendingChunkUpdateIndices.Add(i);
+
+                    //newChunks[i] = GenerateNewChunk(pos, generate);
                 }
                 else
                 {
@@ -207,11 +219,17 @@ public class ChunkArray : MonoBehaviour
         //}
 
         chunks = newChunks;
+
+        foreach (int index in pendingChunkUpdateIndices)
+        {
+            newChunks[index].SetDisplayTiles();
+        }
     }
 
     public void ShiftVertical(bool shiftDown, Func<ChunkPos, TileScriptableObject[]> generate)
     {
         Chunk[] newChunks = new Chunk[chunks.Length];
+        List<int> pendingChunkUpdateIndices = new(sideLength);
 
         for (int i = 0; i < chunks.Length; i++)
         {
@@ -226,10 +244,12 @@ public class ChunkArray : MonoBehaviour
                 {
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.up);
 
-                    //Chunk chunk = PoolOrCreate(pos);
-                    //chunk.PopulateAndSetDisplayTilesWith(generate);
+                    Chunk chunk = PopulateNewChunk(pos, generate);
 
-                    newChunks[i] = GenerateNewChunk(pos, generate);
+                    newChunks[i] = chunk;
+                    pendingChunkUpdateIndices.Add(i);
+
+                    //newChunks[i] = GenerateNewChunk(pos, generate);
                 }
                 else
                 {
@@ -250,7 +270,12 @@ public class ChunkArray : MonoBehaviour
                     //Chunk chunk = PoolOrCreate(pos);
                     //chunk.PopulateAndSetDisplayTilesWith(generate);
 
-                    newChunks[i] = GenerateNewChunk(pos, generate);
+                    Chunk chunk = PopulateNewChunk(pos, generate);
+
+                    newChunks[i] = chunk;
+                    pendingChunkUpdateIndices.Add(i);
+
+                    //newChunks[i] = GenerateNewChunk(pos, generate);
                 }
                 else
                 {
@@ -260,6 +285,11 @@ public class ChunkArray : MonoBehaviour
         }
 
         chunks = newChunks;
+
+        foreach (int index in pendingChunkUpdateIndices)
+        {
+            newChunks[index].SetDisplayTiles();
+        }
     }
 
     public TileScriptableObject[][] PopulateChunksWith(Func<ChunkPos, TileScriptableObject[]> generate)
