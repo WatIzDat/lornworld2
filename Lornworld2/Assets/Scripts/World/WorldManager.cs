@@ -10,7 +10,7 @@ public class WorldManager : MonoBehaviour
 
     private void Start()
     {
-        Generate(new DebugWorldGenerator());
+        Generate(new BasicWorldGenerator());
     }
 
     public void Generate(IWorldGenerator generator)

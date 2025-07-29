@@ -44,7 +44,7 @@ public class ChunkManager : MonoBehaviour
     // Don't have to check every frame (change later)
     private void Update()
     {
-        IWorldGenerator generator = new DebugWorldGenerator();
+        IWorldGenerator generator = new BasicWorldGenerator();
 
         // moved off a chunk
         if (player.ChunkPos.pos.x - loadedChunks.Center.chunkPos.pos.x > 0)
