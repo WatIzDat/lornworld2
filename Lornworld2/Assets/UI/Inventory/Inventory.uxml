@@ -28,7 +28,7 @@
                         <InventorySlot />
                     </ui:VisualElement>
                     <ui:VisualElement name="InventoryRow" class="inventory-row">
-                        <InventorySlot name="InventorySlot" />
+                        <InventorySlot />
                         <InventorySlot />
                         <InventorySlot />
                         <InventorySlot />
@@ -39,7 +39,7 @@
                         <InventorySlot />
                     </ui:VisualElement>
                 </ui:VisualElement>
-                <ui:VisualElement name="HotbarRow" class="hotbar-row">
+                <ui:VisualElement name="InventoryRow" class="hotbar-row">
                     <InventorySlot style="margin-top: 5px;" />
                     <InventorySlot />
                     <InventorySlot />

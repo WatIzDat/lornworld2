@@ -3,9 +3,9 @@ public record InventoryItem
     public ItemScriptableObject item;
     public int stackSize;
 
-    public InventoryItem(ItemScriptableObject item)
+    public InventoryItem(ItemScriptableObject item, int stackSize = 1)
     {
         this.item = item;
-        stackSize = 1;
+        this.stackSize = stackSize;
     }
 }
