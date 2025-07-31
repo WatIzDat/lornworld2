@@ -3,7 +3,54 @@
     <ui:VisualElement name="Panel" class="panel">
         <ui:VisualElement name="Inventory" class="inventory">
             <ui:Label text="Inventory" class="label" />
-            <ui:VisualElement name="SlotContainer" class="slot-container" />
+            <ui:VisualElement name="SlotContainer" class="slot-container">
+                <ui:VisualElement name="InventoryRowContainer" class="inventory-row-container">
+                    <ui:VisualElement name="InventoryRow" class="inventory-row">
+                        <InventorySlot />
+                        <InventorySlot />
+                        <InventorySlot />
+                        <InventorySlot />
+                        <InventorySlot />
+                        <InventorySlot />
+                        <InventorySlot />
+                        <InventorySlot />
+                        <InventorySlot />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="InventoryRow" class="inventory-row">
+                        <InventorySlot />
+                        <InventorySlot />
+                        <InventorySlot />
+                        <InventorySlot />
+                        <InventorySlot />
+                        <InventorySlot />
+                        <InventorySlot />
+                        <InventorySlot />
+                        <InventorySlot />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="InventoryRow" class="inventory-row">
+                        <InventorySlot name="InventorySlot" />
+                        <InventorySlot />
+                        <InventorySlot />
+                        <InventorySlot />
+                        <InventorySlot />
+                        <InventorySlot />
+                        <InventorySlot />
+                        <InventorySlot />
+                        <InventorySlot />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement name="HotbarRow" class="hotbar-row">
+                    <InventorySlot style="margin-top: 5px;" />
+                    <InventorySlot />
+                    <InventorySlot />
+                    <InventorySlot />
+                    <InventorySlot />
+                    <InventorySlot />
+                    <InventorySlot />
+                    <InventorySlot />
+                    <InventorySlot />
+                </ui:VisualElement>
+            </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>
