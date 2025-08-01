@@ -15,9 +15,15 @@ public class InventoryUIManager : MonoBehaviour
     // bottom left to top right
     private readonly ObservableCollection<InventoryItem> items = new();
 
+    private InventorySlot[] inventorySlots = new InventorySlot[InventorySize];
+
     private VisualElement root;
     private VisualElement slotContainer;
+    private static VisualElement ghostIcon;
     private List<VisualElement> inventoryRows;
+
+    private static bool isDragging;
+    private static InventorySlot dragStartSlot;
 
     [SerializeField]
     private ItemScriptableObject testItem;
@@ -26,9 +32,22 @@ public class InventoryUIManager : MonoBehaviour
     {
         root = GetComponent<UIDocument>().rootVisualElement;
         slotContainer = root.Q<VisualElement>("SlotContainer");
+        ghostIcon = root.Q<VisualElement>("GhostIcon");
+
+        ghostIcon.RegisterCallback<PointerMoveEvent>(OnPointerMove);
+        ghostIcon.RegisterCallback<PointerUpEvent>(OnPointerUp);
 
         inventoryRows = slotContainer.Query<VisualElement>("InventoryRow").ToList();
         inventoryRows.Reverse();
+
+        List<InventorySlot> tempSlots = new();
+
+        foreach (VisualElement row in inventoryRows)
+        {
+            tempSlots.AddRange(row.Query<InventorySlot>().ToList());
+        }
+
+        inventorySlots = tempSlots.ToArray();
 
         for (int i = 0; i < InventorySize; i++)
         {
@@ -61,17 +80,79 @@ public class InventoryUIManager : MonoBehaviour
         items.CollectionChanged -= OnItemsChanged;
     }
 
+    public static void StartDrag(Vector2 position, InventorySlot startSlot)
+    {
+        isDragging = true;
+        dragStartSlot = startSlot;
+
+        ghostIcon.style.top = position.y - (ghostIcon.layout.height / 2);
+        ghostIcon.style.left = position.x - (ghostIcon.layout.width / 2);
+
+        // TODO: rename this confusing item.Item thing
+        ghostIcon.style.backgroundImage = startSlot.item.Item.sprite.texture;
+
+        ghostIcon.style.visibility = Visibility.Visible;
+    }
+
+    private void OnPointerMove(PointerMoveEvent evt)
+    {
+        if (!isDragging)
+        {
+            return;
+        }
+
+        ghostIcon.style.top = evt.position.y - (ghostIcon.layout.height / 2);
+        ghostIcon.style.left = evt.position.x - (ghostIcon.layout.width / 2);
+    }
+
+    private void OnPointerUp(PointerUpEvent evt)
+    {
+        if (!isDragging)
+        {
+            return;
+        }
+
+        IEnumerable<InventorySlot> slots = inventorySlots.Where(slot =>
+               slot.worldBound.Overlaps(ghostIcon.worldBound));
+
+        if (slots.Count() != 0)
+        {
+            InventorySlot closestSlot = slots.OrderBy(slot => Vector2.Distance
+               (slot.worldBound.position, ghostIcon.worldBound.position)).First();
+
+            // TODO: don't update slots directly (update items collection instead)
+            // probably by adding an index field to inventory slot
+
+            closestSlot.SetItem(dragStartSlot.item);
+
+            dragStartSlot.DropItem();
+        }
+        else
+        {
+            dragStartSlot.icon.image =
+                  dragStartSlot.icon.sprite.texture;
+        }
+
+        isDragging = false;
+        dragStartSlot = null;
+        ghostIcon.style.visibility = Visibility.Hidden;
+    }
+
     private void OnItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
-        InventorySlot slot = inventoryRows[e.NewStartingIndex / InventoryWidth]
-            .Query<InventorySlot>()
-            .AtIndex(e.NewStartingIndex % InventoryWidth);
+        //InventorySlot slot = inventoryRows[e.NewStartingIndex / InventoryWidth]
+        //    .Query<InventorySlot>()
+        //    .AtIndex(e.NewStartingIndex % InventoryWidth);
+
+        InventorySlot slot = inventorySlots[e.NewStartingIndex];
 
         InventoryItem inventoryItem = (InventoryItem)e.NewItems[0];
 
-        slot.item = inventoryItem.Item;
-        slot.icon.sprite = inventoryItem.Item.sprite;
-        slot.stackSizeLabel.text = inventoryItem.StackSize.ToString();
+        //slot.item = inventoryItem.Item;
+        //slot.icon.sprite = inventoryItem.Item.sprite;
+        //slot.stackSizeLabel.text = inventoryItem.StackSize.ToString();
+
+        slot.SetItem(inventoryItem);
     }
 
     private bool AddItem(ItemScriptableObject item, int stack)

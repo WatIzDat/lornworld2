@@ -53,4 +53,5 @@
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
+    <ui:VisualElement name="GhostIcon" style="flex-grow: 1; position: absolute; visibility: hidden; width: 128px; height: 128px; max-width: 128px; max-height: 128px;" />
 </ui:UXML>
