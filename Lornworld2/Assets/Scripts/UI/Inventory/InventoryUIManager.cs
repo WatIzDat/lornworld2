@@ -45,7 +45,10 @@ public class InventoryUIManager : MonoBehaviour
 
     private void Start()
     {
-        AddItem(testItem);
+        AddItem(testItem, 1);
+        AddItem(testItem, 1);
+        AddItem(testItem, 3);
+        AddItem(testItem, 2);
     }
 
     private void OnEnable()
@@ -64,24 +67,67 @@ public class InventoryUIManager : MonoBehaviour
             .Query<InventorySlot>()
             .AtIndex(e.NewStartingIndex % InventoryWidth);
 
-        InventoryItem item = (InventoryItem)e.NewItems[0];
+        InventoryItem inventoryItem = (InventoryItem)e.NewItems[0];
 
-        slot.icon.sprite = item.item.sprite;
+        slot.item = inventoryItem.Item;
+        slot.icon.sprite = inventoryItem.Item.sprite;
+        slot.stackSizeLabel.text = inventoryItem.StackSize.ToString();
     }
 
-    private bool AddItem(ItemScriptableObject item)
+    private bool AddItem(ItemScriptableObject item, int stack)
     {
-        InventoryItem inventoryItem = new(item);
+        bool hasEmptySlot = false;
+        int emptyIndex = -1;
 
-        for (int i = 0; i < items.Count; i++)
+        int remainingStack = stack;
+
+        do
         {
-            if (items[i] == null)
+            for (int i = 0; i < items.Count; i++)
             {
-                items[i] = inventoryItem;
+                if (items[i] == null && hasEmptySlot == false)
+                {
+                    emptyIndex = i;
+                    hasEmptySlot = true;
+                }
+                else if (
+                    items[i] != null &&
+                    items[i].Item == item && 
+                    items[i].StackSize < item.maxStackSize)
+                {
+                    int usedStack = item.maxStackSize - items[i].StackSize;
 
-                return true;
+                    if (usedStack > stack)
+                    {
+                        usedStack = stack;
+                    }
+
+                    remainingStack -= usedStack;
+
+                    items[i] = new InventoryItem(item, items[i].StackSize + usedStack);
+
+                    Debug.Log("test");
+                }
             }
         }
+        while (remainingStack > item.maxStackSize);
+
+        if (hasEmptySlot && remainingStack >= 1)
+        {
+            items[emptyIndex] = new InventoryItem(item, remainingStack);
+
+            return true;
+        }
+
+        //for (int i = 0; i < items.Count; i++)
+        //{
+        //    if (items[i] == null)
+        //    {
+        //        items[i] = inventoryItem;
+
+        //        return true;
+        //    }
+        //}
 
         return false;
     }

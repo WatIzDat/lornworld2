@@ -93,3 +93,7 @@
     flex-direction: row;
     flex-wrap: wrap;
 }
+
+.stack-size-label {
+    color: white;
+}
