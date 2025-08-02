@@ -6,6 +6,9 @@ public partial class InventorySlot : VisualElement
     public Image icon;
     public InventoryItem item;
     public Label stackSizeLabel;
+    public int index;
+
+    public bool IsEmpty => item == null;
 
     public InventorySlot()
     {
@@ -44,7 +47,7 @@ public partial class InventorySlot : VisualElement
     public void DropItem()
     {
         item = null;
-        icon.sprite = null;
+        icon.image = null;
         stackSizeLabel.text = null;
     }
 }

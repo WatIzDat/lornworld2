@@ -47,6 +47,11 @@ public class InventoryUIManager : MonoBehaviour
             tempSlots.AddRange(row.Query<InventorySlot>().ToList());
         }
 
+        for (int i = 0; i < tempSlots.Count; i++)
+        {
+            tempSlots[i].index = i;
+        }
+
         inventorySlots = tempSlots.ToArray();
 
         for (int i = 0; i < InventorySize; i++)
@@ -115,22 +120,24 @@ public class InventoryUIManager : MonoBehaviour
         IEnumerable<InventorySlot> slots = inventorySlots.Where(slot =>
                slot.worldBound.Overlaps(ghostIcon.worldBound));
 
+        InventorySlot closestSlot = null;
+
         if (slots.Count() != 0)
         {
-            InventorySlot closestSlot = slots.OrderBy(slot => Vector2.Distance
-               (slot.worldBound.position, ghostIcon.worldBound.position)).First();
+            closestSlot = slots.OrderBy(slot => Vector2.Distance
+                (slot.worldBound.position, ghostIcon.worldBound.position)).First();
+        }
 
-            // TODO: don't update slots directly (update items collection instead)
-            // probably by adding an index field to inventory slot
+        if (closestSlot != null && closestSlot != dragStartSlot && closestSlot.IsEmpty)
+        {
+            items[closestSlot.index] = dragStartSlot.item;
 
-            closestSlot.SetItem(dragStartSlot.item);
-
-            dragStartSlot.DropItem();
+            items[dragStartSlot.index] = null;
         }
         else
         {
             dragStartSlot.icon.image =
-                  dragStartSlot.icon.sprite.texture;
+                  dragStartSlot.item.Item.sprite.texture;
         }
 
         isDragging = false;
@@ -152,7 +159,14 @@ public class InventoryUIManager : MonoBehaviour
         //slot.icon.sprite = inventoryItem.Item.sprite;
         //slot.stackSizeLabel.text = inventoryItem.StackSize.ToString();
 
-        slot.SetItem(inventoryItem);
+        if (inventoryItem == null)
+        {
+            slot.DropItem();
+        }
+        else
+        {
+            slot.SetItem(inventoryItem);
+        }
     }
 
     private bool AddItem(ItemScriptableObject item, int stack)
