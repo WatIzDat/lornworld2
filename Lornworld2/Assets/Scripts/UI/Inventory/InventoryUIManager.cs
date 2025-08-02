@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -19,11 +20,13 @@ public class InventoryUIManager : MonoBehaviour
 
     private VisualElement root;
     private VisualElement slotContainer;
-    private static VisualElement ghostIcon;
+    private VisualElement ghostIcon;
     private List<VisualElement> inventoryRows;
 
-    private static bool isDragging;
-    private static InventorySlot dragStartSlot;
+    private bool isDragging;
+    private InventorySlot dragStartSlot;
+    private InventoryItem draggedItem;
+    private int draggedStackSize;
 
     [SerializeField]
     private ItemScriptableObject testItem;
@@ -50,6 +53,7 @@ public class InventoryUIManager : MonoBehaviour
         for (int i = 0; i < tempSlots.Count; i++)
         {
             tempSlots[i].index = i;
+            tempSlots[i].inventoryUIManager = this;
         }
 
         inventorySlots = tempSlots.ToArray();
@@ -69,13 +73,15 @@ public class InventoryUIManager : MonoBehaviour
 
     private void Start()
     {
-        AddItem(testItem, 1);
-        AddItem(testItem, 1);
-        AddItem(testItem, 3);
-        AddItem(testItem, 2);
+        AddItem(testItem, 40);
+        AddItem(testItem, 40);
+        //AddItem(testItem, 1);
+        //AddItem(testItem, 1);
+        //AddItem(testItem, 3);
+        //AddItem(testItem, 2);
 
-        items[10] = new InventoryItem(testItem);
-        items[12] = new InventoryItem(testItem);
+        //items[10] = new InventoryItem(testItem);
+        //items[12] = new InventoryItem(testItem);
     }
 
     private void OnEnable()
@@ -88,17 +94,33 @@ public class InventoryUIManager : MonoBehaviour
         items.CollectionChanged -= OnItemsChanged;
     }
 
-    public static void StartDrag(Vector2 position, InventorySlot startSlot)
+    public void StartDrag(Vector2 position, InventorySlot startSlot, int stackSize)
     {
+        stackSize = Mathf.Clamp(stackSize, 1, startSlot.InventoryItem.Item.maxStackSize);
+
+        //startSlot.SetItem(
+        //    new InventoryItem(
+        //        startSlot.InventoryItem.Item,
+        //        startSlot.InventoryItem.StackSize - stackSize));
+
+
+        //startSlot.Icon.image = null;
+
         isDragging = true;
         dragStartSlot = startSlot;
+        draggedItem = startSlot.InventoryItem;
+        draggedStackSize = stackSize;
 
         ghostIcon.style.top = position.y - (ghostIcon.layout.height / 2);
         ghostIcon.style.left = position.x - (ghostIcon.layout.width / 2);
 
-        ghostIcon.style.backgroundImage = startSlot.inventoryItem.Item.sprite.texture;
+        ghostIcon.style.backgroundImage = startSlot.InventoryItem.Item.sprite.texture;
 
         ghostIcon.style.visibility = Visibility.Visible;
+
+        items[startSlot.index] = new InventoryItem(
+            startSlot.InventoryItem.Item,
+            startSlot.InventoryItem.StackSize - stackSize);
     }
 
     private void OnPointerMove(PointerMoveEvent evt)
@@ -129,24 +151,48 @@ public class InventoryUIManager : MonoBehaviour
             closestSlot = slots.OrderBy(slot => Vector2.Distance
                 (slot.worldBound.position, ghostIcon.worldBound.position)).First();
         }
+        
+        InventoryItem newInventoryItem = draggedItem.WithStack(draggedStackSize);
 
         if (closestSlot != null &&
             closestSlot != dragStartSlot &&
-            CanItemBeSet(closestSlot.index, dragStartSlot.inventoryItem))
+            CanItemBeSet(closestSlot.index, newInventoryItem))
         {
-            items[closestSlot.index] = dragStartSlot.inventoryItem;
+            if (items[closestSlot.index] == null)
+            {
+                items[closestSlot.index] = newInventoryItem;
+            }
+            else
+            {
+                items[closestSlot.index] = items[closestSlot.index].AddStack(draggedStackSize);
+            }
 
-            items[dragStartSlot.index] = null;
+            if (dragStartSlot.InventoryItem.StackSize <= 0)
+            {
+                items[dragStartSlot.index] = null;
+            }
+            //else
+            //{
+            //    items[dragStartSlot.index] = draggedItem;
+            //}
         }
         else
         {
-            dragStartSlot.icon.image =
-                  dragStartSlot.inventoryItem.Item.sprite.texture;
+            //dragStartSlot.inventoryItem = dragStartSlot.inventoryItem.AddStack(draggedStackSize);
+
+            //dragStartSlot.SetItem(dragStartSlot.InventoryItem.AddStack(draggedStackSize));
+
+            items[dragStartSlot.index] = draggedItem;
+
+            //dragStartSlot.icon.image =
+            //      dragStartSlot.inventoryItem.Item.sprite.texture;
         }
 
         isDragging = false;
         dragStartSlot = null;
         ghostIcon.style.visibility = Visibility.Hidden;
+        draggedStackSize = 0;
+        draggedItem = null;
     }
 
     private void OnItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -158,26 +204,26 @@ public class InventoryUIManager : MonoBehaviour
         InventorySlot slot = inventorySlots[e.NewStartingIndex];
 
         InventoryItem newInventoryItem = (InventoryItem)e.NewItems[0];
-        InventoryItem oldInventoryItem = (InventoryItem)e.OldItems[0];
+        //InventoryItem oldInventoryItem = (InventoryItem)e.OldItems[0];
 
-        if (oldInventoryItem == null)
-        {
-            slot.SetItem(newInventoryItem);
+        //if (oldInventoryItem == null)
+        //{
+        //    slot.SetItem(newInventoryItem);
 
-            return;
-        }
+        //    return;
+        //}
+
+        //if (newInventoryItem.Item == oldInventoryItem.Item &&
+        //    CanItemBeSet(e.NewStartingIndex, oldInventoryItem))
+        //{
+        //    slot.SetItem(new InventoryItem(oldInventoryItem.Item, oldInventoryItem.StackSize + newInventoryItem.StackSize));
+
+        //    return;
+        //}
 
         if (newInventoryItem == null)
         {
             slot.DropItem();
-
-            return;
-        }
-
-        if (newInventoryItem.Item == oldInventoryItem.Item &&
-            CanItemBeSet(e.NewStartingIndex, oldInventoryItem))
-        {
-            slot.SetItem(new InventoryItem(oldInventoryItem.Item, oldInventoryItem.StackSize + newInventoryItem.StackSize));
 
             return;
         }

@@ -9,4 +9,14 @@ public record InventoryItem
         Item = item;
         StackSize = stackSize;
     }
+
+    public InventoryItem AddStack(int stack)
+    {
+        return new InventoryItem(Item, StackSize + stack);
+    }
+
+    public InventoryItem WithStack(int stack)
+    {
+        return new InventoryItem(Item, stack);
+    }
 }

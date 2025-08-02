@@ -3,64 +3,73 @@ using UnityEngine.UIElements;
 [UxmlElement]
 public partial class InventorySlot : VisualElement
 {
-    public Image icon;
-    public InventoryItem inventoryItem;
-    public Label stackSizeLabel;
-    public int index;
+    public Image Icon { get; private set; }
+    public InventoryItem InventoryItem { get; private set; }
+    public Label StackSizeLabel { get; private set; }
 
-    public bool IsEmpty => inventoryItem == null;
+    public int index;
+    public InventoryUIManager inventoryUIManager;
+
+    public bool IsEmpty => InventoryItem == null;
 
     public InventorySlot()
     {
-        icon = new Image();
-        Add(icon);
-        icon.AddToClassList("slot-icon");
+        Icon = new Image();
+        Add(Icon);
+        Icon.AddToClassList("slot-icon");
 
         AddToClassList("inventory-slot");
 
-        stackSizeLabel = new Label();
-        Add(stackSizeLabel);
-        stackSizeLabel.AddToClassList("stack-size-label");
+        StackSizeLabel = new Label();
+        Add(StackSizeLabel);
+        StackSizeLabel.AddToClassList("stack-size-label");
 
         RegisterCallback<PointerDownEvent>(OnPointerDown);
     }
 
     private void OnPointerDown(PointerDownEvent evt)
     {
-        if (evt.button != 0 || inventoryItem == null)
+        if (InventoryItem == null)
         {
             return;
         }
 
-        icon.image = null;
+        //icon.image = null;
 
-        InventoryUIManager.StartDrag(evt.position, this);
+        if (evt.button == 0)
+        {
+            inventoryUIManager.StartDrag(evt.position, this, InventoryItem.StackSize);
+        }
+        else if (evt.button == 1)
+        {
+            inventoryUIManager.StartDrag(evt.position, this, InventoryItem.StackSize / 2);
+        }
     }
 
     public void SetItem(InventoryItem inventoryItem)
     {
-        this.inventoryItem = inventoryItem;
-        icon.image = inventoryItem.Item.sprite.texture;
-        stackSizeLabel.text = inventoryItem.StackSize.ToString();
+        InventoryItem = inventoryItem;
+        Icon.image = inventoryItem.Item.sprite.texture;
+        StackSizeLabel.text = inventoryItem.StackSize.ToString();
     }
 
     public void DropItem()
     {
-        inventoryItem = null;
-        icon.image = null;
-        stackSizeLabel.text = null;
+        InventoryItem = null;
+        Icon.image = null;
+        StackSizeLabel.text = null;
     }
 
-    public bool CanItemBeSet(InventoryItem item)
-    {
-        if (IsEmpty)
-        {
-            return true;
-        }
+    //public bool CanItemBeSet(InventoryItem item)
+    //{
+    //    if (IsEmpty)
+    //    {
+    //        return true;
+    //    }
 
-        bool isSameItem = inventoryItem.Item == item.Item;
-        bool isNotOverflowing = inventoryItem.StackSize + item.StackSize <= inventoryItem.Item.maxStackSize;
+    //    bool isSameItem = inventoryItem.Item == item.Item;
+    //    bool isNotOverflowing = inventoryItem.StackSize + item.StackSize <= inventoryItem.Item.maxStackSize;
 
-        return isSameItem && isNotOverflowing;
-    }
+    //    return isSameItem && isNotOverflowing;
+    //}
 }
