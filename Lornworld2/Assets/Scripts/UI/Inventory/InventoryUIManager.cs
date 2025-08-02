@@ -73,6 +73,9 @@ public class InventoryUIManager : MonoBehaviour
         AddItem(testItem, 1);
         AddItem(testItem, 3);
         AddItem(testItem, 2);
+
+        items[10] = new InventoryItem(testItem);
+        items[12] = new InventoryItem(testItem);
     }
 
     private void OnEnable()
@@ -93,8 +96,7 @@ public class InventoryUIManager : MonoBehaviour
         ghostIcon.style.top = position.y - (ghostIcon.layout.height / 2);
         ghostIcon.style.left = position.x - (ghostIcon.layout.width / 2);
 
-        // TODO: rename this confusing item.Item thing
-        ghostIcon.style.backgroundImage = startSlot.item.Item.sprite.texture;
+        ghostIcon.style.backgroundImage = startSlot.inventoryItem.Item.sprite.texture;
 
         ghostIcon.style.visibility = Visibility.Visible;
     }
@@ -128,16 +130,18 @@ public class InventoryUIManager : MonoBehaviour
                 (slot.worldBound.position, ghostIcon.worldBound.position)).First();
         }
 
-        if (closestSlot != null && closestSlot != dragStartSlot && closestSlot.IsEmpty)
+        if (closestSlot != null &&
+            closestSlot != dragStartSlot &&
+            CanItemBeSet(closestSlot.index, dragStartSlot.inventoryItem))
         {
-            items[closestSlot.index] = dragStartSlot.item;
+            items[closestSlot.index] = dragStartSlot.inventoryItem;
 
             items[dragStartSlot.index] = null;
         }
         else
         {
             dragStartSlot.icon.image =
-                  dragStartSlot.item.Item.sprite.texture;
+                  dragStartSlot.inventoryItem.Item.sprite.texture;
         }
 
         isDragging = false;
@@ -153,59 +157,90 @@ public class InventoryUIManager : MonoBehaviour
 
         InventorySlot slot = inventorySlots[e.NewStartingIndex];
 
-        InventoryItem inventoryItem = (InventoryItem)e.NewItems[0];
+        InventoryItem newInventoryItem = (InventoryItem)e.NewItems[0];
+        InventoryItem oldInventoryItem = (InventoryItem)e.OldItems[0];
+
+        if (oldInventoryItem == null)
+        {
+            slot.SetItem(newInventoryItem);
+
+            return;
+        }
+
+        if (newInventoryItem == null)
+        {
+            slot.DropItem();
+
+            return;
+        }
+
+        if (newInventoryItem.Item == oldInventoryItem.Item &&
+            CanItemBeSet(e.NewStartingIndex, oldInventoryItem))
+        {
+            slot.SetItem(new InventoryItem(oldInventoryItem.Item, oldInventoryItem.StackSize + newInventoryItem.StackSize));
+
+            return;
+        }
 
         //slot.item = inventoryItem.Item;
         //slot.icon.sprite = inventoryItem.Item.sprite;
         //slot.stackSizeLabel.text = inventoryItem.StackSize.ToString();
 
-        if (inventoryItem == null)
-        {
-            slot.DropItem();
-        }
-        else
-        {
-            slot.SetItem(inventoryItem);
-        }
+        slot.SetItem(newInventoryItem);
     }
+
+    private bool CanItemBeSet(int itemIndex, InventoryItem item)
+    {
+        if (items[itemIndex] == null)
+        {
+            return true;
+        }
+
+        bool isSameItem = items[itemIndex].Item == item.Item;
+        bool isNotOverflowing = items[itemIndex].StackSize + item.StackSize <= items[itemIndex].Item.maxStackSize;
+
+        return isSameItem && isNotOverflowing;
+    }
+
 
     private bool AddItem(ItemScriptableObject item, int stack)
     {
+        if (stack > item.maxStackSize)
+        {
+            return false;
+        }
+
         bool hasEmptySlot = false;
         int emptyIndex = -1;
 
         int remainingStack = stack;
 
-        do
+        for (int i = 0; i < items.Count; i++)
         {
-            for (int i = 0; i < items.Count; i++)
+            if (items[i] == null && hasEmptySlot == false)
             {
-                if (items[i] == null && hasEmptySlot == false)
+                emptyIndex = i;
+                hasEmptySlot = true;
+            }
+            else if (
+                items[i] != null &&
+                items[i].Item == item && 
+                items[i].StackSize < item.maxStackSize)
+            {
+                int usedStack = item.maxStackSize - items[i].StackSize;
+
+                if (usedStack > stack)
                 {
-                    emptyIndex = i;
-                    hasEmptySlot = true;
+                    usedStack = stack;
                 }
-                else if (
-                    items[i] != null &&
-                    items[i].Item == item && 
-                    items[i].StackSize < item.maxStackSize)
-                {
-                    int usedStack = item.maxStackSize - items[i].StackSize;
 
-                    if (usedStack > stack)
-                    {
-                        usedStack = stack;
-                    }
+                remainingStack -= usedStack;
 
-                    remainingStack -= usedStack;
+                items[i] = new InventoryItem(item, items[i].StackSize + usedStack);
 
-                    items[i] = new InventoryItem(item, items[i].StackSize + usedStack);
-
-                    Debug.Log("test");
-                }
+                Debug.Log("test");
             }
         }
-        while (remainingStack > item.maxStackSize);
 
         if (hasEmptySlot && remainingStack >= 1)
         {
@@ -213,16 +248,6 @@ public class InventoryUIManager : MonoBehaviour
 
             return true;
         }
-
-        //for (int i = 0; i < items.Count; i++)
-        //{
-        //    if (items[i] == null)
-        //    {
-        //        items[i] = inventoryItem;
-
-        //        return true;
-        //    }
-        //}
 
         return false;
     }

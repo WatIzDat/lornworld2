@@ -4,11 +4,11 @@ using UnityEngine.UIElements;
 public partial class InventorySlot : VisualElement
 {
     public Image icon;
-    public InventoryItem item;
+    public InventoryItem inventoryItem;
     public Label stackSizeLabel;
     public int index;
 
-    public bool IsEmpty => item == null;
+    public bool IsEmpty => inventoryItem == null;
 
     public InventorySlot()
     {
@@ -27,7 +27,7 @@ public partial class InventorySlot : VisualElement
 
     private void OnPointerDown(PointerDownEvent evt)
     {
-        if (evt.button != 0 || item == null)
+        if (evt.button != 0 || inventoryItem == null)
         {
             return;
         }
@@ -39,15 +39,28 @@ public partial class InventorySlot : VisualElement
 
     public void SetItem(InventoryItem inventoryItem)
     {
-        item = inventoryItem;
+        this.inventoryItem = inventoryItem;
         icon.image = inventoryItem.Item.sprite.texture;
         stackSizeLabel.text = inventoryItem.StackSize.ToString();
     }
 
     public void DropItem()
     {
-        item = null;
+        inventoryItem = null;
         icon.image = null;
         stackSizeLabel.text = null;
+    }
+
+    public bool CanItemBeSet(InventoryItem item)
+    {
+        if (IsEmpty)
+        {
+            return true;
+        }
+
+        bool isSameItem = inventoryItem.Item == item.Item;
+        bool isNotOverflowing = inventoryItem.StackSize + item.StackSize <= inventoryItem.Item.maxStackSize;
+
+        return isSameItem && isNotOverflowing;
     }
 }
