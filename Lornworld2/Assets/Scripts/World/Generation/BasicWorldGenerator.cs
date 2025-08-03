@@ -29,11 +29,11 @@ public class BasicWorldGenerator : IWorldGenerator
 
                 if (e < 0.5f)
                 {
-                    tiles[index] = TileRegistry.Instance.GetTile(TileIds.Water);
+                    tiles[index] = TileRegistry.Instance.GetEntry(TileIds.WaterTile);
                 }
                 else
                 {
-                    tiles[index] = TileRegistry.Instance.GetTile(TileIds.Grass);
+                    tiles[index] = TileRegistry.Instance.GetEntry(TileIds.GrassTile);
                 }
             }
         }

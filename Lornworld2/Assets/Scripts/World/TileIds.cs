@@ -1,5 +1,5 @@
 public static class TileIds
 {
-    public static TileIdentifier Grass { get; set; }
-    public static TileIdentifier Water { get; set; }
+    public static TileIdentifier GrassTile { get; set; }
+    public static TileIdentifier WaterTile { get; set; }
 }

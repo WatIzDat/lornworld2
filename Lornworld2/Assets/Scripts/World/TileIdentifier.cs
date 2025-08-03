@@ -1,9 +1,6 @@
-public record TileIdentifier
+public record TileIdentifier : Identifier
 {
-    public string Id { get; }
+    //public string Id { get; }
 
-    public TileIdentifier(string id)
-    {
-        Id = id;
-    }
+    public TileIdentifier(string id) : base(id) { }
 }
