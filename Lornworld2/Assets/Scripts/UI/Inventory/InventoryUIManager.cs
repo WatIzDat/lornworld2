@@ -73,8 +73,8 @@ public class InventoryUIManager : MonoBehaviour
 
     private void Start()
     {
-        AddItem(testItem, 40);
-        AddItem(testItem, 40);
+        AddItem(ItemRegistry.Instance.GetEntry(ItemIds.GrassItem), 40);
+        AddItem(ItemRegistry.Instance.GetEntry(ItemIds.StoneItem), 17);
         //AddItem(testItem, 1);
         //AddItem(testItem, 1);
         //AddItem(testItem, 3);
