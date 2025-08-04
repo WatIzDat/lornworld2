@@ -97,3 +97,11 @@
 .stack-size-label {
     color: white;
 }
+
+.hotbar-container {
+    flex-grow: 1;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: flex-end;
+    justify-content: center;
+}

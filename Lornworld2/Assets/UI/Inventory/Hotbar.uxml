@@ -1,0 +1,14 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/Inventory/Inventory.uss?fileID=7433441132597879392&amp;guid=eedb7afe2cbadb24b89e9d7958849d45&amp;type=3#Inventory" />
+    <ui:VisualElement name="SlotContainer" class="hotbar-container">
+        <InventorySlot />
+        <InventorySlot />
+        <InventorySlot />
+        <InventorySlot />
+        <InventorySlot />
+        <InventorySlot />
+        <InventorySlot />
+        <InventorySlot />
+        <InventorySlot />
+    </ui:VisualElement>
+</ui:UXML>

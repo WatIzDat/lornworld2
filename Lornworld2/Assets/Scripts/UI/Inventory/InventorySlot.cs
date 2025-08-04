@@ -10,6 +10,8 @@ public partial class InventorySlot : VisualElement
     public int index;
     public InventoryUIManager inventoryUIManager;
 
+    public bool isHotbarSlot;
+
     public bool IsEmpty => InventoryItem == null;
 
     public InventorySlot()
@@ -29,7 +31,7 @@ public partial class InventorySlot : VisualElement
 
     private void OnPointerDown(PointerDownEvent evt)
     {
-        if (InventoryItem == null)
+        if (InventoryItem == null || isHotbarSlot)
         {
             return;
         }

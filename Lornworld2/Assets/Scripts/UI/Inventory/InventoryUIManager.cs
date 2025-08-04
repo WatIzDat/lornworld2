@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -8,8 +9,8 @@ using UnityEngine.UIElements;
 
 public class InventoryUIManager : MonoBehaviour
 {
-    private const int InventoryWidth = 9;
-    private const int InventoryHeight = 4; // including hotbar
+    public const int InventoryWidth = 9;
+    public const int InventoryHeight = 4; // including hotbar
 
     private const int InventorySize = InventoryWidth * InventoryHeight;
 
@@ -30,6 +31,8 @@ public class InventoryUIManager : MonoBehaviour
     private int draggedStackSize;
 
     public bool IsInventoryOpen { get; private set; }
+
+    public static event Action<int, InventoryItem> InventoryChanged;
 
     private void Awake()
     {
@@ -216,9 +219,13 @@ public class InventoryUIManager : MonoBehaviour
         //    .Query<InventorySlot>()
         //    .AtIndex(e.NewStartingIndex % InventoryWidth);
 
+
         InventorySlot slot = inventorySlots[e.NewStartingIndex];
 
         InventoryItem newInventoryItem = (InventoryItem)e.NewItems[0];
+
+        InventoryChanged?.Invoke(e.NewStartingIndex, newInventoryItem);
+
         //InventoryItem oldInventoryItem = (InventoryItem)e.OldItems[0];
 
         //if (oldInventoryItem == null)
