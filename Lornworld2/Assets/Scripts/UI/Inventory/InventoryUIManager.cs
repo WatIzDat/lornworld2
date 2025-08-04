@@ -19,6 +19,7 @@ public class InventoryUIManager : MonoBehaviour
     private InventorySlot[] inventorySlots = new InventorySlot[InventorySize];
 
     private VisualElement root;
+    private VisualElement panel;
     private VisualElement slotContainer;
     private VisualElement ghostIcon;
     private List<VisualElement> inventoryRows;
@@ -28,12 +29,12 @@ public class InventoryUIManager : MonoBehaviour
     private InventoryItem draggedItem;
     private int draggedStackSize;
 
-    [SerializeField]
-    private ItemScriptableObject testItem;
+    public bool IsInventoryOpen { get; private set; }
 
     private void Awake()
     {
         root = GetComponent<UIDocument>().rootVisualElement;
+        panel = root.Q<VisualElement>("Panel");
         slotContainer = root.Q<VisualElement>("SlotContainer");
         ghostIcon = root.Q<VisualElement>("GhostIcon");
 
@@ -92,6 +93,20 @@ public class InventoryUIManager : MonoBehaviour
     private void OnDisable()
     {
         items.CollectionChanged -= OnItemsChanged;
+    }
+
+    public void OpenInventory()
+    {
+        panel.style.display = DisplayStyle.Flex;
+
+        IsInventoryOpen = true;
+    }
+
+    public void CloseInventory()
+    {
+        panel.style.display = DisplayStyle.None;
+
+        IsInventoryOpen = false;
     }
 
     public void StartDrag(Vector2 position, InventorySlot startSlot, int stackSize)
