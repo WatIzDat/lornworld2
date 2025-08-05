@@ -19,4 +19,12 @@ public record InventoryItem
     {
         return new InventoryItem(Item, stack);
     }
+
+    public void UseItem()
+    {
+        if (Item.itemUseBehavior != null)
+        {
+            Item.itemUseBehavior.UseItem();
+        }
+    }
 }

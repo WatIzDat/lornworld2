@@ -52,5 +52,10 @@ public class PlayerInventory : MonoBehaviour
 
         Debug.Log(selectedIndex + " " + SelectedItem);
     }
+
+    private void OnUseItem(InputValue inputValue)
+    {
+        SelectedItem?.UseItem();
+    }
 #pragma warning restore IDE0051, IDE0060
 }
