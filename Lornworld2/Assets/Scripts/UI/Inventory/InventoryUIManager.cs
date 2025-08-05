@@ -15,7 +15,10 @@ public class InventoryUIManager : MonoBehaviour
     private const int InventorySize = InventoryWidth * InventoryHeight;
 
     // bottom left to top right
+    // TODO: maybe separate items outside of view logic
     private readonly ObservableCollection<InventoryItem> items = new();
+
+    public InventoryItem[] HotbarItems => items.ToArray()[..InventoryWidth];
 
     private InventorySlot[] inventorySlots = new InventorySlot[InventorySize];
 
