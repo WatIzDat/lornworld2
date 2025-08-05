@@ -5,6 +5,8 @@ public class HotbarUIManager : MonoBehaviour
 {
     private InventorySlot[] hotbarSlots = new InventorySlot[InventoryUIManager.InventoryWidth];
 
+    private InventorySlot selectedHotbarSlot;
+
     private VisualElement root;
     private VisualElement slotContainer;
 
@@ -15,6 +17,8 @@ public class HotbarUIManager : MonoBehaviour
 
         hotbarSlots = slotContainer.Query<InventorySlot>().ToList().ToArray();
 
+        selectedHotbarSlot = hotbarSlots[0];
+
         foreach (InventorySlot slot in hotbarSlots)
         {
             slot.isHotbarSlot = true;
@@ -24,11 +28,24 @@ public class HotbarUIManager : MonoBehaviour
     private void OnEnable()
     {
         InventoryUIManager.InventoryChanged += OnInventoryChanged;
+
+        PlayerInventory.HotbarSelectedIndexChanged += OnHotbarSelectedIndexChanged;
     }
 
     private void OnDisable()
     {
         InventoryUIManager.InventoryChanged -= OnInventoryChanged;
+
+        PlayerInventory.HotbarSelectedIndexChanged -= OnHotbarSelectedIndexChanged;
+    }
+
+    private void OnHotbarSelectedIndexChanged(int newIndex)
+    {
+        selectedHotbarSlot.RemoveFromClassList("hotbar-selected-slot");
+
+        selectedHotbarSlot = hotbarSlots[newIndex];
+
+        selectedHotbarSlot.AddToClassList("hotbar-selected-slot");
     }
 
     private void OnInventoryChanged(int index, InventoryItem item)

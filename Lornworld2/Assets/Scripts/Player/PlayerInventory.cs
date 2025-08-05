@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,6 +9,8 @@ public class PlayerInventory : MonoBehaviour
 
     private int selectedIndex;
     private InventoryItem SelectedItem => inventoryUIManager.HotbarItems[selectedIndex];
+
+    public static event Action<int> HotbarSelectedIndexChanged;
 
 #pragma warning disable IDE0051, IDE0060
     private void OnToggleInventory(InputValue inputValue)
@@ -37,10 +40,14 @@ public class PlayerInventory : MonoBehaviour
             selectedIndex < inventoryUIManager.HotbarItems.Length - 1)
         {
             selectedIndex++;
+
+            HotbarSelectedIndexChanged?.Invoke(selectedIndex);
         }
         else if (direction < 0 && selectedIndex > 0)
         {
             selectedIndex--;
+
+            HotbarSelectedIndexChanged?.Invoke(selectedIndex);
         }
 
         Debug.Log(selectedIndex + " " + SelectedItem);

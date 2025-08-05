@@ -105,3 +105,8 @@
     align-items: flex-end;
     justify-content: center;
 }
+
+.hotbar-selected-slot {
+    border-color: white;
+    border-width: 5;
+}
