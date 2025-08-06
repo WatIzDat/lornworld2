@@ -8,12 +8,16 @@ public class PathfindingGrid : MonoBehaviour
     [SerializeField]
     private ChunkManager chunkManager;
 
+    [SerializeField]
+    private Player player;
+
     private void Start()
     {
         transform.position = Vector2.one * (ChunkManager.ChunkSize / 2);
 
         gridSize = ChunkManager.ChunkSize * chunkManager.LoadedChunksSideLength * Vector2Int.one;
     }
+
     public void Initialize()
     {
         CreateGrid();
@@ -54,15 +58,33 @@ public class PathfindingGrid : MonoBehaviour
         }
     }
 
+    private PathfindingNode GetNodeAtWorldPos(Vector2 pos)
+    {
+        float percentX = ((pos.x - (ChunkManager.ChunkSize / 2)) / gridSize.x) + 0.5f;
+        float percentY = ((pos.y - (ChunkManager.ChunkSize / 2)) / gridSize.y) + 0.5f;
+
+        int x = Mathf.FloorToInt(Mathf.Clamp(gridSize.x * percentX, 0, gridSize.x - 1));
+        int y = Mathf.FloorToInt(Mathf.Clamp(gridSize.y * percentY, 0, gridSize.y - 1));
+
+        return grid[x, y];
+    }
+
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireCube(transform.position, new Vector3(gridSize.x, gridSize.y, 1));
 
         if (grid != null)
         {
+            PathfindingNode playerNode = GetNodeAtWorldPos(player.transform.position);
+
             foreach (PathfindingNode node in grid)
             {
                 Gizmos.color = node.Walkable ? Color.white : Color.red;
+
+                if (playerNode == node)
+                {
+                    Gizmos.color = Color.cyan;
+                }
 
                 Gizmos.DrawCube(new Vector2(node.TilePos.x + 0.5f, node.TilePos.y + 0.5f), Vector3.one * 0.9f);
             }
