@@ -16,7 +16,7 @@ public class ChunkManager : MonoBehaviour
     private int renderDistance;
 
     [SerializeField]
-    private PlayerInfo player;
+    private Player player;
 
     [SerializeField]
     private DualGridTilemap tilemap;

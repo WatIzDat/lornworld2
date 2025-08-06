@@ -355,9 +355,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 514829017}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 395181b16a9488a47b4f8bc77b1445db, type: 3}
+  m_Script: {fileID: 11500000, guid: 38493600a6b862a4baa1da5f67612f37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  health: 20
+  maxHealth: 20
+  hunger: 20
 --- !u!114 &514829024
 MonoBehaviour:
   m_ObjectHideFlags: 0
