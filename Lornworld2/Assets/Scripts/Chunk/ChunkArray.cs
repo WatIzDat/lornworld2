@@ -9,7 +9,7 @@ public class ChunkArray : MonoBehaviour
 
     private readonly Queue<GameObject> unloadedChunks = new();
 
-    private int sideLength;
+    public int SideLength { get; private set; }
 
     private int maxDisplayOrder;
 
@@ -27,13 +27,13 @@ public class ChunkArray : MonoBehaviour
     {
         ChunkArray chunkArray = gameObject.AddComponent<ChunkArray>();
 
-        chunkArray.sideLength = 1 + (2 * renderDistance);
+        chunkArray.SideLength = 1 + (2 * renderDistance);
 
-        chunkArray.chunks = new Chunk[chunkArray.sideLength * chunkArray.sideLength];
+        chunkArray.chunks = new Chunk[chunkArray.SideLength * chunkArray.SideLength];
 
-        int[] vals = new int[chunkArray.sideLength];
+        int[] vals = new int[chunkArray.SideLength];
 
-        for (int i = 0; i < chunkArray.sideLength; i++)
+        for (int i = 0; i < chunkArray.SideLength; i++)
         {
             vals[i] = i - renderDistance;
         }
@@ -41,7 +41,7 @@ public class ChunkArray : MonoBehaviour
         for (int i = 0; i < chunkArray.chunks.Length; i++)
         {
             // confusing but modulus changes for every column and divide changes for every row
-            Vector2Int pos = new(vals[i % chunkArray.sideLength], vals[i / chunkArray.sideLength]);
+            Vector2Int pos = new(vals[i % chunkArray.SideLength], vals[i / chunkArray.SideLength]);
 
             //Debug.Log(pos);
 
@@ -117,18 +117,18 @@ public class ChunkArray : MonoBehaviour
     public void ShiftHorizontal(bool shiftLeft, Func<ChunkPos, TileScriptableObject[]> generate)
     {
         Chunk[] newChunks = new Chunk[chunks.Length];
-        List<int> pendingChunkUpdateIndices = new(sideLength);
+        List<int> pendingChunkUpdateIndices = new(SideLength);
 
         for (int i = 0; i < chunks.Length; i++)
         {
             if (shiftLeft)
             {
-                if (i % sideLength == 0)
+                if (i % SideLength == 0)
                 {
                     ChunkUnloaded?.Invoke(i);
                 }
 
-                if ((i + 1) % sideLength == 0)
+                if ((i + 1) % SideLength == 0)
                 {
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.right);
 
@@ -144,12 +144,12 @@ public class ChunkArray : MonoBehaviour
             }
             else
             {
-                if ((i + 1) % sideLength == 0)
+                if ((i + 1) % SideLength == 0)
                 {
                     ChunkUnloaded?.Invoke(i);
                 }
 
-                if (i % sideLength == 0)
+                if (i % SideLength == 0)
                 {
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.left);
 
@@ -176,18 +176,18 @@ public class ChunkArray : MonoBehaviour
     public void ShiftVertical(bool shiftDown, Func<ChunkPos, TileScriptableObject[]> generate)
     {
         Chunk[] newChunks = new Chunk[chunks.Length];
-        List<int> pendingChunkUpdateIndices = new(sideLength);
+        List<int> pendingChunkUpdateIndices = new(SideLength);
 
         for (int i = 0; i < chunks.Length; i++)
         {
             if (shiftDown)
             {
-                if (i / sideLength == 0)
+                if (i / SideLength == 0)
                 {
                     ChunkUnloaded?.Invoke(i);
                 }
 
-                if (i / sideLength == sideLength - 1)
+                if (i / SideLength == SideLength - 1)
                 {
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.up);
 
@@ -198,17 +198,17 @@ public class ChunkArray : MonoBehaviour
                 }
                 else
                 {
-                    newChunks[i] = chunks[i + sideLength];
+                    newChunks[i] = chunks[i + SideLength];
                 }
             }
             else
             {
-                if (i / sideLength == sideLength - 1)
+                if (i / SideLength == SideLength - 1)
                 {
                     ChunkUnloaded?.Invoke(i);
                 }
 
-                if (i / sideLength == 0)
+                if (i / SideLength == 0)
                 {
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.down);
 
@@ -219,7 +219,7 @@ public class ChunkArray : MonoBehaviour
                 }
                 else
                 {
-                    newChunks[i] = chunks[i - sideLength];
+                    newChunks[i] = chunks[i - SideLength];
                 }
             }
         }

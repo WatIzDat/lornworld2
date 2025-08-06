@@ -50,7 +50,7 @@ public class PlayerInventory : MonoBehaviour
             HotbarSelectedIndexChanged?.Invoke(selectedIndex);
         }
 
-        Debug.Log(selectedIndex + " " + SelectedItem);
+        //Debug.Log(selectedIndex + " " + SelectedItem);
     }
 
     private void OnUseItem(InputValue inputValue)

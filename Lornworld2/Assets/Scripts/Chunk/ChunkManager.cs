@@ -23,6 +23,8 @@ public class ChunkManager : MonoBehaviour
 
     private ChunkArray loadedChunks;
 
+    public int LoadedChunksSideLength => loadedChunks.SideLength;
+
     private void Awake()
     {
         loadedChunks = ChunkArray.AddChunkArrayComponent(gameObject, renderDistance, chunkPrefab, chunkParent, this);

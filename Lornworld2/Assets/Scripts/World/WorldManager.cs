@@ -5,6 +5,9 @@ public class WorldManager : MonoBehaviour
     [SerializeField]
     private ChunkManager chunkManager;
 
+    [SerializeField]
+    private PathfindingGrid pathfindingGrid;
+
     private void Start()
     {
         Generate(new BasicWorldGenerator());
@@ -13,6 +16,8 @@ public class WorldManager : MonoBehaviour
     public void Generate(IWorldGenerator generator)
     {
         chunkManager.Generate(generator);
+
+        pathfindingGrid.Initialize();
 
         //foreach (TileScriptableObject[] tiles in tilesInChunks)
         //{
