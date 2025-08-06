@@ -12,7 +12,7 @@ public class PathfindingGrid : MonoBehaviour
     //[SerializeField]
     //private Player player;
 
-    private void Start()
+    private void Awake()
     {
         transform.position = Vector2.one * (ChunkManager.ChunkSize / 2);
 
@@ -95,9 +95,12 @@ public class PathfindingGrid : MonoBehaviour
         int x = Mathf.FloorToInt(Mathf.Clamp(gridSize.x * percentX, 0, gridSize.x - 1));
         int y = Mathf.FloorToInt(Mathf.Clamp(gridSize.y * percentY, 0, gridSize.y - 1));
 
+        Debug.Log(x + " " + y);
+
         return grid[x, y];
     }
 
+    public List<PathfindingNode> path;
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireCube(transform.position, new Vector3(gridSize.x, gridSize.y, 1));
@@ -109,6 +112,11 @@ public class PathfindingGrid : MonoBehaviour
             foreach (PathfindingNode node in grid)
             {
                 Gizmos.color = node.Walkable ? Color.white : Color.red;
+
+                if (path != null && path.Contains(node))
+                {
+                    Gizmos.color = Color.black;
+                }
 
                 //if (playerNode == node)
                 //{

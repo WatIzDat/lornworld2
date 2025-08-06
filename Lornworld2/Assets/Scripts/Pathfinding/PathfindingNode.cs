@@ -11,6 +11,8 @@ public class PathfindingNode
     public int hCost;
     public int FCost => gCost + hCost;
 
+    public PathfindingNode parent;
+
     public PathfindingNode(bool walkable, Vector2Int tilePos, int gridX, int gridY)
     {
         Walkable = walkable;

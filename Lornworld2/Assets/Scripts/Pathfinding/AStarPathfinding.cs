@@ -5,9 +5,17 @@ public class AStarPathfinding : MonoBehaviour
 {
     private PathfindingGrid grid;
 
+    [SerializeField]
+    private Transform seeker, target;
+
     private void Awake()
     {
         grid = GetComponent<PathfindingGrid>();
+    }
+
+    private void Update()
+    {
+        FindPath(seeker.position, target.position);
     }
 
     private void FindPath(Vector2 startPos, Vector2 targetPos)
@@ -39,6 +47,8 @@ public class AStarPathfinding : MonoBehaviour
 
             if (currentNode == targetNode)
             {
+                RetracePath(startNode, targetNode);
+
                 return;
             }
 
@@ -49,8 +59,41 @@ public class AStarPathfinding : MonoBehaviour
                 {
                     continue;
                 }
+
+                int newGCost = currentNode.gCost + GetDistance(currentNode, neighbour);
+
+                if (newGCost < neighbour.gCost || !openSet.Contains(neighbour))
+                {
+                    neighbour.gCost = newGCost;
+                    neighbour.hCost = GetDistance(neighbour, targetNode);
+
+                    neighbour.parent = currentNode;
+
+                    if (!openSet.Contains(neighbour))
+                    {
+                        openSet.Add(neighbour);
+                    }
+                }
             }
         }
+    }
+
+    private void RetracePath(PathfindingNode startNode, PathfindingNode targetNode)
+    {
+        List<PathfindingNode> path = new();
+
+        PathfindingNode currentNode = targetNode;
+
+        while (currentNode != startNode)
+        {
+            path.Add(currentNode);
+
+            currentNode = currentNode.parent;
+        }
+
+        path.Reverse();
+
+        grid.path = path;
     }
 
     private int GetDistance(PathfindingNode nodeA, PathfindingNode nodeB)
