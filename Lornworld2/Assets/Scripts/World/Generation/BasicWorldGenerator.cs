@@ -10,8 +10,8 @@ public class BasicWorldGenerator : IWorldGenerator
         {
             for (int x = 0; x < ChunkManager.ChunkSize; x++)
             {
-                float noiseX = ((x / (float)ChunkManager.ChunkSize) - 0.5f + (pos.pos.x));
-                float noiseY = ((y / (float)ChunkManager.ChunkSize) - 0.5f + (pos.pos.y));
+                float noiseX = ((x / (float)ChunkManager.ChunkSize) - 0.5f + (pos.pos.x)) / 5f;
+                float noiseY = ((y / (float)ChunkManager.ChunkSize) - 0.5f + (pos.pos.y)) / 5f;
 
                 // adding large number to avoid symmetry around 0, 0
                 float e =
@@ -27,7 +27,7 @@ public class BasicWorldGenerator : IWorldGenerator
 
                 //Debug.Log(e);
 
-                if (e < 0.5f)
+                if (e < 0.2f)
                 {
                     tiles[index] = TileRegistry.Instance.GetEntry(TileIds.WaterTile);
                 }

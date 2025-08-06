@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PathfindingGrid : MonoBehaviour
@@ -8,13 +9,14 @@ public class PathfindingGrid : MonoBehaviour
     [SerializeField]
     private ChunkManager chunkManager;
 
-    [SerializeField]
-    private Player player;
+    //[SerializeField]
+    //private Player player;
 
     private void Start()
     {
         transform.position = Vector2.one * (ChunkManager.ChunkSize / 2);
 
+        // TODO: separate render distance from simulation distance
         gridSize = ChunkManager.ChunkSize * chunkManager.LoadedChunksSideLength * Vector2Int.one;
     }
 
@@ -53,12 +55,39 @@ public class PathfindingGrid : MonoBehaviour
                 // add an isWalkable field to tile scriptable objects
                 bool walkable = tile != TileRegistry.Instance.GetEntry(TileIds.WaterTile);
 
-                grid[x, y] = new PathfindingNode(walkable, tilePos);
+                grid[x, y] = new PathfindingNode(walkable, tilePos, x, y);
             }
         }
     }
 
-    private PathfindingNode GetNodeAtWorldPos(Vector2 pos)
+    public List<PathfindingNode> GetNeighbours(PathfindingNode node)
+    {
+        List<PathfindingNode> neighbours = new();
+
+        for (int x = -1; x <= 1; x++)
+        {
+            for (int y = -1; y <= 1; y++)
+            {
+                if (x == 0 && y == 0)
+                {
+                    continue;
+                }
+
+                int neighbourX = node.GridX + x;
+                int neighbourY = node.GridY + y;
+
+                if (neighbourX >= 0 && neighbourX < gridSize.x &&
+                    neighbourY >= 0 && neighbourY < gridSize.y)
+                {
+                    neighbours.Add(grid[neighbourX, neighbourY]);
+                }
+            }
+        }
+
+        return neighbours;
+    }
+
+    public PathfindingNode GetNodeAtWorldPos(Vector2 pos)
     {
         float percentX = ((pos.x - (ChunkManager.ChunkSize / 2)) / gridSize.x) + 0.5f;
         float percentY = ((pos.y - (ChunkManager.ChunkSize / 2)) / gridSize.y) + 0.5f;
@@ -75,16 +104,16 @@ public class PathfindingGrid : MonoBehaviour
 
         if (grid != null)
         {
-            PathfindingNode playerNode = GetNodeAtWorldPos(player.transform.position);
+            //PathfindingNode playerNode = GetNodeAtWorldPos(player.transform.position);
 
             foreach (PathfindingNode node in grid)
             {
                 Gizmos.color = node.Walkable ? Color.white : Color.red;
 
-                if (playerNode == node)
-                {
-                    Gizmos.color = Color.cyan;
-                }
+                //if (playerNode == node)
+                //{
+                //    Gizmos.color = Color.cyan;
+                //}
 
                 Gizmos.DrawCube(new Vector2(node.TilePos.x + 0.5f, node.TilePos.y + 0.5f), Vector3.one * 0.9f);
             }
