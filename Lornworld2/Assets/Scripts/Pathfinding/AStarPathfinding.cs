@@ -61,6 +61,7 @@ public class AStarPathfinding : MonoBehaviour
                 }
 
                 // optimization: create a list of neighbors for each Node when creating the grid to skip this entire step
+                // TODO: prevent pathfinding through corners
                 foreach (PathfindingNode neighbour in grid.GetNeighbours(currentNode))
                 {
                     if (!neighbour.Walkable || closedSet.Contains(neighbour))

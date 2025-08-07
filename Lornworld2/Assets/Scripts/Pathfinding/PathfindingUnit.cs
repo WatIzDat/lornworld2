@@ -8,13 +8,18 @@ public class PathfindingUnit : MonoBehaviour
 
     private Rigidbody2D rb;
 
-    private float speed = 0.01f;
+    [SerializeField]
+    private float speed = 5f;
+
     private Vector2[] path;
     private int targetIndex;
 
-    private Coroutine followPathCoroutine;
+    private bool followPath;
+    private Vector2 currentWaypoint;
 
     private bool pathRequested;
+
+    private Vector2 startPos;
 
     private void Awake()
     {
@@ -37,37 +42,50 @@ public class PathfindingUnit : MonoBehaviour
         {
             path = newPath;
 
-            if (followPathCoroutine != null)
-            {
-                StopCoroutine(followPathCoroutine);
-            }
+            followPath = true;
 
-            followPathCoroutine = StartCoroutine(FollowPath());
+            startPos = transform.position;
+
+            currentWaypoint = path[0];
         }
     }
 
-    private IEnumerator FollowPath()
+    private void FixedUpdate()
     {
-        Vector2 currentWaypoint = path[0];
-
-        while (true)
+        if (followPath)
         {
-            if ((Vector2)transform.position == currentWaypoint)
+            FollowPath();
+        }
+    }
+
+    private void FollowPath()
+    {
+        if (Vector2.Distance(transform.position, currentWaypoint) < 0.1f)
+        {
+            targetIndex++;
+
+            if (targetIndex >= path.Length)
             {
-                targetIndex++;
+                targetIndex = 0;
 
-                if (targetIndex >= path.Length)
-                {
-                    yield break;
-                }
+                path = new Vector2[0];
 
-                currentWaypoint = path[targetIndex];
+                followPath = false;
+
+                rb.linearVelocity = Vector2.zero;
+
+                return;
             }
 
-            transform.position = Vector2.MoveTowards(transform.position, currentWaypoint, speed);
-
-            yield return null;
+            currentWaypoint = path[targetIndex];
         }
+
+        startPos = targetIndex == 0 ? startPos : path[targetIndex - 1];
+        Vector2 targetPos = path[targetIndex];
+
+        rb.linearVelocity = speed * Time.fixedDeltaTime * new Vector2(
+            targetPos.x - startPos.x,
+            targetPos.y - startPos.y).normalized;
     }
 
     private void OnDrawGizmos()
