@@ -11,6 +11,8 @@ public class PathfindingGrid : MonoBehaviour
 
     public int GridArea => gridSize.x * gridSize.y;
 
+    private bool displayGridGizmos;
+
     //[SerializeField]
     //private Player player;
 
@@ -105,27 +107,30 @@ public class PathfindingGrid : MonoBehaviour
     //public List<PathfindingNode> path;
     private void OnDrawGizmos()
     {
-        Gizmos.DrawWireCube(transform.position, new Vector3(gridSize.x, gridSize.y, 1));
-
-        if (grid != null)
+        if (displayGridGizmos)
         {
-            //PathfindingNode playerNode = GetNodeAtWorldPos(player.transform.position);
+            Gizmos.DrawWireCube(transform.position, new Vector3(gridSize.x, gridSize.y, 1));
 
-            foreach (PathfindingNode node in grid)
+            if (grid != null)
             {
-                Gizmos.color = node.Walkable ? Color.white : Color.red;
+                //PathfindingNode playerNode = GetNodeAtWorldPos(player.transform.position);
 
-                //if (path != null && path.Contains(node))
-                //{
-                //    Gizmos.color = Color.black;
-                //}
+                foreach (PathfindingNode node in grid)
+                {
+                    Gizmos.color = node.Walkable ? Color.white : Color.red;
 
-                //if (playerNode == node)
-                //{
-                //    Gizmos.color = Color.cyan;
-                //}
+                    //if (path != null && path.Contains(node))
+                    //{
+                    //    Gizmos.color = Color.black;
+                    //}
 
-                Gizmos.DrawCube(new Vector2(node.TilePos.x + 0.5f, node.TilePos.y + 0.5f), Vector3.one * 0.9f);
+                    //if (playerNode == node)
+                    //{
+                    //    Gizmos.color = Color.cyan;
+                    //}
+
+                    Gizmos.DrawCube(new Vector2(node.TilePos.x + 0.5f, node.TilePos.y + 0.5f), Vector3.one * 0.9f);
+                }
             }
         }
     }
