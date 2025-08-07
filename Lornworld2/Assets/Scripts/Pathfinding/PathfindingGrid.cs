@@ -102,7 +102,7 @@ public class PathfindingGrid : MonoBehaviour
         return grid[x, y];
     }
 
-    public List<PathfindingNode> path;
+    //public List<PathfindingNode> path;
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireCube(transform.position, new Vector3(gridSize.x, gridSize.y, 1));
@@ -115,10 +115,10 @@ public class PathfindingGrid : MonoBehaviour
             {
                 Gizmos.color = node.Walkable ? Color.white : Color.red;
 
-                if (path != null && path.Contains(node))
-                {
-                    Gizmos.color = Color.black;
-                }
+                //if (path != null && path.Contains(node))
+                //{
+                //    Gizmos.color = Color.black;
+                //}
 
                 //if (playerNode == node)
                 //{
