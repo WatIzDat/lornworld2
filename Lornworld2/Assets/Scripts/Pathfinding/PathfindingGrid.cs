@@ -9,6 +9,8 @@ public class PathfindingGrid : MonoBehaviour
     [SerializeField]
     private ChunkManager chunkManager;
 
+    public int GridArea => gridSize.x * gridSize.y;
+
     //[SerializeField]
     //private Player player;
 
@@ -50,7 +52,7 @@ public class PathfindingGrid : MonoBehaviour
                 TileScriptableObject tile = chunkManager.GetTileInChunkAt(
                     chunkPos, relativeTilePos);
 
-                Debug.Log(tile + "  " + chunkPos + "  " + relativeTilePos);
+                //Debug.Log(tile + "  " + chunkPos + "  " + relativeTilePos);
 
                 // add an isWalkable field to tile scriptable objects
                 bool walkable = tile != TileRegistry.Instance.GetEntry(TileIds.WaterTile);
@@ -95,7 +97,7 @@ public class PathfindingGrid : MonoBehaviour
         int x = Mathf.FloorToInt(Mathf.Clamp(gridSize.x * percentX, 0, gridSize.x - 1));
         int y = Mathf.FloorToInt(Mathf.Clamp(gridSize.y * percentY, 0, gridSize.y - 1));
 
-        Debug.Log(x + " " + y);
+        //Debug.Log(x + " " + y);
 
         return grid[x, y];
     }

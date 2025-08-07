@@ -4,6 +4,7 @@ using System.Collections.Generic;
 public class AStarPathfinding : MonoBehaviour
 {
     private PathfindingGrid grid;
+    private Heap<PathfindingNode> openSet;
 
     [SerializeField]
     private Transform seeker, target;
@@ -13,36 +14,36 @@ public class AStarPathfinding : MonoBehaviour
         grid = GetComponent<PathfindingGrid>();
     }
 
+    private void Start()
+    {
+        Debug.Log(grid.GridArea);
+        openSet = new Heap<PathfindingNode>(grid.GridArea);
+    }
+
     private void Update()
     {
         FindPath(seeker.position, target.position);
     }
 
+    // optimization: check if target node is unwalkable and return early or first search for walkable node
     private void FindPath(Vector2 startPos, Vector2 targetPos)
     {
         PathfindingNode startNode = grid.GetNodeAtWorldPos(startPos);
         PathfindingNode targetNode = grid.GetNodeAtWorldPos(targetPos);
 
-        List<PathfindingNode> openSet = new();
+        startNode.gCost = 0;
+
+        openSet.Clear();
         // optimization: use a two dimensional bool array to mark items for the closedSet
+        // optimization: use .Clear() instead to avoid too much garbage
         HashSet<PathfindingNode> closedSet = new();
 
         openSet.Add(startNode);
 
         while (openSet.Count > 0)
         {
-            PathfindingNode currentNode = openSet[0];
+            PathfindingNode currentNode = openSet.RemoveFirst();
 
-            for (int i = 1; i < openSet.Count; i++)
-            {
-                if (openSet[i].FCost < currentNode.FCost ||
-                    (openSet[i].FCost == currentNode.FCost && openSet[i].hCost < currentNode.hCost))
-                {
-                    currentNode = openSet[i];
-                }
-            }
-
-            openSet.Remove(currentNode);
             closedSet.Add(currentNode);
 
             if (currentNode == targetNode)
@@ -72,6 +73,10 @@ public class AStarPathfinding : MonoBehaviour
                     if (!openSet.Contains(neighbour))
                     {
                         openSet.Add(neighbour);
+                    }
+                    else
+                    {
+                        openSet.UpdateItem(neighbour);
                     }
                 }
             }
