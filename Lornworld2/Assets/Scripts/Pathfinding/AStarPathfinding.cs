@@ -140,6 +140,8 @@ public class AStarPathfinding : MonoBehaviour
             directionOld = directionNew;
         }
 
+        waypoints.Add(path[^1].TilePos);
+
         return waypoints.ToArray();
     }
 

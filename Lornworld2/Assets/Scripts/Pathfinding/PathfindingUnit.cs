@@ -1,10 +1,9 @@
-using System.Collections;
 using UnityEngine;
 
 public class PathfindingUnit : MonoBehaviour
 {
-    [SerializeField]
-    private Transform target;
+    [HideInInspector]
+    public Transform target;
 
     private Rigidbody2D rb;
 
@@ -60,6 +59,7 @@ public class PathfindingUnit : MonoBehaviour
 
     private void FollowPath()
     {
+        // optimization: use sqrMagnitude and 0.01f to check distances
         if (Vector2.Distance(transform.position, currentWaypoint) < 0.1f)
         {
             targetIndex++;
