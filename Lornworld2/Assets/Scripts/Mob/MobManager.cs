@@ -13,7 +13,7 @@ public class MobManager : MonoBehaviour
 
     private void Start()
     {
-        SpawnMob(MobRegistry.Instance.GetEntry(MobIds.SlimeMob), Vector2.one);
+        SpawnMob(MobRegistry.Instance.GetEntry(MobIds.SlimeMob), new Vector2(20, 30));
     }
 
     private void SpawnMob(MobScriptableObject mobScriptableObject, Vector2 position)

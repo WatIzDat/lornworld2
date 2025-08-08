@@ -5,6 +5,10 @@ public class PathfindingUnit : MonoBehaviour
     [HideInInspector]
     public Transform target;
 
+    public IMobPathfindingBehavior pathfindingBehavior;
+
+    public IMobFollowPathBehavior followPathBehavior;
+
     private Rigidbody2D rb;
 
     [SerializeField]
@@ -29,7 +33,8 @@ public class PathfindingUnit : MonoBehaviour
     {
         if (!pathRequested)
         {
-            PathRequestManager.RequestPath(transform.position, target.position, OnPathFound);
+            //PathRequestManager.RequestPath(transform.position, target.position, OnPathFound);
+            pathfindingBehavior.RequestPath(transform.position, target.position, OnPathFound);
 
             pathRequested = true;
         }
@@ -83,9 +88,13 @@ public class PathfindingUnit : MonoBehaviour
         startPos = targetIndex == 0 ? startPos : path[targetIndex - 1];
         Vector2 targetPos = path[targetIndex];
 
-        rb.linearVelocity = speed * Time.fixedDeltaTime * new Vector2(
-            targetPos.x - startPos.x,
-            targetPos.y - startPos.y).normalized;
+        Vector2 direction = new Vector2(targetPos.x - startPos.x, targetPos.y - startPos.y).normalized;
+
+        //rb.linearVelocity = speed * Time.fixedDeltaTime * new Vector2(
+        //    targetPos.x - startPos.x,
+        //    targetPos.y - startPos.y).normalized;
+
+        followPathBehavior.FollowPath(rb, speed, direction, startPos, targetPos);
     }
 
     private void OnDrawGizmos()

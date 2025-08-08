@@ -16,9 +16,9 @@ public class Mob : Entity
 
         PathfindingUnit pathfindingUnit = mob.GetComponent<PathfindingUnit>();
 
-        //Debug.Log(pathfindingUnit.);
-
         pathfindingUnit.target = player.transform;
+        pathfindingUnit.pathfindingBehavior = mobScriptableObject.mobPathfindingBehavior;
+        pathfindingUnit.followPathBehavior = mobScriptableObject.mobFollowPathBehavior;
 
         return mob;
     }
