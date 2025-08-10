@@ -1,10 +1,14 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class Mob : Entity
 {
+    [HideInInspector]
+    public Player player;
+
+    private List<StateTransitionInfo<EnemyState>> stateTransitions;
     private StateMachine stateMachine;
     private PathfindingUnit pathfindingUnit;
-    private Player player;
 
     // TODO: implement state machine and get rid of directly passing in player
     public static Mob Create(Player player, GameObject mobPrefab, Transform mobParent, MobScriptableObject mobScriptableObject, Vector2 position)
@@ -20,6 +24,8 @@ public class Mob : Entity
 
         mob.player = player;
 
+        mob.stateTransitions = mobScriptableObject.stateTransitions;
+
         mob.pathfindingUnit = mob.GetComponent<PathfindingUnit>();
 
         //pathfindingUnit.target = player.transform;
@@ -33,22 +39,33 @@ public class Mob : Entity
     {
         stateMachine = new StateMachine();
 
-        PatrolState patrolState = new();
-        ChaseState chaseState = new(player.transform, pathfindingUnit);
+        //PatrolState patrolState = new();
+        //ChaseState chaseState = new(player.transform, pathfindingUnit);
         //AttackState attackState = new();
 
-        stateMachine.AddTransition(patrolState, chaseState, playerInChaseRange);
+        //stateMachine.AddTransition(patrolState, chaseState, playerInChaseRange);
         //stateMachine.AddTransition(chaseState, attackState, playerInAttackRange);
 
-        stateMachine.AddTransition(chaseState, patrolState, () => !playerInChaseRange());
+        //stateMachine.AddTransition(chaseState, patrolState, () => !playerInChaseRange());
 
-        stateMachine.SetState(patrolState);
+        //stateMachine.SetState(patrolState);
         //stateMachine.AddTransition(attackState, chaseState, () => !playerInAttackRange());
 
         //stateMachine.AddAnyTransition(attackState, playerInAttackRange);
 
-        bool playerInChaseRange() 
-            => Vector2.Distance(transform.position, player.transform.position) < 10f;
+        foreach (StateTransitionInfo<EnemyState> transitionInfo in stateTransitions)
+        {
+            transitionInfo.fromState.Initialize(this);
+            transitionInfo.toState.Initialize(this);
+
+            stateMachine.AddTransition(
+                transitionInfo.fromState,
+                transitionInfo.toState,
+                transitionInfo.condition.Condition);
+        }
+
+        //bool playerInChaseRange() 
+        //    => Vector2.Distance(transform.position, player.transform.position) < 10f;
     }
 
     private void Update()
