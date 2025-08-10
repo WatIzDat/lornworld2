@@ -7,6 +7,8 @@ public class Mob : Entity
     public Player player;
 
     private List<StateTransitionInfo<EnemyState>> stateTransitions;
+    private EnemyState initialState;
+
     private StateMachine stateMachine;
     private PathfindingUnit pathfindingUnit;
 
@@ -25,6 +27,7 @@ public class Mob : Entity
         mob.player = player;
 
         mob.stateTransitions = mobScriptableObject.stateTransitions;
+        mob.initialState = mobScriptableObject.initialState;
 
         mob.pathfindingUnit = mob.GetComponent<PathfindingUnit>();
 
@@ -48,24 +51,33 @@ public class Mob : Entity
 
         //stateMachine.AddTransition(chaseState, patrolState, () => !playerInChaseRange());
 
-        //stateMachine.SetState(patrolState);
         //stateMachine.AddTransition(attackState, chaseState, () => !playerInAttackRange());
 
         //stateMachine.AddAnyTransition(attackState, playerInAttackRange);
 
         foreach (StateTransitionInfo<EnemyState> transitionInfo in stateTransitions)
         {
-            transitionInfo.fromState.Initialize(this);
-            transitionInfo.toState.Initialize(this);
+            Debug.Log("test");
+
+            EnemyState fromState = Instantiate(transitionInfo.fromState);
+            EnemyState toState = Instantiate(transitionInfo.toState);
+
+            fromState.Initialize(this);
+            toState.Initialize(this);
 
             stateMachine.AddTransition(
-                transitionInfo.fromState,
-                transitionInfo.toState,
-                transitionInfo.condition.Condition);
+                fromState,
+                toState,
+                playerInChaseRange);
         }
 
-        //bool playerInChaseRange() 
-        //    => Vector2.Distance(transform.position, player.transform.position) < 10f;
+        EnemyState initialStateClone = Instantiate(initialState);
+        initialStateClone.Initialize(this);
+
+        stateMachine.SetState(initialStateClone);
+
+        bool playerInChaseRange()
+            => Vector2.Distance(transform.position, player.transform.position) < 10f;
     }
 
     private void Update()

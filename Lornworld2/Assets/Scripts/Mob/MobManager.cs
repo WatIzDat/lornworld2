@@ -14,6 +14,7 @@ public class MobManager : MonoBehaviour
     private void Start()
     {
         SpawnMob(MobRegistry.Instance.GetEntry(MobIds.SlimeMob), new Vector2(20, 30));
+        SpawnMob(MobRegistry.Instance.GetEntry(MobIds.SlimeMob), new Vector2(-10, 15));
     }
 
     private void SpawnMob(MobScriptableObject mobScriptableObject, Vector2 position)

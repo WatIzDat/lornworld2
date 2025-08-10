@@ -9,4 +9,5 @@ public class MobScriptableObject : ScriptableObject
     public MobPathfindingBehaviorScriptableObject mobPathfindingBehavior;
     public MobFollowPathBehaviorScriptableObject mobFollowPathBehavior;
     public List<StateTransitionInfo<EnemyState>> stateTransitions;
+    public EnemyState initialState;
 }

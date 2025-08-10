@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[CreateAssetMenu(fileName = "ChaseState", menuName = "Scriptable Objects/States/Enemy/Chase")]
 public class ChaseState : EnemyState
 {
     private Transform target;
