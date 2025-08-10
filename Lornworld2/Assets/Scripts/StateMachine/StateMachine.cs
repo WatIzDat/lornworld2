@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class StateMachine
 {
@@ -7,7 +8,7 @@ public class StateMachine
 
     private readonly Dictionary<Type, List<Transition>> transitionsMap = new();
     private readonly List<Transition> anyTransitions = new();
-    private List<Transition> currentTransitions;
+    private List<Transition> currentTransitions = new();
 
     private static readonly List<Transition> emptyTransitions = new(0);
 
@@ -21,9 +22,11 @@ public class StateMachine
         }
 
         currentState?.Tick();
+
+        Debug.Log(currentState);
     }
 
-    private void SetState(IState state)
+    public void SetState(IState state)
     {
         if (state == currentState)
         {

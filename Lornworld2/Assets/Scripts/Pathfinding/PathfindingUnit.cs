@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class PathfindingUnit : MonoBehaviour
 {
-    [HideInInspector]
-    public Transform target;
+    //[HideInInspector]
+    //public Transform target;
 
     public IMobPathfindingBehavior pathfindingBehavior;
 
@@ -20,7 +20,7 @@ public class PathfindingUnit : MonoBehaviour
     private bool followPath;
     private Vector2 currentWaypoint;
 
-    private bool pathRequested;
+    //private bool pathRequested;
 
     private Vector2 startPos;
 
@@ -29,15 +29,25 @@ public class PathfindingUnit : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    private void Update()
-    {
-        if (!pathRequested)
-        {
-            //PathRequestManager.RequestPath(transform.position, target.position, OnPathFound);
-            pathfindingBehavior.RequestPath(transform.position, target.position, OnPathFound);
+    //private void Update()
+    //{
+    //    if (!pathRequested)
+    //    {
+    //        //PathRequestManager.RequestPath(transform.position, target.position, OnPathFound);
+    //        pathfindingBehavior.RequestPath(transform.position, target.position, OnPathFound);
 
-            pathRequested = true;
-        }
+    //        pathRequested = true;
+    //    }
+    //}
+
+    public void RequestFollowPath(Transform target)
+    {
+        pathfindingBehavior.RequestPath(transform.position, target.position, OnPathFound);
+    }
+
+    public void StopFollowPath()
+    {
+        followPath = false;
     }
 
     private void OnPathFound(Vector2[] newPath, bool success)
