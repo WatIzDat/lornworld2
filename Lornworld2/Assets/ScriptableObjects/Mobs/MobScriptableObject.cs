@@ -8,6 +8,6 @@ public class MobScriptableObject : ScriptableObject
     public float maxHealth;
     public MobPathfindingBehaviorScriptableObject mobPathfindingBehavior;
     public MobFollowPathBehaviorScriptableObject mobFollowPathBehavior;
-    public List<StateTransitionInfo<EnemyState>> stateTransitions;
+    public List<StateTransitionInfo<EnemyState, EnemyTransitionCondition>> stateTransitions;
     public EnemyState initialState;
 }

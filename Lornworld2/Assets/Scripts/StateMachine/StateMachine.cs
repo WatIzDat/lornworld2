@@ -23,7 +23,7 @@ public class StateMachine
 
         currentState?.Tick();
 
-        Debug.Log(currentState);
+        //Debug.Log(currentState);
     }
 
     public void SetState(IState state)

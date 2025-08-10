@@ -6,7 +6,7 @@ public class Mob : Entity
     [HideInInspector]
     public Player player;
 
-    private List<StateTransitionInfo<EnemyState>> stateTransitions;
+    private List<StateTransitionInfo<EnemyState, EnemyTransitionCondition>> stateTransitions;
     private EnemyState initialState;
 
     private StateMachine stateMachine;
@@ -55,20 +55,22 @@ public class Mob : Entity
 
         //stateMachine.AddAnyTransition(attackState, playerInAttackRange);
 
-        foreach (StateTransitionInfo<EnemyState> transitionInfo in stateTransitions)
+        foreach (StateTransitionInfo<EnemyState, EnemyTransitionCondition> transitionInfo in stateTransitions)
         {
             Debug.Log("test");
 
             EnemyState fromState = Instantiate(transitionInfo.fromState);
             EnemyState toState = Instantiate(transitionInfo.toState);
+            EnemyTransitionCondition transitionCondition = Instantiate(transitionInfo.condition);
 
             fromState.Initialize(this);
             toState.Initialize(this);
+            transitionCondition.Initialize(this);
 
             stateMachine.AddTransition(
                 fromState,
                 toState,
-                playerInChaseRange);
+                transitionCondition.Condition);
         }
 
         EnemyState initialStateClone = Instantiate(initialState);
@@ -76,8 +78,8 @@ public class Mob : Entity
 
         stateMachine.SetState(initialStateClone);
 
-        bool playerInChaseRange()
-            => Vector2.Distance(transform.position, player.transform.position) < 10f;
+        //bool playerInChaseRange()
+        //    => Vector2.Distance(transform.position, player.transform.position) < 10f;
     }
 
     private void Update()
