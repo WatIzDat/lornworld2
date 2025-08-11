@@ -61,6 +61,8 @@ public class PathfindingUnit : MonoBehaviour
             startPos = transform.position;
 
             currentWaypoint = path[0];
+
+            targetIndex = 0;
         }
     }
 
@@ -94,6 +96,8 @@ public class PathfindingUnit : MonoBehaviour
 
             currentWaypoint = path[targetIndex];
         }
+
+        //Debug.Log(path.Length + " " + targetIndex);
 
         startPos = targetIndex == 0 ? startPos : path[targetIndex - 1];
         Vector2 targetPos = path[targetIndex];

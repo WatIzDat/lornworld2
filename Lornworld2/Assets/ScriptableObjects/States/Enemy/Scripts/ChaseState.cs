@@ -3,7 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "ChaseState", menuName = "Scriptable Objects/States/Enemy/Chase")]
 public class ChaseState : EnemyState
 {
-    private Transform target;
+    private Entity target;
     private PathfindingUnit pathfindingUnit;
 
     //public ChaseState(Transform target, PathfindingUnit pathfindingUnit)
@@ -16,13 +16,13 @@ public class ChaseState : EnemyState
     {
         base.Initialize(mob);
 
-        target = mob.player.transform;
+        target = mob.player.GetComponent<Entity>();
         pathfindingUnit = mob.GetComponent<PathfindingUnit>();
     }
 
     public override void OnEnter()
     {
-        pathfindingUnit.RequestFollowPath(target);
+        pathfindingUnit.RequestFollowPath(target.transform);
     }
 
     public override void OnExit()
@@ -32,5 +32,11 @@ public class ChaseState : EnemyState
 
     public override void Tick()
     {
+        if (target.MovedThisFrame)
+        {
+            Debug.Log("moved");
+
+            pathfindingUnit.RequestFollowPath(target.transform);
+        }
     }
 }

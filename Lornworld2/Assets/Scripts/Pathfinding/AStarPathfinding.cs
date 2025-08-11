@@ -24,6 +24,10 @@ public class AStarPathfinding : MonoBehaviour
 
     public void StartFindPath(Vector2 startPos, Vector2 targetPos)
     {
+        Debug.Log("start find path");
+
+        StopAllCoroutines();
+
         StartCoroutine(FindPath(startPos, targetPos));
     }
 
@@ -35,6 +39,15 @@ public class AStarPathfinding : MonoBehaviour
 
         PathfindingNode startNode = grid.GetNodeAtWorldPos(startPos);
         PathfindingNode targetNode = grid.GetNodeAtWorldPos(targetPos);
+
+        if (startNode.TilePos == targetNode.TilePos)
+        {
+            Debug.Log("test");
+
+            pathRequestManager.FinishedProcessingPath(waypoints, pathSuccess);
+
+            yield break;
+        }
 
         startNode.gCost = 0;
 
