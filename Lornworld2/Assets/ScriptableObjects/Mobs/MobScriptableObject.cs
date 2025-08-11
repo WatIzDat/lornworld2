@@ -6,6 +6,7 @@ public class MobScriptableObject : ScriptableObject
 {
     public string mobName;
     public float maxHealth;
+    public float speed;
     public MobPathfindingBehaviorScriptableObject mobPathfindingBehavior;
     public MobFollowPathBehaviorScriptableObject mobFollowPathBehavior;
     public List<StateTransitionInfo<EnemyState, EnemyTransitionCondition>> stateTransitions;

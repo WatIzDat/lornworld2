@@ -11,8 +11,7 @@ public class PathfindingUnit : MonoBehaviour
 
     private Rigidbody2D rb;
 
-    [SerializeField]
-    private float speed = 5f;
+    public float speed;
 
     private Vector2[] path;
     private int targetIndex;

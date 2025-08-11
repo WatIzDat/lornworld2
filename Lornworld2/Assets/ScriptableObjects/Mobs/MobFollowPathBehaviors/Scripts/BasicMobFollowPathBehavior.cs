@@ -5,8 +5,6 @@ public class BasicMobFollowPathBehavior : MobFollowPathBehaviorScriptableObject
 {
     public override void FollowPath(Rigidbody2D rb, float speed, Vector2 direction, Vector2 startPos, Vector2 targetPos)
     {
-        rb.linearVelocity = speed * Time.fixedDeltaTime * new Vector2(
-            targetPos.x - startPos.x,
-            targetPos.y - startPos.y).normalized;
+        rb.linearVelocity = speed * Time.fixedDeltaTime * direction;
     }
 }

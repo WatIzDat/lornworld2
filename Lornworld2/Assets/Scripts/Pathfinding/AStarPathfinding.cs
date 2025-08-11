@@ -40,18 +40,19 @@ public class AStarPathfinding : MonoBehaviour
         PathfindingNode startNode = grid.GetNodeAtWorldPos(startPos);
         PathfindingNode targetNode = grid.GetNodeAtWorldPos(targetPos);
 
-        if (startNode.TilePos == targetNode.TilePos)
-        {
-            Debug.Log("test");
+        //if ()
+        //{
+        //    Debug.Log("test");
 
-            pathRequestManager.FinishedProcessingPath(waypoints, pathSuccess);
+        //    pathRequestManager.FinishedProcessingPath(waypoints, pathSuccess);
 
-            yield break;
-        }
+        //    yield break;
+        //}
 
         startNode.gCost = 0;
 
-        if (startNode.Walkable && targetNode.Walkable)
+        if (startNode.Walkable && targetNode.Walkable &&
+            startNode.TilePos != targetNode.TilePos)
         {
             openSet.Clear();
             // optimization: use a two dimensional bool array to mark items for the closedSet
