@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class ChunkManager : MonoBehaviour
@@ -25,6 +26,8 @@ public class ChunkManager : MonoBehaviour
 
     public int LoadedChunksSideLength => loadedChunks.SideLength;
 
+    public static event Action<Vector2Int> LoadedChunksShifted;
+
     private void Awake()
     {
         loadedChunks = ChunkArray.AddChunkArrayComponent(gameObject, renderDistance, chunkPrefab, chunkParent, this);
@@ -51,18 +54,26 @@ public class ChunkManager : MonoBehaviour
         if (player.ChunkPos.pos.x - loadedChunks.Center.chunkPos.pos.x > 0)
         {
             loadedChunks.ShiftHorizontal(true, generator.Generate);
+
+            LoadedChunksShifted?.Invoke(Vector2Int.left);
         }
         else if (player.ChunkPos.pos.x - loadedChunks.Center.chunkPos.pos.x < 0)
         {
             loadedChunks.ShiftHorizontal(false, generator.Generate);
+
+            LoadedChunksShifted?.Invoke(Vector2Int.right);
         }
         else if (player.ChunkPos.pos.y - loadedChunks.Center.chunkPos.pos.y > 0)
         {
             loadedChunks.ShiftVertical(true, generator.Generate);
+
+            LoadedChunksShifted?.Invoke(Vector2Int.down);
         }
         else if (player.ChunkPos.pos.y - loadedChunks.Center.chunkPos.pos.y < 0)
         {
             loadedChunks.ShiftVertical(false, generator.Generate);
+
+            LoadedChunksShifted?.Invoke(Vector2Int.up);
         }
     }
 

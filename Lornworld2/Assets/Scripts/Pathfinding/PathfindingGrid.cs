@@ -4,10 +4,14 @@ using UnityEngine;
 public class PathfindingGrid : MonoBehaviour
 {
     private Vector2Int gridSize;
+    //private Vector2 gridCenter;
     private PathfindingNode[,] grid;
 
     [SerializeField]
     private ChunkManager chunkManager;
+
+    //[SerializeField]
+    //private Player player;
 
     public int GridArea => gridSize.x * gridSize.y;
 
@@ -24,13 +28,42 @@ public class PathfindingGrid : MonoBehaviour
         gridSize = ChunkManager.ChunkSize * chunkManager.LoadedChunksSideLength * Vector2Int.one;
     }
 
+    private void OnEnable()
+    {
+        ChunkManager.LoadedChunksShifted += OnLoadedChunksShifted;
+    }
+
+    private void OnDisable()
+    {
+        ChunkManager.LoadedChunksShifted -= OnLoadedChunksShifted;
+    }
+
+    private void OnLoadedChunksShifted(Vector2Int direction)
+    {
+        transform.position += (Vector3)(Vector2)(-direction * ChunkManager.ChunkSize);
+
+        CreateGrid();
+    }
+
     public void Initialize()
     {
         CreateGrid();
     }
 
+    //private bool PlayerOutsideGrid()
+    //{
+    //    if (player.transform.position.x < gridCenter.x - (gridSize.x / 2))
+    //    {
+    //        return true;
+    //    }
+
+    //    return false;
+    //}
+
     private void CreateGrid()
     {
+        //gridCenter = transform.position;
+
         grid = new PathfindingNode[gridSize.x, gridSize.y];
 
         Vector2Int bottomLeft = new(
@@ -93,8 +126,11 @@ public class PathfindingGrid : MonoBehaviour
 
     public PathfindingNode GetNodeAtWorldPos(Vector2 pos)
     {
-        float percentX = ((pos.x - (ChunkManager.ChunkSize / 2)) / gridSize.x) + 0.5f;
-        float percentY = ((pos.y - (ChunkManager.ChunkSize / 2)) / gridSize.y) + 0.5f;
+        //float percentX = ((pos.x - gridCenter.x - (ChunkManager.ChunkSize / 2)) / gridSize.x) + 0.5f;
+        //float percentY = ((pos.y - gridCenter.x - (ChunkManager.ChunkSize / 2)) / gridSize.y) + 0.5f;
+
+        float percentX = (pos.x - (transform.position.x) + (gridSize.x / 2)) / gridSize.x;
+        float percentY = (pos.y - (transform.position.y) + (gridSize.y / 2)) / gridSize.y;
 
         int x = Mathf.FloorToInt(Mathf.Clamp(gridSize.x * percentX, 0, gridSize.x - 1));
         int y = Mathf.FloorToInt(Mathf.Clamp(gridSize.y * percentY, 0, gridSize.y - 1));

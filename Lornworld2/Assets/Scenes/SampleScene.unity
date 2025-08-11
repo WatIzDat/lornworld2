@@ -963,6 +963,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chunkManager: {fileID: 704853192}
+  player: {fileID: 514829023}
 --- !u!114 &2082054972
 MonoBehaviour:
   m_ObjectHideFlags: 0
