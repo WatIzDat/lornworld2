@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 988aa9c6285a1684796fc84826471ad9, type: 3}
-  m_Name: PlayerInChaseRangeTransitionCondition
+  m_Script: {fileID: 11500000, guid: 5debf46f0faaeaa4bbefd052b0c71ea0, type: 3}
+  m_Name: AttackState
   m_EditorClassIdentifier: 
-  range: 10
+  attackCooldown: 1

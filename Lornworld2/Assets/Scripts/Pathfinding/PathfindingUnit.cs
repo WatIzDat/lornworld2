@@ -46,7 +46,13 @@ public class PathfindingUnit : MonoBehaviour
 
     public void StopFollowPath()
     {
+        targetIndex = 0;
+
+        path = new Vector2[0];
+
         followPath = false;
+
+        rb.linearVelocity = Vector2.zero;
     }
 
     private void OnPathFound(Vector2[] newPath, bool success)
@@ -82,13 +88,7 @@ public class PathfindingUnit : MonoBehaviour
 
             if (targetIndex >= path.Length)
             {
-                targetIndex = 0;
-
-                path = new Vector2[0];
-
-                followPath = false;
-
-                rb.linearVelocity = Vector2.zero;
+                StopFollowPath();
 
                 return;
             }

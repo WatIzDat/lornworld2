@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mobName: Slime
   maxHealth: 5
+  attackDamage: 0
   speed: 200
   mobPathfindingBehavior: {fileID: 11400000, guid: a2bcd02374d62a5449f82a7d74f7492a, type: 2}
   mobFollowPathBehavior: {fileID: 11400000, guid: 31be52016f2b19045ae7498676e31d21, type: 2}
@@ -21,4 +22,7 @@ MonoBehaviour:
   - fromState: {fileID: 11400000, guid: e4d0ae2d50fcb894da4cc6a907019426, type: 2}
     toState: {fileID: 11400000, guid: 9718264c32d147f4f821cc26676fe573, type: 2}
     condition: {fileID: 11400000, guid: b5fb7384e1afef9469b5ac772c6391f0, type: 2}
+  - fromState: {fileID: 11400000, guid: 9718264c32d147f4f821cc26676fe573, type: 2}
+    toState: {fileID: 11400000, guid: 8cc549427924f0e49bdc3b2897ea8320, type: 2}
+    condition: {fileID: 11400000, guid: eabe8aeef1faa55448a50deeadaa78ee, type: 2}
   initialState: {fileID: 11400000, guid: e4d0ae2d50fcb894da4cc6a907019426, type: 2}

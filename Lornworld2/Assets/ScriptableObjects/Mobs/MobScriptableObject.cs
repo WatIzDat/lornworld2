@@ -6,6 +6,7 @@ public class MobScriptableObject : ScriptableObject
 {
     public string mobName;
     public float maxHealth;
+    public float attackDamage;
     public float speed;
     public MobPathfindingBehaviorScriptableObject mobPathfindingBehavior;
     public MobFollowPathBehaviorScriptableObject mobFollowPathBehavior;

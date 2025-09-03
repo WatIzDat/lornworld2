@@ -6,6 +6,8 @@ public class Mob : Entity
     [HideInInspector]
     public Player player;
 
+    public float AttackDamage { get; private set; }
+
     private List<StateTransitionInfo<EnemyState, EnemyTransitionCondition>> stateTransitions;
     private EnemyState initialState;
 
@@ -23,6 +25,8 @@ public class Mob : Entity
 
         mob.maxHealth = mobScriptableObject.maxHealth;
         mob.health = mob.maxHealth;
+
+        mob.AttackDamage = mobScriptableObject.attackDamage;
 
         mob.player = player;
 
