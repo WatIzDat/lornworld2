@@ -6,4 +6,5 @@ public class StateTransitionInfo<T, U> where T : StateScriptableObject where U :
     public T fromState;
     public T toState;
     public U condition;
+    public bool includeInverse;
 }

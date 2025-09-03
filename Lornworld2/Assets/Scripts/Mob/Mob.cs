@@ -78,6 +78,14 @@ public class Mob : Entity
                 fromState,
                 toState,
                 transitionCondition.Condition);
+
+            if (transitionInfo.includeInverse)
+            {
+                stateMachine.AddTransition(
+                    toState,
+                    fromState,
+                    transitionCondition.InverseCondition);
+            }
         }
 
         EnemyState initialStateClone = Instantiate(initialState);
