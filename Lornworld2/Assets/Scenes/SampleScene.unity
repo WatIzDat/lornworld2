@@ -196,6 +196,7 @@ GameObject:
   - component: {fileID: 514829023}
   - component: {fileID: 514829020}
   - component: {fileID: 514829024}
+  - component: {fileID: 514829025}
   - component: {fileID: 514829021}
   - component: {fileID: 514829022}
   m_Layer: 0
@@ -360,6 +361,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 20
   maxHealth: 20
+  baseAttackDamage: 2
   hunger: 20
 --- !u!114 &514829024
 MonoBehaviour:
@@ -374,6 +376,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inventoryUIManager: {fileID: 437441554}
+--- !u!114 &514829025
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 514829017}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4437b2a3c30a95f4d9de4d421c77e597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -963,7 +977,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chunkManager: {fileID: 704853192}
-  player: {fileID: 514829023}
 --- !u!114 &2082054972
 MonoBehaviour:
   m_ObjectHideFlags: 0

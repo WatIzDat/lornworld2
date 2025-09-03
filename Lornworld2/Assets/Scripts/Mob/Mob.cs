@@ -105,6 +105,8 @@ public class Mob : Entity
 
     protected override void OnDeath()
     {
-        Destroy(this);
+        Debug.Log("mob death");
+
+        Destroy(gameObject);
     }
 }

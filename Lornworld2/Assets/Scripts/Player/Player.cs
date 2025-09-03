@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class Player : Entity
 {
+    public float baseAttackDamage;
+
     [SerializeField]
     private int hunger;
 
