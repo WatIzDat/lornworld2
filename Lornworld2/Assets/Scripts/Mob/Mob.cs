@@ -62,6 +62,7 @@ public class Mob : Entity
 
         //stateMachine.AddAnyTransition(attackState, playerInAttackRange);
 
+        // TODO: Implement any transitions
         foreach (StateTransitionInfo<EnemyState, EnemyTransitionCondition> transitionInfo in stateTransitions)
         {
             Debug.Log("test");
@@ -100,5 +101,10 @@ public class Mob : Entity
     private void Update()
     {
         stateMachine.Tick();
+    }
+
+    protected override void OnDeath()
+    {
+        Destroy(this);
     }
 }

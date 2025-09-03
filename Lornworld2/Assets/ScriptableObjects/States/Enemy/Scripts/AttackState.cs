@@ -31,7 +31,7 @@ public class AttackState : EnemyState
     {
         if (cooldownTimer <= 0f)
         {
-            Debug.Log("damage");
+            target.TakeDamage(damage);
 
             cooldownTimer = attackCooldown;
         }

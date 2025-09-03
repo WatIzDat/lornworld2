@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 988aa9c6285a1684796fc84826471ad9, type: 3}
   m_Name: PlayerInAttackRangeTransitionCondition
   m_EditorClassIdentifier: 
-  range: 1
+  range: 2

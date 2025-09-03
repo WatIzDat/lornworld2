@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mobName: Slime
   maxHealth: 5
-  attackDamage: 0
+  attackDamage: 5
   speed: 200
   mobPathfindingBehavior: {fileID: 11400000, guid: a2bcd02374d62a5449f82a7d74f7492a, type: 2}
   mobFollowPathBehavior: {fileID: 11400000, guid: 31be52016f2b19045ae7498676e31d21, type: 2}

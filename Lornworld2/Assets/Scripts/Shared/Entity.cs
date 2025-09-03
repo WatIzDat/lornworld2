@@ -20,4 +20,20 @@ public abstract class Entity : MonoBehaviour
 
         prevPosition = transform.position;
     }
+
+    public virtual void TakeDamage(float damage)
+    {
+        health -= damage;
+
+        if (health <= 0)
+        {
+            OnDeath();
+
+            return;
+        }
+
+        Debug.Log(health);
+    }
+
+    protected abstract void OnDeath();
 }
