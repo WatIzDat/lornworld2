@@ -9,11 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a7c9e5d0a2d4a248a76cb965631334a, type: 3}
-  m_Name: StoneItem
+  m_Script: {fileID: 11500000, guid: 56583e4c61433ce4885b1024caffb68e, type: 3}
+  m_Name: DebugStatScaleBehavior
   m_EditorClassIdentifier: 
-  itemName: Stone
-  sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  maxStackSize: 17
-  itemUseBehavior: {fileID: 0}
-  statScaleBehavior: {fileID: 0}

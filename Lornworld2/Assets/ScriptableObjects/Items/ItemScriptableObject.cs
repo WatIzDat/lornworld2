@@ -7,5 +7,5 @@ public class ItemScriptableObject : ScriptableObject
     public Sprite sprite;
     public int maxStackSize;
     public ItemUseBehaviorScriptableObject itemUseBehavior;
-    // TODO: Implement stat scale behavior that returns a stat scale object maybe
+    public StatScaleBehaviorScriptableObject statScaleBehavior;
 }

@@ -26,7 +26,7 @@ public class PlayerAttack : MonoBehaviour
 
                 if (isEntity)
                 {
-                    entity.TakeDamage(player.baseAttackDamage);
+                    entity.TakeDamage(player.AttackDamage);
                 }
             }
 

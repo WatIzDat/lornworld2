@@ -8,7 +8,7 @@ public class PlayerInventory : MonoBehaviour
     private InventoryUIManager inventoryUIManager;
 
     private int selectedIndex;
-    private InventoryItem SelectedItem => inventoryUIManager.HotbarItems[selectedIndex];
+    public InventoryItem SelectedItem => inventoryUIManager.HotbarItems[selectedIndex];
 
     public static event Action<int> HotbarSelectedIndexChanged;
 
