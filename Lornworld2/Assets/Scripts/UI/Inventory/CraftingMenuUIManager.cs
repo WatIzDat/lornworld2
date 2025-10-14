@@ -14,9 +14,13 @@ public class CraftingMenuUIManager : MonoBehaviour
 
     private void Start()
     {
-        CraftingRecipeUIElement craftingRecipe = new();
-        craftingRecipe.SetRecipe(new InventoryItem[] { new(ItemRegistry.Instance.GetEntry(ItemIds.GrassItem)), new(ItemRegistry.Instance.GetEntry(ItemIds.GrassItem), 5) }, new(ItemRegistry.Instance.GetEntry(ItemIds.StoneItem)));
+        foreach (CraftingRecipeScriptableObject craftingRecipe in CraftingRecipeRegistry.Instance.Entries)
+        {
+            CraftingRecipeUIElement craftingRecipeUIElement = new();
 
-        recipeContainer.Add(craftingRecipe);
+            craftingRecipeUIElement.SetRecipe(craftingRecipe);
+
+            recipeContainer.Add(craftingRecipeUIElement);
+        }
     }
 }

@@ -40,19 +40,19 @@ public partial class InventorySlot : VisualElement
 
         if (evt.button == 0)
         {
-            inventoryUIManager.StartDrag(evt.position, this, InventoryItem.StackSize);
+            inventoryUIManager.StartDrag(evt.position, this, InventoryItem.stackSize);
         }
         else if (evt.button == 1)
         {
-            inventoryUIManager.StartDrag(evt.position, this, InventoryItem.StackSize / 2);
+            inventoryUIManager.StartDrag(evt.position, this, InventoryItem.stackSize / 2);
         }
     }
 
     public void SetItem(InventoryItem inventoryItem)
     {
         InventoryItem = inventoryItem;
-        Icon.image = inventoryItem.Item.sprite.texture;
-        StackSizeLabel.text = inventoryItem.StackSize.ToString();
+        Icon.image = inventoryItem.item.sprite.texture;
+        StackSizeLabel.text = inventoryItem.stackSize.ToString();
     }
 
     public void DropItem()

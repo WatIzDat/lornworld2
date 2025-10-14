@@ -1,30 +1,31 @@
+[System.Serializable]
 public record InventoryItem
 {
-    public ItemScriptableObject Item { get; }
+    public ItemScriptableObject item;
 
-    public int StackSize { get; }
+    public int stackSize;
 
     public InventoryItem(ItemScriptableObject item, int stackSize = 1)
     {
-        Item = item;
-        StackSize = stackSize;
+        this.item = item;
+        this.stackSize = stackSize;
     }
 
     public InventoryItem AddStack(int stack)
     {
-        return new InventoryItem(Item, StackSize + stack);
+        return new InventoryItem(item, stackSize + stack);
     }
 
     public InventoryItem WithStack(int stack)
     {
-        return new InventoryItem(Item, stack);
+        return new InventoryItem(item, stack);
     }
 
     public void UseItem()
     {
-        if (Item.itemUseBehavior != null)
+        if (item.itemUseBehavior != null)
         {
-            Item.itemUseBehavior.UseItem();
+            item.itemUseBehavior.UseItem();
         }
     }
 }

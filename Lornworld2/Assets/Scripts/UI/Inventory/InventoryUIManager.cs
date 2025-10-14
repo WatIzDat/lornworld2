@@ -117,7 +117,7 @@ public class InventoryUIManager : MonoBehaviour
 
     public void StartDrag(Vector2 position, InventorySlot startSlot, int stackSize)
     {
-        stackSize = Mathf.Clamp(stackSize, 1, startSlot.InventoryItem.Item.maxStackSize);
+        stackSize = Mathf.Clamp(stackSize, 1, startSlot.InventoryItem.item.maxStackSize);
 
         //startSlot.SetItem(
         //    new InventoryItem(
@@ -135,13 +135,13 @@ public class InventoryUIManager : MonoBehaviour
         ghostIcon.style.top = position.y - (ghostIcon.layout.height / 2);
         ghostIcon.style.left = position.x - (ghostIcon.layout.width / 2);
 
-        ghostIcon.style.backgroundImage = startSlot.InventoryItem.Item.sprite.texture;
+        ghostIcon.style.backgroundImage = startSlot.InventoryItem.item.sprite.texture;
 
         ghostIcon.style.visibility = Visibility.Visible;
 
         items[startSlot.index] = new InventoryItem(
-            startSlot.InventoryItem.Item,
-            startSlot.InventoryItem.StackSize - stackSize);
+            startSlot.InventoryItem.item,
+            startSlot.InventoryItem.stackSize - stackSize);
     }
 
     private void OnPointerMove(PointerMoveEvent evt)
@@ -188,7 +188,7 @@ public class InventoryUIManager : MonoBehaviour
                 items[closestSlot.index] = items[closestSlot.index].AddStack(draggedStackSize);
             }
 
-            if (dragStartSlot.InventoryItem.StackSize <= 0)
+            if (dragStartSlot.InventoryItem.stackSize <= 0)
             {
                 items[dragStartSlot.index] = null;
             }
@@ -267,8 +267,8 @@ public class InventoryUIManager : MonoBehaviour
             return true;
         }
 
-        bool isSameItem = items[itemIndex].Item == item.Item;
-        bool isNotOverflowing = items[itemIndex].StackSize + item.StackSize <= items[itemIndex].Item.maxStackSize;
+        bool isSameItem = items[itemIndex].item == item.item;
+        bool isNotOverflowing = items[itemIndex].stackSize + item.stackSize <= items[itemIndex].item.maxStackSize;
 
         return isSameItem && isNotOverflowing;
     }
@@ -295,10 +295,10 @@ public class InventoryUIManager : MonoBehaviour
             }
             else if (
                 items[i] != null &&
-                items[i].Item == item && 
-                items[i].StackSize < item.maxStackSize)
+                items[i].item == item && 
+                items[i].stackSize < item.maxStackSize)
             {
-                int usedStack = item.maxStackSize - items[i].StackSize;
+                int usedStack = item.maxStackSize - items[i].stackSize;
 
                 if (usedStack > stack)
                 {
@@ -307,7 +307,7 @@ public class InventoryUIManager : MonoBehaviour
 
                 remainingStack -= usedStack;
 
-                items[i] = new InventoryItem(item, items[i].StackSize + usedStack);
+                items[i] = new InventoryItem(item, items[i].stackSize + usedStack);
 
                 Debug.Log("test");
             }

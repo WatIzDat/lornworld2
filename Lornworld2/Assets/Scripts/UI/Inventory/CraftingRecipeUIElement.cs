@@ -11,9 +11,9 @@ public partial class CraftingRecipeUIElement : VisualElement
         AddToClassList("crafting-recipe");
     }
     
-    public void SetRecipe(InventoryItem[] items, InventoryItem result)
+    public void SetRecipe(CraftingRecipeScriptableObject craftingRecipe)
     {
-        foreach (InventoryItem item in items)
+        foreach (InventoryItem item in craftingRecipe.items)
         {
             InventorySlot inventorySlot = new()
             {
@@ -32,7 +32,7 @@ public partial class CraftingRecipeUIElement : VisualElement
 
         resultSlot.AddToClassList("crafting-recipe-result");
 
-        resultSlot.SetItem(result);
+        resultSlot.SetItem(craftingRecipe.result);
 
         Add(resultSlot);
     }

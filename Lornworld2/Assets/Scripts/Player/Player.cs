@@ -30,14 +30,14 @@ public class Player : Entity
     private void OnHotbarSelectedIndexChanged(int index)
     {
         if (playerInventory.SelectedItem == null ||
-            playerInventory.SelectedItem.Item.statScaleBehavior == null)
+            playerInventory.SelectedItem.item.statScaleBehavior == null)
         {
             AttackDamage = baseAttackDamage;
 
             return;
         }
 
-        StatScaleInfo statScaleInfo = playerInventory.SelectedItem.Item.statScaleBehavior.GetStatScaleInfo();
+        StatScaleInfo statScaleInfo = playerInventory.SelectedItem.item.statScaleBehavior.GetStatScaleInfo();
 
         AttackDamage = baseAttackDamage * statScaleInfo.AttackDamageScaler;
     }
