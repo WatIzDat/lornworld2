@@ -75,6 +75,22 @@
     flex-shrink: 0;
 }
 
+.crafting-recipe {
+    height: 128px;
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    margin-bottom: 10px;
+    align-items: center;
+    justify-content: flex-end;
+    flex-grow: 1;
+    flex-shrink: 0;
+}
+
+.crafting-recipe-result {
+    margin-left: auto;
+}
+
 .hotbar-row {
     width: 100%;
     align-items: flex-end;
@@ -108,5 +124,5 @@
 
 .hotbar-selected-slot {
     border-color: white;
-    border-width: 5;
+    border-width: 5px;
 }
