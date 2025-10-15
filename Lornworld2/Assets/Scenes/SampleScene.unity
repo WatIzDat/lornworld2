@@ -441,6 +441,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inventoryUIManager: {fileID: 437441554}
+  craftingMenuUIManager: {fileID: 374862733}
 --- !u!114 &514829025
 MonoBehaviour:
   m_ObjectHideFlags: 0

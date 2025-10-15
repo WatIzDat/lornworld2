@@ -7,6 +7,9 @@ public class PlayerInventory : MonoBehaviour
     [SerializeField]
     private InventoryUIManager inventoryUIManager;
 
+    [SerializeField]
+    private CraftingMenuUIManager craftingMenuUIManager;
+
     private int selectedIndex;
     public InventoryItem SelectedItem => inventoryUIManager.HotbarItems[selectedIndex];
 
@@ -22,6 +25,18 @@ public class PlayerInventory : MonoBehaviour
         else
         {
             inventoryUIManager.OpenInventory();
+        }
+    }
+
+    private void OnToggleCraftingMenu(InputValue inputValue)
+    {
+        if (craftingMenuUIManager.IsCraftingMenuOpen)
+        {
+            craftingMenuUIManager.CloseCraftingMenu();
+        }
+        else
+        {
+            craftingMenuUIManager.OpenCraftingMenu();
         }
     }
 

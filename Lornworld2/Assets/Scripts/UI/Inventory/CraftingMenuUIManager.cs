@@ -7,11 +7,15 @@ public class CraftingMenuUIManager : MonoBehaviour
     private InventoryUIManager inventoryUIManager;
 
     private VisualElement root;
+    private VisualElement panel;
     private ScrollView recipeContainer;
+
+    public bool IsCraftingMenuOpen { get; private set; }
 
     private void Awake()
     {
         root = GetComponent<UIDocument>().rootVisualElement;
+        panel = root.Q<VisualElement>("Panel");
         recipeContainer = root.Q<ScrollView>("RecipeContainer");
     }
 
@@ -41,5 +45,19 @@ public class CraftingMenuUIManager : MonoBehaviour
 
             recipeContainer.Add(craftingRecipeUIElement);
         }
+    }
+
+    public void OpenCraftingMenu()
+    {
+        panel.style.display = DisplayStyle.Flex;
+
+        IsCraftingMenuOpen = true;
+    }
+
+    public void CloseCraftingMenu()
+    {
+        panel.style.display = DisplayStyle.None;
+
+        IsCraftingMenuOpen = false;
     }
 }

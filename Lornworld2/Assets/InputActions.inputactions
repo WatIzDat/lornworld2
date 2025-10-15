@@ -24,6 +24,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "ToggleCraftingMenu",
+                    "type": "Button",
+                    "id": "fbb0d79b-38ca-45c0-aa4a-8f429639c943",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "NavigateHotbar",
                     "type": "Value",
                     "id": "67bc0729-f4b9-4b3a-b57f-f3b89111414b",
@@ -115,6 +124,17 @@
                     "processors": "",
                     "groups": ";KeyboardMouse",
                     "action": "ToggleInventory",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a4c9fda1-8289-4eba-9458-7010d1a8be4c",
+                    "path": "<Keyboard>/c",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";KeyboardMouse",
+                    "action": "ToggleCraftingMenu",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
