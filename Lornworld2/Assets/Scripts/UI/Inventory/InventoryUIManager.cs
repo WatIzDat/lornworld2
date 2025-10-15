@@ -80,7 +80,7 @@ public class InventoryUIManager : MonoBehaviour
 
     private void Start()
     {
-        AddItem(ItemRegistry.Instance.GetEntry(ItemIds.GrassItem), 40);
+        AddItem(ItemRegistry.Instance.GetEntry(ItemIds.GrassItem), 39);
         AddItem(ItemRegistry.Instance.GetEntry(ItemIds.StoneItem), 17);
 
         //AddItem(testItem, 1);
@@ -92,13 +92,13 @@ public class InventoryUIManager : MonoBehaviour
         //items[12] = new InventoryItem(testItem);
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.V))
-        {
-            TryRemoveItem(ItemRegistry.Instance.GetEntry(ItemIds.GrassItem), 27);
-        }
-    }
+    //private void Update()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.V))
+    //    {
+    //        TryRemoveItem(ItemRegistry.Instance.GetEntry(ItemIds.GrassItem), 27);
+    //    }
+    //}
 
     private void OnEnable()
     {
@@ -345,8 +345,7 @@ public class InventoryUIManager : MonoBehaviour
         return isSameItem && isNotOverflowing;
     }
 
-
-    private bool AddItem(ItemScriptableObject item, int stack)
+    public bool AddItem(ItemScriptableObject item, int stack)
     {
         if (stack > item.maxStackSize)
         {

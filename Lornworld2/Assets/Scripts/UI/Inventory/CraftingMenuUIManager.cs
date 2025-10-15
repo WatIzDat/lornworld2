@@ -3,6 +3,9 @@ using UnityEngine.UIElements;
 
 public class CraftingMenuUIManager : MonoBehaviour
 {
+    [SerializeField]
+    private InventoryUIManager inventoryUIManager;
+
     private VisualElement root;
     private ScrollView recipeContainer;
 
@@ -16,7 +19,23 @@ public class CraftingMenuUIManager : MonoBehaviour
     {
         foreach (CraftingRecipeScriptableObject craftingRecipe in CraftingRecipeRegistry.Instance.Entries)
         {
-            CraftingRecipeUIElement craftingRecipeUIElement = new();
+            CraftingRecipeUIElement craftingRecipeUIElement = new(() =>
+            {
+                foreach (InventoryItem item in craftingRecipe.items)
+                {
+                    if (!inventoryUIManager.ContainsItem(item.item, item.stackSize))
+                    {
+                        return;
+                    }
+                }
+
+                foreach (InventoryItem item in craftingRecipe.items)
+                {
+                    inventoryUIManager.RemoveItem(item.item, item.stackSize);
+                }
+
+                inventoryUIManager.AddItem(craftingRecipe.result.item, craftingRecipe.result.stackSize);
+            });
 
             craftingRecipeUIElement.SetRecipe(craftingRecipe);
 

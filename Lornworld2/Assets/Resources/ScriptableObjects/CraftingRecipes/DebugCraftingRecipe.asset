@@ -14,9 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   items:
   - item: {fileID: 11400000, guid: 97d8bc31be883db4bbc9dc6c9c0b61c6, type: 2}
-    stackSize: 2
-  - item: {fileID: 11400000, guid: 8d430d96e645ef540a72e921d9ae0aaf, type: 2}
-    stackSize: 4
+    stackSize: 40
   result:
     item: {fileID: 11400000, guid: 8d430d96e645ef540a72e921d9ae0aaf, type: 2}
     stackSize: 17
