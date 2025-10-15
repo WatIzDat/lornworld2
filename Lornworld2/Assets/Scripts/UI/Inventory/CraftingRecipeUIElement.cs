@@ -1,16 +1,20 @@
+using System;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 [UxmlElement]
-public partial class CraftingRecipeUIElement : VisualElement
+public partial class CraftingRecipeUIElement : Button
 {
     //public InventorySlot[] RequiredItems { get; private set; }
     //public InventorySlot Result { get; private set; }
 
-    public CraftingRecipeUIElement()
+    public CraftingRecipeUIElement() { }
+
+    public CraftingRecipeUIElement(Action clickEvent) : base(clickEvent)
     {
         AddToClassList("crafting-recipe");
     }
-    
+
     public void SetRecipe(CraftingRecipeScriptableObject craftingRecipe)
     {
         foreach (InventoryItem item in craftingRecipe.items)

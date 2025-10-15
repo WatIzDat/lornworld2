@@ -82,6 +82,7 @@ public class InventoryUIManager : MonoBehaviour
     {
         AddItem(ItemRegistry.Instance.GetEntry(ItemIds.GrassItem), 40);
         AddItem(ItemRegistry.Instance.GetEntry(ItemIds.StoneItem), 17);
+
         //AddItem(testItem, 1);
         //AddItem(testItem, 1);
         //AddItem(testItem, 3);
@@ -89,6 +90,14 @@ public class InventoryUIManager : MonoBehaviour
 
         //items[10] = new InventoryItem(testItem);
         //items[12] = new InventoryItem(testItem);
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            TryRemoveItem(ItemRegistry.Instance.GetEntry(ItemIds.GrassItem), 27);
+        }
     }
 
     private void OnEnable()
@@ -142,6 +151,69 @@ public class InventoryUIManager : MonoBehaviour
         items[startSlot.index] = new InventoryItem(
             startSlot.InventoryItem.item,
             startSlot.InventoryItem.stackSize - stackSize);
+    }
+
+    public bool ContainsItem(ItemScriptableObject targetItem, int targetStack)
+    {
+        int stack = 0;
+
+        foreach (InventoryItem item in items)
+        {
+            if (item?.item == targetItem)
+            {
+                stack += item.stackSize;
+
+                if (stack >= targetStack)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public void RemoveItem(ItemScriptableObject targetItem, int targetStack)
+    {
+        int stack = targetStack;
+
+        for (int i = 0; i < items.Count; i++)
+        {
+            if (items[i]?.item == targetItem)
+            {
+                if (stack < items[i].stackSize)
+                {
+                    items[i] = items[i].AddStack(-stack);
+
+                    return;
+                }
+                else
+                {
+                    stack -= items[i].stackSize;
+
+                    items[i] = null;
+
+                    if (stack == 0)
+                    {
+                        return;
+                    }
+                }
+            }
+        }
+
+        return;
+    }
+
+    public bool TryRemoveItem(ItemScriptableObject targetItem, int targetStack)
+    {
+        if (!ContainsItem(targetItem, targetStack))
+        {
+            return false;
+        }
+
+        RemoveItem(targetItem, targetStack);
+
+        return true;
     }
 
     private void OnPointerMove(PointerMoveEvent evt)
