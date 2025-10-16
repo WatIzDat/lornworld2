@@ -15,6 +15,11 @@ public class PlayerInventory : MonoBehaviour
 
     public static event Action<int> HotbarSelectedIndexChanged;
 
+    private void Start()
+    {
+        HotbarSelectedIndexChanged?.Invoke(0);
+    }
+
 #pragma warning disable IDE0051, IDE0060
     private void OnToggleInventory(InputValue inputValue)
     {

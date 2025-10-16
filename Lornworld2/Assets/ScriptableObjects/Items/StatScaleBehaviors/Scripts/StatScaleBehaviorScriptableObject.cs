@@ -1,6 +1,12 @@
 using UnityEngine;
 
-public abstract class StatScaleBehaviorScriptableObject : ScriptableObject, IStatScaleBehavior
+[CreateAssetMenu(fileName = "StatScaleBehaviorScriptableObject", menuName = "Scriptable Objects/Items/StatScaleBehaviors/Default")]
+public class StatScaleBehaviorScriptableObject : ScriptableObject, IStatScaleBehavior
 {
-    public abstract StatScaleInfo GetStatScaleInfo();
+    public float attackDamageScaler = 1f;
+
+    public virtual StatScaleInfo GetStatScaleInfo()
+    {
+        return new StatScaleInfo(attackDamageScaler);
+    }
 }

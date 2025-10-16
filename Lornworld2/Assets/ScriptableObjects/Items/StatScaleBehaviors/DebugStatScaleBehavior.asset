@@ -9,6 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56583e4c61433ce4885b1024caffb68e, type: 3}
+  m_Script: {fileID: 11500000, guid: 595960a3eb752c441a87c20c92828ceb, type: 3}
   m_Name: DebugStatScaleBehavior
   m_EditorClassIdentifier: 
+  attackDamageScaler: 2
