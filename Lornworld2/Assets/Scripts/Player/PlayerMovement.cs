@@ -6,6 +6,8 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
 
+    private Vector2 velocity;
+
     [SerializeField]
     private float moveSpeed = 1;
 
@@ -15,12 +17,17 @@ public class PlayerMovement : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
+    private void Update()
+    {
+        rb.linearVelocity = velocity;
+    }
+
 #pragma warning disable IDE0051
     private void OnMove(InputValue inputValue)
     {
         Vector2 moveDir = inputValue.Get<Vector2>();
 
-        rb.linearVelocity = new Vector2(moveDir.x * moveSpeed, moveDir.y * moveSpeed);
+        velocity = new Vector2(moveDir.x * moveSpeed, moveDir.y * moveSpeed);
 
         if (moveDir.x > 0)
         {
