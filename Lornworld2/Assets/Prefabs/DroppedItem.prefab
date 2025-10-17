@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3870431287848987177}
   - component: {fileID: 5028186434103202638}
+  - component: {fileID: -9115275788759412724}
   m_Layer: 0
   m_Name: DroppedItem
   m_TagString: Untagged
@@ -87,3 +88,15 @@ SpriteRenderer:
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &-9115275788759412724
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5804108876306653333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ac9bec68f8dd94499e935443edd0426, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
