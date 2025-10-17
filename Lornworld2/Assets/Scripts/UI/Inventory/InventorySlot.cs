@@ -27,6 +27,25 @@ public partial class InventorySlot : VisualElement
         StackSizeLabel.AddToClassList("stack-size-label");
 
         RegisterCallback<PointerDownEvent>(OnPointerDown);
+
+        RegisterCallback<PointerEnterEvent>(OnPointerEnter);
+        RegisterCallback<PointerLeaveEvent>(OnPointerLeave);
+    }
+
+    private void OnPointerEnter(PointerEnterEvent evt)
+    {
+        if (!isHotbarSlot)
+        {
+            inventoryUIManager.hoveredSlot = this;
+        }
+    }
+
+    private void OnPointerLeave(PointerLeaveEvent evt)
+    {
+        if (!isHotbarSlot)
+        {
+            inventoryUIManager.hoveredSlot = null;
+        }
     }
 
     private void OnPointerDown(PointerDownEvent evt)

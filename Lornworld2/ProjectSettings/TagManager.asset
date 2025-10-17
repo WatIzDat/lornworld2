@@ -44,6 +44,9 @@ TagManager:
   - name: DisplayTiles
     uniqueID: 1431191769
     locked: 0
+  - name: DroppedItems
+    uniqueID: 764557499
+    locked: 0
   - name: Player
     uniqueID: 3808183513
     locked: 0

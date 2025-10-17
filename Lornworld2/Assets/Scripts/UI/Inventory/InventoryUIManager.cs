@@ -22,6 +22,11 @@ public class InventoryUIManager : MonoBehaviour
 
     private InventorySlot[] inventorySlots = new InventorySlot[InventorySize];
 
+    public InventorySlot hoveredSlot;
+
+    [SerializeField]
+    private GameObject droppedItemPrefab;
+
     private VisualElement root;
     private VisualElement panel;
     private VisualElement slotContainer;
@@ -94,10 +99,15 @@ public class InventoryUIManager : MonoBehaviour
 
     //private void Update()
     //{
-    //    if (Input.GetKeyDown(KeyCode.V))
-    //    {
-    //        TryRemoveItem(ItemRegistry.Instance.GetEntry(ItemIds.GrassItem), 27);
-    //    }
+        //if (Input.GetKeyDown(KeyCode.V))
+        //{
+        //    TryRemoveItem(ItemRegistry.Instance.GetEntry(ItemIds.GrassItem), 27);
+        //}
+
+        //if (hoveredSlot != null)
+        //{
+        //    Debug.Log(hoveredSlot.index);
+        //}
     //}
 
     private void OnEnable()
@@ -151,6 +161,15 @@ public class InventoryUIManager : MonoBehaviour
         items[startSlot.index] = new InventoryItem(
             startSlot.InventoryItem.item,
             startSlot.InventoryItem.stackSize - stackSize);
+    }
+
+    public void DropHoveredItem(Vector2 pos)
+    {
+        GameObject droppedItem = Instantiate(droppedItemPrefab, pos, Quaternion.identity);
+
+        droppedItem.GetComponent<SpriteRenderer>().sprite = hoveredSlot.InventoryItem.item.sprite;
+
+        items[hoveredSlot.index] = null;
     }
 
     public bool ContainsItem(ItemScriptableObject targetItem, int targetStack)

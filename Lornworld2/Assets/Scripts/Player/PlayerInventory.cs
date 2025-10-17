@@ -77,5 +77,15 @@ public class PlayerInventory : MonoBehaviour
     {
         SelectedItem?.UseItem();
     }
+
+    private void OnDropItem(InputValue inputValue)
+    {
+        if (!inventoryUIManager.IsInventoryOpen || inventoryUIManager.hoveredSlot == null)
+        {
+            return;
+        }
+
+        inventoryUIManager.DropHoveredItem(transform.position);
+    }
 #pragma warning restore IDE0051, IDE0060
 }
