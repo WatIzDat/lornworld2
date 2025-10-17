@@ -13,6 +13,11 @@ public record InventoryItem
 
     public InventoryItem AddStack(int stack)
     {
+        if (stackSize + stack <= 0)
+        {
+            return null;
+        }
+
         return new InventoryItem(item, stackSize + stack);
     }
 

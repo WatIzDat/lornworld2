@@ -163,13 +163,26 @@ public class InventoryUIManager : MonoBehaviour
             startSlot.InventoryItem.stackSize - stackSize);
     }
 
-    public void DropHoveredItem(Vector2 pos)
+    public void DropHoveredItem(Vector2 pos, bool dropStack = false)
     {
-        GameObject droppedItem = Instantiate(droppedItemPrefab, pos, Quaternion.identity);
+        //GameObject droppedItem = Instantiate(droppedItemPrefab, pos, Quaternion.identity);
 
-        droppedItem.GetComponent<SpriteRenderer>().sprite = hoveredSlot.InventoryItem.item.sprite;
+        //droppedItem.GetComponent<SpriteRenderer>().sprite = hoveredSlot.InventoryItem.item.sprite;
 
-        items[hoveredSlot.index] = null;
+        DroppedItem.Create(
+            droppedItemPrefab,
+            pos,
+            hoveredSlot.InventoryItem.item,
+            dropStack ? hoveredSlot.InventoryItem.stackSize : 1);
+
+        if (dropStack)
+        {
+            items[hoveredSlot.index] = null;
+        }
+        else
+        {
+            items[hoveredSlot.index] = items[hoveredSlot.index].AddStack(-1);
+        }
     }
 
     public bool ContainsItem(ItemScriptableObject targetItem, int targetStack)
