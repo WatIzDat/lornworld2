@@ -388,11 +388,21 @@ public class InventoryUIManager : MonoBehaviour
     {
         if (items[itemIndex] == null)
         {
+            if (inventorySlots[itemIndex].isArmorSlot)
+            {
+                return item.item.isArmor;
+            }
+
             return true;
         }
 
         bool isSameItem = items[itemIndex].item == item.item;
         bool isNotOverflowing = items[itemIndex].stackSize + item.stackSize <= items[itemIndex].item.maxStackSize;
+
+        if (inventorySlots[itemIndex].isArmorSlot)
+        {
+            return item.item.isArmor && isSameItem && isNotOverflowing;
+        }
 
         return isSameItem && isNotOverflowing;
     }

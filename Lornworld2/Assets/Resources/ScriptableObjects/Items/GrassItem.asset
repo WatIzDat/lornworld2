@@ -17,3 +17,4 @@ MonoBehaviour:
   maxStackSize: 40
   itemUseBehavior: {fileID: 11400000, guid: 149348bfc35e0c94aadc7b0312030463, type: 2}
   statScaleBehavior: {fileID: 11400000, guid: d44d68104375f4f4c8a85554c5240d59, type: 2}
+  isArmor: 1

@@ -8,4 +8,6 @@ public class ItemScriptableObject : ScriptableObject
     public int maxStackSize;
     public ItemUseBehaviorScriptableObject itemUseBehavior;
     public StatScaleBehaviorScriptableObject statScaleBehavior;
+    // TODO: make this into an item type enum
+    public bool isArmor;
 }
