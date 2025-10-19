@@ -4,6 +4,7 @@ public class PathfindingNode : IHeapItem<PathfindingNode>
 {
     public bool Walkable { get; }
     public Vector2Int TilePos { get; }
+    public Vector2 WorldPos => TilePos + (Vector2.one * 0.5f);
     public int GridX { get; }
     public int GridY { get; }
 

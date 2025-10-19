@@ -148,13 +148,13 @@ public class AStarPathfinding : MonoBehaviour
 
             if (directionNew != directionOld)
             {
-                waypoints.Add(path[i - 1].TilePos);
+                waypoints.Add(path[i - 1].WorldPos);
             }
 
             directionOld = directionNew;
         }
 
-        waypoints.Add(path[^1].TilePos);
+        waypoints.Add(path[^1].WorldPos);
 
         return waypoints.ToArray();
     }

@@ -165,7 +165,7 @@ public class PathfindingGrid : MonoBehaviour
                     //    Gizmos.color = Color.cyan;
                     //}
 
-                    Gizmos.DrawCube(new Vector2(node.TilePos.x + 0.5f, node.TilePos.y + 0.5f), Vector3.one * 0.9f);
+                    Gizmos.DrawCube(new Vector2(node.WorldPos.x, node.WorldPos.y), Vector3.one * 0.9f);
                 }
             }
         }
