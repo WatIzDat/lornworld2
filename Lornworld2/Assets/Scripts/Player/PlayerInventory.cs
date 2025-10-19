@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -16,10 +17,33 @@ public class PlayerInventory : MonoBehaviour
     public static event Action<int> HotbarSelectedIndexChanged;
 
     private bool dropItemStackModifierPressed;
+    private bool pickUpItemNextUpdate;
 
     private void Start()
     {
         HotbarSelectedIndexChanged?.Invoke(0);
+    }
+
+    private void FixedUpdate()
+    {
+        if (pickUpItemNextUpdate)
+        {
+            Collider2D itemCollider = Physics2D.OverlapCircleAll(transform.position, 1f)
+                .Where(c => c.TryGetComponent(out DroppedItem _))
+                .OrderBy(c => Vector2.Distance(transform.position, c.transform.position))
+                .FirstOrDefault();
+
+            if (itemCollider != null)
+            {
+                DroppedItem item = itemCollider.GetComponent<DroppedItem>();
+
+                inventoryUIManager.AddItem(item.Item, item.StackSize);
+
+                Destroy(item.gameObject);
+            }
+
+            pickUpItemNextUpdate = false;
+        }
     }
 
 #pragma warning disable IDE0051, IDE0060
@@ -93,6 +117,11 @@ public class PlayerInventory : MonoBehaviour
     private void OnDropItemStackModifier(InputValue inputValue)
     {
         dropItemStackModifierPressed = inputValue.isPressed;
+    }
+
+    private void OnPickUpItem(InputValue inputValue)
+    {
+        pickUpItemNextUpdate = true;
     }
 #pragma warning restore IDE0051, IDE0060
 }
