@@ -10,7 +10,9 @@ public partial class InventorySlot : VisualElement
     public int index;
     public InventoryUIManager inventoryUIManager;
 
+    // TODO: make these into an enum
     public bool isHotbarSlot;
+    public bool isArmorSlot;
 
     public bool IsEmpty => InventoryItem == null;
 

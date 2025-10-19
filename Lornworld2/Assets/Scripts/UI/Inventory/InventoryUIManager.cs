@@ -12,6 +12,8 @@ public class InventoryUIManager : MonoBehaviour
     public const int InventoryWidth = 9;
     public const int InventoryHeight = 4; // including hotbar
 
+    public const int ArmorSlotsSize = 4;
+
     private const int InventorySize = InventoryWidth * InventoryHeight;
 
     // bottom left to top right
@@ -20,7 +22,11 @@ public class InventoryUIManager : MonoBehaviour
 
     public InventoryItem[] HotbarItems => items.ToArray()[..InventoryWidth];
 
-    private InventorySlot[] inventorySlots = new InventorySlot[InventorySize];
+    // armor slots are last 4 slots of inventory
+    public InventoryItem[] ArmorItems => items.ToArray()[^ArmorSlotsSize..];
+
+    private InventorySlot[] inventorySlots = new InventorySlot[InventorySize + ArmorSlotsSize];
+
 
     public InventorySlot hoveredSlot;
 
@@ -68,9 +74,23 @@ public class InventoryUIManager : MonoBehaviour
             tempSlots[i].inventoryUIManager = this;
         }
 
+        List<InventorySlot> armorSlots = slotContainer
+            .Q<VisualElement>("ArmorSlotsContainer")
+            .Query<InventorySlot>()
+            .ToList();
+
+        for (int i = 0; i < armorSlots.Count; i++)
+        {
+            armorSlots[i].index = InventorySize + i;
+            armorSlots[i].inventoryUIManager = this;
+            armorSlots[i].isArmorSlot = true;
+        }
+
+        tempSlots.AddRange(armorSlots);
+
         inventorySlots = tempSlots.ToArray();
 
-        for (int i = 0; i < InventorySize; i++)
+        for (int i = 0; i < inventorySlots.Length; i++)
         {
             items.Add(null);
         }
