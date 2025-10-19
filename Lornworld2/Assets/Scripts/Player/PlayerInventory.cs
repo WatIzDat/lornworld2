@@ -15,6 +15,8 @@ public class PlayerInventory : MonoBehaviour
 
     public static event Action<int> HotbarSelectedIndexChanged;
 
+    private bool dropItemStackModifierPressed;
+
     private void Start()
     {
         HotbarSelectedIndexChanged?.Invoke(0);
@@ -85,7 +87,12 @@ public class PlayerInventory : MonoBehaviour
             return;
         }
 
-        inventoryUIManager.DropHoveredItem(transform.position);
+        inventoryUIManager.DropHoveredItem(transform.position, dropItemStackModifierPressed);
+    }
+
+    private void OnDropItemStackModifier(InputValue inputValue)
+    {
+        dropItemStackModifierPressed = inputValue.isPressed;
     }
 #pragma warning restore IDE0051, IDE0060
 }
