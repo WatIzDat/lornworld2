@@ -47,6 +47,7 @@ public class InventoryUIManager : MonoBehaviour
     public bool IsInventoryOpen { get; private set; }
 
     public static event Action<int, InventoryItem> InventoryChanged;
+    public static event Action<int, InventoryItem[]> ArmorChanged;
 
     private void Awake()
     {
@@ -352,6 +353,11 @@ public class InventoryUIManager : MonoBehaviour
         InventoryItem newInventoryItem = (InventoryItem)e.NewItems[0];
 
         InventoryChanged?.Invoke(e.NewStartingIndex, newInventoryItem);
+
+        if (slot.isArmorSlot)
+        {
+            ArmorChanged?.Invoke(e.NewStartingIndex, ArmorItems);
+        }
 
         //InventoryItem oldInventoryItem = (InventoryItem)e.OldItems[0];
 

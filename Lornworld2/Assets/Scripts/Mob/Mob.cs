@@ -24,6 +24,7 @@ public class Mob : Entity
             mobParent).GetComponent<Mob>();
 
         mob.maxHealth = mobScriptableObject.maxHealth;
+        mob.baseHealth = mob.maxHealth;
         mob.health = mob.maxHealth;
 
         mob.AttackDamage = mobScriptableObject.attackDamage;

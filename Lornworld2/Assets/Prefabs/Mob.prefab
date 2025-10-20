@@ -177,7 +177,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 0
-  maxHealth: 0
+  baseHealth: 0
   player: {fileID: 0}
 --- !u!114 &4902268875161072665
 MonoBehaviour:

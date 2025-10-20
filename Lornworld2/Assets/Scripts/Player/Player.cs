@@ -20,11 +20,36 @@ public class Player : Entity
     private void OnEnable()
     {
         PlayerInventory.HotbarSelectedIndexChanged += OnHotbarSelectedIndexChanged;
+
+        InventoryUIManager.ArmorChanged += OnArmorChanged;
     }
 
     private void OnDisable()
     {
         PlayerInventory.HotbarSelectedIndexChanged -= OnHotbarSelectedIndexChanged;
+
+        InventoryUIManager.ArmorChanged -= OnArmorChanged;
+    }
+
+    private void OnArmorChanged(int index, InventoryItem[] items)
+    {
+        float health = baseHealth;
+
+        foreach (InventoryItem item in items)
+        {
+            if (item == null || item.item.statScaleBehavior == null)
+            {
+                continue;
+            }
+
+            StatScaleInfo statScaleInfo = item.item.statScaleBehavior.GetStatScaleInfo();
+
+            health += baseHealth * statScaleInfo.HealthScaler;
+        }
+
+        maxHealth = health;
+
+        Debug.Log(maxHealth);
     }
 
     private void OnHotbarSelectedIndexChanged(int index)

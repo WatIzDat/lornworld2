@@ -10,6 +10,8 @@ public abstract class Entity : MonoBehaviour
     protected float health;
 
     [SerializeField]
+    protected float baseHealth;
+
     protected float maxHealth;
 
     private Vector2 prevPosition;
