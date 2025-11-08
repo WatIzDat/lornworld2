@@ -1,14 +1,19 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/UI/Inventory/Inventory.uss?fileID=7433441132597879392&amp;guid=eedb7afe2cbadb24b89e9d7958849d45&amp;type=3#Inventory" />
-    <ui:VisualElement name="SlotContainer" class="hotbar-container">
-        <InventorySlot class="hotbar-selected-slot" />
-        <InventorySlot />
-        <InventorySlot />
-        <InventorySlot />
-        <InventorySlot />
-        <InventorySlot />
-        <InventorySlot />
-        <InventorySlot />
-        <InventorySlot />
+    <ui:VisualElement name="Container" style="flex-grow: 1; flex-shrink: 0;">
+        <ui:VisualElement name="StatsContainer" class="label" style="flex-grow: 1; flex-shrink: 1; flex-direction: row; padding-left: 0; justify-content: center; align-items: stretch;">
+            <ui:Label name="Health" style="margin-top: auto;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="SlotContainer" class="hotbar-container" style="flex-grow: 0;">
+            <InventorySlot class="hotbar-selected-slot" />
+            <InventorySlot />
+            <InventorySlot />
+            <InventorySlot />
+            <InventorySlot />
+            <InventorySlot />
+            <InventorySlot />
+            <InventorySlot />
+            <InventorySlot />
+        </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

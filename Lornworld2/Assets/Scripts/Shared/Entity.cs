@@ -6,13 +6,13 @@ public abstract class Entity : MonoBehaviour
 
     public bool MovedThisFrame { get; private set; }
 
-    [SerializeField]
-    protected float health;
+    public float Health { get; protected set; }
 
     [SerializeField]
     protected float baseHealth;
 
-    protected float maxHealth;
+    [field: SerializeField]
+    public float MaxHealth { get; protected set; }
 
     private Vector2 prevPosition;
 
@@ -25,16 +25,16 @@ public abstract class Entity : MonoBehaviour
 
     public virtual void TakeDamage(float damage)
     {
-        health -= damage;
+        Health -= damage;
 
-        if (health <= 0)
+        if (Health <= 0)
         {
             OnDeath();
 
             return;
         }
 
-        Debug.Log(health);
+        Debug.Log(Health);
     }
 
     protected abstract void OnDeath();

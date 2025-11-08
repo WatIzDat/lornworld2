@@ -426,8 +426,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38493600a6b862a4baa1da5f67612f37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 20
   baseHealth: 20
+  <MaxHealth>k__BackingField: 20
   baseAttackDamage: 2
   hunger: 20
 --- !u!114 &514829024
@@ -919,6 +919,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aba274afd891d434796ad7d822630bf2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 514829023}
 --- !u!1 &1505691740
 GameObject:
   m_ObjectHideFlags: 0

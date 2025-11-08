@@ -1,21 +1,43 @@
+using Unity.Properties;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 public class HotbarUIManager : MonoBehaviour
 {
+    [SerializeField]
+    private Player player;
+
     private InventorySlot[] hotbarSlots = new InventorySlot[InventoryUIManager.InventoryWidth];
 
     private InventorySlot selectedHotbarSlot;
 
     private VisualElement root;
     private VisualElement slotContainer;
+    private VisualElement statsContainer;
+
+    private Label healthLabel;
+
+    [CreateProperty]
+    private string FormattedHealth => $"{player.Health}/{player.MaxHealth}";
 
     private void Awake()
     {
         root = GetComponent<UIDocument>().rootVisualElement;
         slotContainer = root.Q<VisualElement>("SlotContainer");
+        statsContainer = root.Q<VisualElement>("StatsContainer");
 
         hotbarSlots = slotContainer.Query<InventorySlot>().ToList().ToArray();
+
+        healthLabel = statsContainer.Q<Label>("Health");
+
+        DataBinding healthBinding = new()
+        {
+            bindingMode = BindingMode.ToTarget,
+            dataSource = this,
+            dataSourcePath = new PropertyPath(nameof(FormattedHealth))
+        };
+
+        healthLabel.SetBinding("text", healthBinding);
 
         selectedHotbarSlot = hotbarSlots[0];
 

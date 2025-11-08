@@ -15,6 +15,8 @@ public class Player : Entity
     private void Awake()
     {
         playerInventory = GetComponent<PlayerInventory>();
+
+        Health = MaxHealth;
     }
 
     private void OnEnable()
@@ -47,9 +49,9 @@ public class Player : Entity
             health += baseHealth * statScaleInfo.HealthScaler;
         }
 
-        maxHealth = health;
+        MaxHealth = health;
 
-        Debug.Log(maxHealth);
+        Debug.Log(MaxHealth);
     }
 
     private void OnHotbarSelectedIndexChanged(int index)

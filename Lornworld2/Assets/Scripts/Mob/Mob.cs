@@ -23,9 +23,9 @@ public class Mob : Entity
             Quaternion.identity,
             mobParent).GetComponent<Mob>();
 
-        mob.maxHealth = mobScriptableObject.maxHealth;
-        mob.baseHealth = mob.maxHealth;
-        mob.health = mob.maxHealth;
+        mob.MaxHealth = mobScriptableObject.maxHealth;
+        mob.baseHealth = mob.MaxHealth;
+        mob.Health = mob.MaxHealth;
 
         mob.AttackDamage = mobScriptableObject.attackDamage;
 
