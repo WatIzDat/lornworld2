@@ -99,8 +99,10 @@ public class Mob : Entity
         //    => Vector2.Distance(transform.position, player.transform.position) < 10f;
     }
 
-    private void Update()
+    protected override void Update()
     {
+        base.Update();
+
         stateMachine.Tick();
     }
 

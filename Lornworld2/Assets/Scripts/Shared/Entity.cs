@@ -16,7 +16,7 @@ public abstract class Entity : MonoBehaviour
 
     private Vector2 prevPosition;
 
-    private void Update()
+    protected virtual void Update()
     {
         MovedThisFrame = (Vector2)transform.position != prevPosition;
 

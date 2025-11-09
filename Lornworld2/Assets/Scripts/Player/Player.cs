@@ -38,8 +38,10 @@ public class Player : Entity
         InventoryUIManager.ArmorChanged -= OnArmorChanged;
     }
 
-    private void Update()
+    protected override void Update()
     {
+        base.Update();
+
         if (regenTimer <= 0f)
         {
             if (Health + 1f > MaxHealth)
