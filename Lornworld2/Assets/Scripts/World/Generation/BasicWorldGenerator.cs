@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BasicWorldGenerator : IWorldGenerator
@@ -38,6 +39,36 @@ public class BasicWorldGenerator : IWorldGenerator
             }
         }
 
-        return new ChunkData(tiles, new (FeatureScriptableObject feature, Vector2 pos)[] { (FeatureRegistry.Instance.GetEntry(FeatureIds.TreeFeature), Vector2.zero * 8f) });
+        List<(FeatureScriptableObject feature, Vector2 pos)> features = new();
+
+        int spacing = 4;
+        float jitter = 1f;
+
+        for (int y = 0; y < ChunkManager.ChunkSize; y += spacing)
+        {
+            for (int x = 0; x < ChunkManager.ChunkSize; x += spacing)
+            {
+                Vector2 featurePos = new(
+                    x + jitter * spacing * (Random.value - 0.5f),
+                    y + jitter * spacing * (Random.value - 0.5f));
+
+                Vector2Int tilePos = new(
+                    Mathf.RoundToInt(featurePos.x) % ChunkManager.ChunkSize,
+                    Mathf.RoundToInt(featurePos.y) % ChunkManager.ChunkSize);
+
+                Debug.Log(tilePos.y * ChunkManager.ChunkSize + tilePos.x);
+
+                if (tilePos.y * ChunkManager.ChunkSize + tilePos.x < 0 ||
+                    tilePos.y * ChunkManager.ChunkSize + tilePos.x > ChunkManager.ChunkArea || 
+                    tiles[tilePos.y * ChunkManager.ChunkSize + tilePos.x] == TileRegistry.Instance.GetEntry(TileIds.WaterTile))
+                {
+                    continue;
+                }
+
+                features.Add((FeatureRegistry.Instance.GetEntry(FeatureIds.TreeFeature), featurePos));
+            }
+        }
+
+        return new ChunkData(tiles, features.ToArray());
     }
 }
