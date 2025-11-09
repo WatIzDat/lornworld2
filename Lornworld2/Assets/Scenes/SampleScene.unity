@@ -430,6 +430,7 @@ MonoBehaviour:
   <MaxHealth>k__BackingField: 20
   baseAttackDamage: 2
   hunger: 20
+  regenSpeed: 5
 --- !u!114 &514829024
 MonoBehaviour:
   m_ObjectHideFlags: 0

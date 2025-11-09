@@ -10,6 +10,11 @@ public class Player : Entity
     [SerializeField]
     private int hunger;
 
+    [SerializeField]
+    private float regenSpeed;
+
+    private float regenTimer;
+
     private PlayerInventory playerInventory;
 
     private void Awake()
@@ -31,6 +36,32 @@ public class Player : Entity
         PlayerInventory.HotbarSelectedIndexChanged -= OnHotbarSelectedIndexChanged;
 
         InventoryUIManager.ArmorChanged -= OnArmorChanged;
+    }
+
+    private void Update()
+    {
+        if (regenTimer <= 0f)
+        {
+            if (Health + 1f > MaxHealth)
+            {
+                Health = MaxHealth;
+            }
+            else
+            {
+                Health += 1f;
+            }
+
+            regenTimer = regenSpeed;
+        }
+
+        if (Health < MaxHealth)
+        {
+            regenTimer -= Time.deltaTime;
+        }
+        else
+        {
+            regenTimer = regenSpeed;
+        }
     }
 
     private void OnArmorChanged(int index, InventoryItem[] items)
