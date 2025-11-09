@@ -42,25 +42,27 @@ public class BasicWorldGenerator : IWorldGenerator
         List<(FeatureScriptableObject feature, Vector2 pos)> features = new();
 
         int spacing = 4;
-        float jitter = 1f;
+        float jitter = 2f;
 
-        for (int y = 0; y < ChunkManager.ChunkSize; y += spacing)
+        for (int y = spacing / 4; y < ChunkManager.ChunkSize - (spacing / 4); y += spacing)
         {
-            for (int x = 0; x < ChunkManager.ChunkSize; x += spacing)
+            for (int x = spacing / 4; x < ChunkManager.ChunkSize - (spacing / 4); x += spacing)
             {
                 Vector2 featurePos = new(
-                    x + jitter * spacing * (Random.value - 0.5f),
-                    y + jitter * spacing * (Random.value - 0.5f));
+                    x + jitter * (spacing / 2) * (Random.value - 0.5f),
+                    y + jitter * (spacing / 2) * (Random.value - 0.5f));
 
-                Vector2Int tilePos = new(
-                    Mathf.RoundToInt(featurePos.x) % ChunkManager.ChunkSize,
-                    Mathf.RoundToInt(featurePos.y) % ChunkManager.ChunkSize);
+                if (featurePos.x < 0f ||
+                    featurePos.x > ChunkManager.ChunkSize ||
+                    featurePos.y < 0f ||
+                    featurePos.y > ChunkManager.ChunkSize)
+                {
+                    continue;
+                }
 
-                Debug.Log(tilePos.y * ChunkManager.ChunkSize + tilePos.x);
+                Vector2Int tilePos = Vector2Int.RoundToInt(featurePos);
 
-                if (tilePos.y * ChunkManager.ChunkSize + tilePos.x < 0 ||
-                    tilePos.y * ChunkManager.ChunkSize + tilePos.x > ChunkManager.ChunkArea || 
-                    tiles[tilePos.y * ChunkManager.ChunkSize + tilePos.x] == TileRegistry.Instance.GetEntry(TileIds.WaterTile))
+                if (tiles[tilePos.y * ChunkManager.ChunkSize + tilePos.x] == TileRegistry.Instance.GetEntry(TileIds.WaterTile))
                 {
                     continue;
                 }
