@@ -15,5 +15,6 @@ MonoBehaviour:
   itemName: Stone
   sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   maxStackSize: 17
-  itemUseBehavior: {fileID: 0}
+  itemUseBehavior: {fileID: 11400000, guid: 6144137c9cdfd7b499872d38be29b243, type: 2}
   statScaleBehavior: {fileID: 0}
+  isArmor: 0
