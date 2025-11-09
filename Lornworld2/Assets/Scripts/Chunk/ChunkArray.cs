@@ -100,7 +100,7 @@ public class ChunkArray : MonoBehaviour
         return Chunk.Pool(pos, unloadedChunk);
     }
 
-    private Chunk PopulateNewChunk(ChunkPos pos, Func<ChunkPos, TileScriptableObject[]> generate)
+    private Chunk PopulateNewChunk(ChunkPos pos, Func<ChunkPos, ChunkData> generate)
     {
         Chunk chunk = PoolOrCreate(pos);
         chunk.PopulateWith(generate);
@@ -114,7 +114,7 @@ public class ChunkArray : MonoBehaviour
     }
 
     // TODO: make shifting right and shifting down iterate backwards to avoid instantiating chunks
-    public void ShiftHorizontal(bool shiftLeft, Func<ChunkPos, TileScriptableObject[]> generate)
+    public void ShiftHorizontal(bool shiftLeft, Func<ChunkPos, ChunkData> generate)
     {
         Chunk[] newChunks = new Chunk[chunks.Length];
         List<int> pendingChunkUpdateIndices = new(SideLength);
@@ -173,7 +173,7 @@ public class ChunkArray : MonoBehaviour
         }
     }
 
-    public void ShiftVertical(bool shiftDown, Func<ChunkPos, TileScriptableObject[]> generate)
+    public void ShiftVertical(bool shiftDown, Func<ChunkPos, ChunkData> generate)
     {
         Chunk[] newChunks = new Chunk[chunks.Length];
         List<int> pendingChunkUpdateIndices = new(SideLength);
@@ -232,7 +232,7 @@ public class ChunkArray : MonoBehaviour
         }
     }
 
-    public TileScriptableObject[][] PopulateChunksWith(Func<ChunkPos, TileScriptableObject[]> generate)
+    public TileScriptableObject[][] PopulateChunksWith(Func<ChunkPos, ChunkData> generate)
     {
         TileScriptableObject[][] tilesInChunks = new TileScriptableObject[chunks.Length][];
 

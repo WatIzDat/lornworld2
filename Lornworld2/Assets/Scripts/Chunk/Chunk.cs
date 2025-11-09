@@ -8,6 +8,9 @@ using UnityEngine.Tilemaps;
 
 public class Chunk : MonoBehaviour
 {
+    [SerializeField]
+    private GameObject featurePrefab;
+
     // array is bottom left to top right counting left to right
     private readonly ObservableCollection<TileScriptableObject> tiles = new();
 
@@ -98,20 +101,29 @@ public class Chunk : MonoBehaviour
         //}
     }
 
-    public TileScriptableObject[] PopulateWith(Func<ChunkPos, TileScriptableObject[]> generate)
+    public TileScriptableObject[] PopulateWith(Func<ChunkPos, ChunkData> generate)
     {
-        TileScriptableObject[] generatedTiles = generate(chunkPos);
+        ChunkData generatedChunk = generate(chunkPos);
 
-        tiles.AddRange(generatedTiles);
+        tiles.AddRange(generatedChunk.tiles);
+
+        foreach ((FeatureScriptableObject feature, Vector2 pos) feature in generatedChunk.features)
+        {
+            Feature.Create(
+                featurePrefab,
+                this,
+                feature.feature,
+                feature.pos);
+        }
 
         BoundsInt bounds = new(0, 0, 0, ChunkManager.ChunkSize, ChunkManager.ChunkSize, 1);
 
-        tilemap.SetWorldTilesBlock(bounds, generatedTiles);
+        tilemap.SetWorldTilesBlock(bounds, generatedChunk.tiles);
 
-        return generatedTiles;
+        return generatedChunk.tiles;
     }
 
-    public void PopulateAndSetDisplayTilesWith(Func<ChunkPos, TileScriptableObject[]> generate)
+    public void PopulateAndSetDisplayTilesWith(Func<ChunkPos, ChunkData> generate)
     {
         PopulateWith(generate);
 

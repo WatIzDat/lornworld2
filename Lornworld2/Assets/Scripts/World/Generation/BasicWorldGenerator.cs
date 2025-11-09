@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class BasicWorldGenerator : IWorldGenerator
 {
-    public TileScriptableObject[] Generate(ChunkPos pos)
+    public ChunkData Generate(ChunkPos pos)
     {
         TileScriptableObject[] tiles = new TileScriptableObject[ChunkManager.ChunkArea];
         
@@ -38,6 +38,6 @@ public class BasicWorldGenerator : IWorldGenerator
             }
         }
 
-        return tiles;
+        return new ChunkData(tiles, new (FeatureScriptableObject feature, Vector2 pos)[] { (FeatureRegistry.Instance.GetEntry(FeatureIds.TreeFeature), Vector2.zero * 8f) });
     }
 }

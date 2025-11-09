@@ -1,4 +1,4 @@
 public interface IWorldGenerator
 {
-    TileScriptableObject[] Generate(ChunkPos pos);
+    ChunkData Generate(ChunkPos pos);
 }
