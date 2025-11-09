@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
@@ -13,6 +14,8 @@ public class Chunk : MonoBehaviour
 
     // array is bottom left to top right counting left to right
     private readonly ObservableCollection<TileScriptableObject> tiles = new();
+
+    private readonly List<Feature> features = new(); 
 
     private DualGridTilemap tilemap;
 
@@ -66,6 +69,16 @@ public class Chunk : MonoBehaviour
         chunk.tilemap.ClearAllTiles();
         chunk.tiles.Clear();
 
+        foreach (Feature feature in chunk.features)
+        {
+            if (feature != null)
+            {
+                Destroy(feature.gameObject);
+            }
+        }
+
+        chunk.features.Clear();
+
         return chunk;
     }
 
@@ -109,11 +122,12 @@ public class Chunk : MonoBehaviour
 
         foreach ((FeatureScriptableObject feature, Vector2 pos) feature in generatedChunk.features)
         {
-            Feature.Create(
-                featurePrefab,
-                this,
-                feature.feature,
-                feature.pos);
+            features.Add(
+                Feature.Create(
+                    featurePrefab,
+                    this,
+                    feature.feature,
+                    feature.pos));
         }
 
         BoundsInt bounds = new(0, 0, 0, ChunkManager.ChunkSize, ChunkManager.ChunkSize, 1);
