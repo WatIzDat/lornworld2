@@ -14,7 +14,7 @@ public class InventoryUIManager : MonoBehaviour
 
     public const int ArmorSlotsSize = 4;
 
-    private const int InventorySize = InventoryWidth * InventoryHeight;
+    public const int InventorySize = InventoryWidth * InventoryHeight;
 
     // bottom left to top right
     // TODO: maybe separate items outside of view logic
@@ -204,6 +204,11 @@ public class InventoryUIManager : MonoBehaviour
         {
             items[hoveredSlot.index] = items[hoveredSlot.index].AddStack(-1);
         }
+    }
+
+    public void AddStackToItem(int index, int stack)
+    {
+        items[index] = items[index].AddStack(stack);
     }
 
     public bool ContainsItem(ItemScriptableObject targetItem, int targetStack)

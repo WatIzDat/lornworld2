@@ -46,6 +46,11 @@ public class PlayerInventory : MonoBehaviour
         }
     }
 
+    public void RemoveFromSelectedItem()
+    {
+        inventoryUIManager.AddStackToItem(selectedIndex, -1);
+    }
+
 #pragma warning disable IDE0051, IDE0060
     private void OnToggleInventory(InputValue inputValue)
     {

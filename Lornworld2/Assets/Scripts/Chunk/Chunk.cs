@@ -15,7 +15,7 @@ public class Chunk : MonoBehaviour
     // array is bottom left to top right counting left to right
     private readonly ObservableCollection<TileScriptableObject> tiles = new();
 
-    private readonly List<Feature> features = new(); 
+    public readonly List<Feature> features = new(); 
 
     private DualGridTilemap tilemap;
 
@@ -122,12 +122,11 @@ public class Chunk : MonoBehaviour
 
         foreach ((FeatureScriptableObject feature, Vector2 pos) feature in generatedChunk.features)
         {
-            features.Add(
-                Feature.Create(
-                    featurePrefab,
-                    this,
-                    feature.feature,
-                    feature.pos));
+            Feature.Create(
+                featurePrefab,
+                this,
+                feature.feature,
+                feature.pos);
         }
 
         BoundsInt bounds = new(0, 0, 0, ChunkManager.ChunkSize, ChunkManager.ChunkSize, 1);

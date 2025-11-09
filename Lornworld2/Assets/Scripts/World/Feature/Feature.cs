@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Feature : Entity
@@ -7,20 +8,22 @@ public class Feature : Entity
 
     private InventoryItem[] itemDrops;
 
-    public static Feature Create(GameObject featurePrefab, Chunk chunk, FeatureScriptableObject featureScriptableObject, Vector2 position)
+    public static Feature Create(GameObject featurePrefab, Chunk chunk, FeatureScriptableObject featureScriptableObject, Vector2 position, bool worldPositionStays = false)
     {
         Feature feature = Instantiate(
             featurePrefab,
             position,
             Quaternion.identity).GetComponent<Feature>();
 
-        feature.transform.SetParent(chunk.transform, false);
+        feature.transform.SetParent(chunk.transform, worldPositionStays);
 
         feature.MaxHealth = featureScriptableObject.maxHealth;
         feature.baseHealth = feature.MaxHealth;
         feature.Health = feature.MaxHealth;
 
         feature.itemDrops = featureScriptableObject.itemDrops;
+
+        chunk.features.Add(feature);
 
         return feature;
     }
