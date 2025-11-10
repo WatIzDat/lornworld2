@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Player : Entity
+public class Player : Entity, IDataPersistence
 {
     [SerializeField]
     private float baseAttackDamage;
@@ -105,5 +105,15 @@ public class Player : Entity
     protected override void OnDeath()
     {
         Debug.Log("death");
+    }
+
+    public void LoadData(GameData data)
+    {
+        transform.position = data.playerPosition;
+    }
+
+    public void SaveData(ref GameData data)
+    {
+        data.playerPosition = transform.position;
     }
 }
