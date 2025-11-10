@@ -8,6 +8,7 @@ public abstract class Registry<T, U> : MonoBehaviour where T : Object where U : 
     public T[] Entries { get; private set; }
 
     private readonly Dictionary<U, T> entriesMap = new();
+    private readonly Dictionary<T, U> idsMap = new();
 
     [SerializeField]
     private string entriesPath;
@@ -29,12 +30,18 @@ public abstract class Registry<T, U> : MonoBehaviour where T : Object where U : 
             idsType.GetProperty(entry.name).SetValueOptimized(null, id);
 
             entriesMap.Add(id, entry);
+            idsMap.Add(entry, id);
         }
     }
 
     public T GetEntry(U id)
     {
         return entriesMap[id];
+    }
+
+    public U GetId(T entry)
+    {
+        return idsMap[entry];
     }
 
     protected abstract U CreateId(string id);

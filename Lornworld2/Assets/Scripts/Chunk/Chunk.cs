@@ -7,7 +7,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class Chunk : MonoBehaviour
+public class Chunk : MonoBehaviour, IDataPersistenceRequester
 {
     [SerializeField]
     private GameObject featurePrefab;
@@ -24,6 +24,8 @@ public class Chunk : MonoBehaviour
     public ChunkPos chunkPos;
 
     public static event Action<ChunkPos, int, TileScriptableObject> ChunkChanged;
+
+    public event Action SaveRequested;
 
     private ChunkManager chunkManager;
 
@@ -63,6 +65,8 @@ public class Chunk : MonoBehaviour
         //unusedChunk.transform.GetChild(0).GetChild(1).GetComponent<TilemapRenderer>().enabled = true;
 
         Chunk chunk = unusedChunk.GetComponent<Chunk>();
+
+        chunk.SaveRequested?.Invoke();
 
         chunk.chunkPos = chunkPos;
 
@@ -153,5 +157,21 @@ public class Chunk : MonoBehaviour
     public void SetDisplayOrder(int displayOrder)
     {
         displayTilemapRenderer.sortingOrder = displayOrder;
+    }
+
+    public void LoadData(GameData data)
+    {
+    }
+
+    public void SaveData(ref GameData data)
+    {
+        data.chunks[chunkPos] = new ChunkDataPersistence(
+            tiles
+                .Select(t => TileRegistry.Instance.GetId(t))
+                .ToArray(),
+            features
+                .Where(f => f != null)
+                .Select(f => (FeatureRegistry.Instance.GetId(f.FeatureScriptableObject), (Vector2)f.transform.position))
+                .ToArray());
     }
 }

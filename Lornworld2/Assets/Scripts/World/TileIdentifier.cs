@@ -1,4 +1,7 @@
-public record TileIdentifier : Identifier
+using MemoryPack;
+
+[MemoryPackable]
+public partial record TileIdentifier : Identifier
 {
     //public string Id { get; }
 

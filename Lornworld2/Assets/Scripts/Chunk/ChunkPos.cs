@@ -1,6 +1,8 @@
+using MemoryPack;
 using UnityEngine;
 
-public record ChunkPos
+[MemoryPackable]
+public partial record ChunkPos
 {
     public Vector2Int pos;
 

@@ -6,7 +6,7 @@ public class Feature : Entity
     [SerializeField]
     private GameObject droppedItemPrefab;
 
-    private InventoryItem[] itemDrops;
+    public FeatureScriptableObject FeatureScriptableObject { get; private set; }
 
     public static Feature Create(GameObject featurePrefab, Chunk chunk, FeatureScriptableObject featureScriptableObject, Vector2 position, bool worldPositionStays = false)
     {
@@ -21,7 +21,7 @@ public class Feature : Entity
         feature.baseHealth = feature.MaxHealth;
         feature.Health = feature.MaxHealth;
 
-        feature.itemDrops = featureScriptableObject.itemDrops;
+        feature.FeatureScriptableObject = featureScriptableObject;
 
         chunk.features.Add(feature);
 
@@ -37,7 +37,7 @@ public class Feature : Entity
 
     protected override void OnDeath()
     {
-        foreach (InventoryItem inventoryItem in itemDrops)
+        foreach (InventoryItem inventoryItem in FeatureScriptableObject.itemDrops)
         {
             DroppedItem.Create(
                 droppedItemPrefab,
