@@ -26,7 +26,18 @@ public class BinaryFileDataHandler
             {
                 byte[] dataToLoad = File.ReadAllBytes(fullPath);
 
-                loadedData = MemoryPackSerializer.Deserialize<T>(dataToLoad);
+                Debug.Log(dataFileName + dataToLoad.Length);
+
+                //loadedData = MemoryPackSerializer.Deserialize<T>(dataToLoad);
+
+                if (MemoryPackSerializer.Deserialize<IGameData>(dataToLoad) is T convertedData)
+                {
+                    loadedData = convertedData;
+                }
+                else
+                {
+                    Debug.LogError($"Data from file {fullPath} could not be converted to target type.");
+                }
             }
             catch (Exception e)
             {

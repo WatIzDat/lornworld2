@@ -1,6 +1,7 @@
 using MemoryPack;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
@@ -38,7 +39,7 @@ public class DataPersistenceManager : MonoBehaviour
             Instance = this;
         }
 
-        dataHandler = new(Application.persistentDataPath);
+        dataHandler = new(Path.Combine(Application.persistentDataPath, "data"));
     }
 
     private void Start()
@@ -46,7 +47,7 @@ public class DataPersistenceManager : MonoBehaviour
         //dataHandler = new BinaryFileDataHandler(Application.persistentDataPath);
         //dataPersistenceObjects = FindAllDataPersistenceObjects();
 
-        LoadGame();
+        //LoadGame();
     }
 
     public void NewGame()
