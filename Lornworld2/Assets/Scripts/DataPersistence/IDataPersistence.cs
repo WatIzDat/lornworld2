@@ -1,5 +1,8 @@
-public interface IDataPersistence
+using MemoryPack;
+using System;
+
+public interface IDataPersistence<T> where T : IGameData
 {
-    bool LoadData(GameData data);
-    void SaveData(ref GameData data);
+    bool LoadData(T data);
+    void SaveData(Action<IGameData, string> saveCallback);
 }

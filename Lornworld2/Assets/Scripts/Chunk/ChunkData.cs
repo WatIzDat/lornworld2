@@ -15,7 +15,7 @@ public record ChunkData
 }
 
 [MemoryPackable]
-public partial record ChunkDataPersistence
+public partial record ChunkDataPersistence : IGameData
 {
     public TileIdentifier[] tiles;
 

@@ -1,6 +1,7 @@
+using System;
 using UnityEngine;
 
-public class Player : Entity, IDataPersistence
+public class Player : Entity, IDataPersistence<GameData>
 {
     [SerializeField]
     private float baseAttackDamage;
@@ -26,7 +27,7 @@ public class Player : Entity, IDataPersistence
 
     private void OnEnable()
     {
-        DataPersistenceManager.LoadTriggered += LoadData;
+        //DataPersistenceManager.LoadTriggered += LoadData;
         DataPersistenceManager.SaveTriggered += SaveData;
 
         PlayerInventory.HotbarSelectedIndexChanged += OnHotbarSelectedIndexChanged;
@@ -36,12 +37,17 @@ public class Player : Entity, IDataPersistence
 
     private void OnDisable()
     {
-        DataPersistenceManager.LoadTriggered -= LoadData;
+        //DataPersistenceManager.LoadTriggered -= LoadData;
         DataPersistenceManager.SaveTriggered -= SaveData;
 
         PlayerInventory.HotbarSelectedIndexChanged -= OnHotbarSelectedIndexChanged;
 
         InventoryUIManager.ArmorChanged -= OnArmorChanged;
+    }
+
+    private void Start()
+    {
+        DataPersistenceManager.Instance.LoadObject<GameData>(LoadData, "player");
     }
 
     protected override void Update()
@@ -115,13 +121,15 @@ public class Player : Entity, IDataPersistence
 
     public bool LoadData(GameData data)
     {
-        transform.position = data.playerPosition;
+        transform.position = data == null ? Vector2.zero : data.playerPosition;
 
         return true;
     }
 
-    public void SaveData(ref GameData data)
+    public void SaveData(Action<IGameData, string> saveCallback)
     {
-        data.playerPosition = transform.position;
+        //data.playerPosition = transform.position;
+
+        saveCallback(new GameData(transform.position), "player");
     }
 }

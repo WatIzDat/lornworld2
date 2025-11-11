@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [MemoryPackable]
-public partial class GameData
+public partial class GameData : IGameData
 {
     public Vector2 playerPosition;
-    public Dictionary<ChunkPos, ChunkDataPersistence> chunks;
+    //public Dictionary<ChunkPos, string> chunkFilePaths;
 
-    public GameData()
+    public GameData(Vector2 playerPosition)
     {
-        playerPosition = Vector2.zero;
-        chunks = new Dictionary<ChunkPos, ChunkDataPersistence>();
+        this.playerPosition = playerPosition;
+        //chunkFilePaths = new Dictionary<ChunkPos, string>();
     }
 }

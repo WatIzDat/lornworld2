@@ -6,19 +6,19 @@ using UnityEngine;
 public class BinaryFileDataHandler
 {
     private readonly string dataDirPath;
-    private readonly string dataFileName;
+    //private readonly string dataFileName;
 
-    public BinaryFileDataHandler(string dataDirPath, string dataFileName)
+    public BinaryFileDataHandler(string dataDirPath)
     {
         this.dataDirPath = dataDirPath;
-        this.dataFileName = dataFileName;
+        //this.dataFileName = dataFileName;
     }
 
-    public GameData Load()
+    public T Load<T>(string dataFileName) where T : IGameData
     {
         string fullPath = Path.Combine(dataDirPath, dataFileName);
 
-        GameData loadedData = null;
+        T loadedData = default;
 
         if (File.Exists(fullPath))
         {
@@ -26,7 +26,7 @@ public class BinaryFileDataHandler
             {
                 byte[] dataToLoad = File.ReadAllBytes(fullPath);
 
-                loadedData = MemoryPackSerializer.Deserialize<GameData>(dataToLoad);
+                loadedData = MemoryPackSerializer.Deserialize<T>(dataToLoad);
             }
             catch (Exception e)
             {
@@ -37,7 +37,7 @@ public class BinaryFileDataHandler
         return loadedData;
     }
 
-    public void Save(GameData data)
+    public void Save(IGameData data, string dataFileName)
     {
         string fullPath = Path.Combine(dataDirPath, dataFileName);
 

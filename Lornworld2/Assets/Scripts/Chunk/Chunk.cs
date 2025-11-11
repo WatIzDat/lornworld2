@@ -1,3 +1,4 @@
+using MemoryPack;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -7,7 +8,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class Chunk : MonoBehaviour, IDataPersistence
+public class Chunk : MonoBehaviour, IDataPersistence<ChunkDataPersistence>
 {
     [SerializeField]
     private GameObject featurePrefab;
@@ -36,6 +37,16 @@ public class Chunk : MonoBehaviour, IDataPersistence
 
     //    tiles.CollectionChanged += OnTilesChanged;
     //}
+
+    private void OnEnable()
+    {
+        DataPersistenceManager.SaveTriggered += SaveData;
+    }
+
+    private void OnDisable()
+    {
+        DataPersistenceManager.SaveTriggered -= SaveData;
+    }
 
     public static Chunk Create(ChunkPos chunkPos, GameObject chunkPrefab, Transform chunkParent, ChunkManager chunkManager)
     {
@@ -124,7 +135,7 @@ public class Chunk : MonoBehaviour, IDataPersistence
     {
         BoundsInt bounds = new(0, 0, 0, ChunkManager.ChunkSize, ChunkManager.ChunkSize, 1);
 
-        if (DataPersistenceManager.Instance.LoadObject(LoadData))
+        if (DataPersistenceManager.Instance.LoadObject<ChunkDataPersistence>(LoadData, chunkPos.pos.ToString()))
         {
             Debug.Log(tiles.Count);
             tilemap.SetWorldTilesBlock(bounds, tiles.ToArray());
@@ -172,17 +183,22 @@ public class Chunk : MonoBehaviour, IDataPersistence
         displayTilemapRenderer.sortingOrder = displayOrder;
     }
 
-    public bool LoadData(GameData data)
+    public bool LoadData(ChunkDataPersistence data)
     {
-        if (!data.chunks.ContainsKey(chunkPos))
+        //if (!data.chunkFilePaths.ContainsKey(chunkPos))
+        //{
+        //    return false;
+        //}
+
+        if (data == null)
         {
             return false;
         }
 
         tiles.Clear();
-        tiles.AddRange(data.chunks[chunkPos].tiles.Select(t => TileRegistry.Instance.GetEntry(t)));
+        tiles.AddRange(data.tiles.Select(t => TileRegistry.Instance.GetEntry(t)));
 
-        features.AddRange(data.chunks[chunkPos].features.Select(f =>
+        features.AddRange(data.features.Select(f =>
             Feature.Create(
                 this,
                 FeatureRegistry.Instance.GetEntry(f.feature),
@@ -191,9 +207,18 @@ public class Chunk : MonoBehaviour, IDataPersistence
         return true;
     }
 
-    public void SaveData(ref GameData data)
+    public void SaveData(Action<IGameData, string> saveCallback)
     {
-        data.chunks[chunkPos] = new ChunkDataPersistence(
+        //data.chunkFilePaths[chunkPos] = new ChunkDataPersistence(
+        //    tiles
+        //        .Select(t => TileRegistry.Instance.GetId(t))
+        //        .ToArray(),
+        //    features
+        //        .Where(f => f != null)
+        //        .Select(f => (FeatureRegistry.Instance.GetId(f.FeatureScriptableObject), (Vector2)f.transform.localPosition))
+        //        .ToArray());
+
+        ChunkDataPersistence chunkData = new(
             tiles
                 .Select(t => TileRegistry.Instance.GetId(t))
                 .ToArray(),
@@ -201,5 +226,7 @@ public class Chunk : MonoBehaviour, IDataPersistence
                 .Where(f => f != null)
                 .Select(f => (FeatureRegistry.Instance.GetId(f.FeatureScriptableObject), (Vector2)f.transform.localPosition))
                 .ToArray());
+
+        saveCallback(chunkData, chunkPos.pos.ToString());
     }
 }

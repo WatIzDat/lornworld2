@@ -1,6 +1,8 @@
+using MemoryPack;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
 public class DataPersistenceManager : MonoBehaviour
@@ -11,15 +13,16 @@ public class DataPersistenceManager : MonoBehaviour
     [SerializeField]
     private string fileName;
 
-    private GameData gameData;
+    private GameData gameData = new(Vector2.zero);
 
     //private List<IDataPersistence> dataPersistenceObjects;
 
     private BinaryFileDataHandler dataHandler;
 
-    public static event Func<GameData, bool> LoadTriggered;
+    //public delegate T LoadCallback<T>(string dataFileName) where T : IGameData;
+    //public static event Func<LoadCallback, bool> LoadTriggered;
 
-    public delegate void SaveAction(ref GameData data);
+    public delegate void SaveAction(Action<IGameData, string> saveCallback);
     public static event SaveAction SaveTriggered;
 
     private void Awake()
@@ -34,11 +37,13 @@ public class DataPersistenceManager : MonoBehaviour
         {
             Instance = this;
         }
+
+        dataHandler = new(Application.persistentDataPath);
     }
 
     private void Start()
     {
-        dataHandler = new BinaryFileDataHandler(Application.persistentDataPath, fileName);
+        //dataHandler = new BinaryFileDataHandler(Application.persistentDataPath);
         //dataPersistenceObjects = FindAllDataPersistenceObjects();
 
         LoadGame();
@@ -46,12 +51,12 @@ public class DataPersistenceManager : MonoBehaviour
 
     public void NewGame()
     {
-        gameData = new GameData();
+        gameData = new GameData(Vector2.zero);
     }
 
     public void LoadGame()
     {
-        gameData = dataHandler.Load();
+        gameData = dataHandler.Load<GameData>("data");
 
         if (gameData == null)
         {
@@ -65,7 +70,9 @@ public class DataPersistenceManager : MonoBehaviour
         //    dataPersistenceObj.LoadData(gameData);
         //}
 
-        LoadTriggered?.Invoke(gameData);
+        //T load<T>(string dataFileName) where T : IGameData => dataHandler.Load<T>(dataFileName);
+
+        //LoadTriggered?.Invoke(load);
 
         Debug.Log("loaded pos: " + gameData.playerPosition);
     }
@@ -77,11 +84,14 @@ public class DataPersistenceManager : MonoBehaviour
         //    dataPersistenceObj.SaveData(ref gameData);
         //}
 
-        SaveTriggered?.Invoke(ref gameData);
+        SaveTriggered?.Invoke((data, fileName) =>
+        {
+            dataHandler.Save(data, fileName);
+        });
 
         Debug.Log("saved pos: " + gameData.playerPosition);
 
-        dataHandler.Save(gameData);
+        //dataHandler.Save(gameData);
     }
 
     private void OnApplicationQuit()
@@ -89,21 +99,24 @@ public class DataPersistenceManager : MonoBehaviour
         SaveGame();
     }
 
-    public bool LoadObject(Func<GameData, bool> func)
+    public bool LoadObject<T>(Func<T, bool> func, string dataFileName) where T : IGameData
     {
-        return func(gameData);
+        return func(dataHandler.Load<T>(dataFileName));
     }
 
     public void SaveObject(SaveAction action)
     {
-        action(ref gameData);
+        action((data, fileName) =>
+        {
+            dataHandler.Save(data, fileName);
+        });
     }
 
-    private List<IDataPersistence> FindAllDataPersistenceObjects()
-    {
-        IEnumerable<IDataPersistence> dataPersistenceObjects = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
-            .OfType<IDataPersistence>();
+    //private List<IDataPersistence> FindAllDataPersistenceObjects()
+    //{
+    //    IEnumerable<IDataPersistence> dataPersistenceObjects = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+    //        .OfType<IDataPersistence>();
 
-        return new List<IDataPersistence>(dataPersistenceObjects);
-    }
+    //    return new List<IDataPersistence>(dataPersistenceObjects);
+    //}
 }
