@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -12,9 +13,14 @@ public class DataPersistenceManager : MonoBehaviour
 
     private GameData gameData;
 
-    private List<IDataPersistence> dataPersistenceObjects;
+    //private List<IDataPersistence> dataPersistenceObjects;
 
     private BinaryFileDataHandler dataHandler;
+
+    public static event Func<GameData, bool> LoadTriggered;
+
+    public delegate void SaveAction(ref GameData data);
+    public static event SaveAction SaveTriggered;
 
     private void Awake()
     {
@@ -33,7 +39,7 @@ public class DataPersistenceManager : MonoBehaviour
     private void Start()
     {
         dataHandler = new BinaryFileDataHandler(Application.persistentDataPath, fileName);
-        dataPersistenceObjects = FindAllDataPersistenceObjects();
+        //dataPersistenceObjects = FindAllDataPersistenceObjects();
 
         LoadGame();
     }
@@ -54,20 +60,24 @@ public class DataPersistenceManager : MonoBehaviour
             NewGame();
         }
 
-        foreach (IDataPersistence dataPersistenceObj in dataPersistenceObjects)
-        {
-            dataPersistenceObj.LoadData(gameData);
-        }
+        //foreach (IDataPersistence dataPersistenceObj in dataPersistenceObjects)
+        //{
+        //    dataPersistenceObj.LoadData(gameData);
+        //}
+
+        LoadTriggered?.Invoke(gameData);
 
         Debug.Log("loaded pos: " + gameData.playerPosition);
     }
 
     public void SaveGame()
     {
-        foreach (IDataPersistence dataPersistenceObj in dataPersistenceObjects)
-        {
-            dataPersistenceObj.SaveData(ref gameData);
-        }
+        //foreach (IDataPersistence dataPersistenceObj in dataPersistenceObjects)
+        //{
+        //    dataPersistenceObj.SaveData(ref gameData);
+        //}
+
+        SaveTriggered?.Invoke(ref gameData);
 
         Debug.Log("saved pos: " + gameData.playerPosition);
 
@@ -77,6 +87,16 @@ public class DataPersistenceManager : MonoBehaviour
     private void OnApplicationQuit()
     {
         SaveGame();
+    }
+
+    public bool LoadObject(Func<GameData, bool> func)
+    {
+        return func(gameData);
+    }
+
+    public void SaveObject(SaveAction action)
+    {
+        action(ref gameData);
     }
 
     private List<IDataPersistence> FindAllDataPersistenceObjects()

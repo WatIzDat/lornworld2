@@ -26,6 +26,9 @@ public class Player : Entity, IDataPersistence
 
     private void OnEnable()
     {
+        DataPersistenceManager.LoadTriggered += LoadData;
+        DataPersistenceManager.SaveTriggered += SaveData;
+
         PlayerInventory.HotbarSelectedIndexChanged += OnHotbarSelectedIndexChanged;
 
         InventoryUIManager.ArmorChanged += OnArmorChanged;
@@ -33,6 +36,9 @@ public class Player : Entity, IDataPersistence
 
     private void OnDisable()
     {
+        DataPersistenceManager.LoadTriggered -= LoadData;
+        DataPersistenceManager.SaveTriggered -= SaveData;
+
         PlayerInventory.HotbarSelectedIndexChanged -= OnHotbarSelectedIndexChanged;
 
         InventoryUIManager.ArmorChanged -= OnArmorChanged;
@@ -107,9 +113,11 @@ public class Player : Entity, IDataPersistence
         Debug.Log("death");
     }
 
-    public void LoadData(GameData data)
+    public bool LoadData(GameData data)
     {
         transform.position = data.playerPosition;
+
+        return true;
     }
 
     public void SaveData(ref GameData data)

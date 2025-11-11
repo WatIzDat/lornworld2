@@ -7,7 +7,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class Chunk : MonoBehaviour, IDataPersistenceRequester
+public class Chunk : MonoBehaviour, IDataPersistence
 {
     [SerializeField]
     private GameObject featurePrefab;
@@ -25,7 +25,8 @@ public class Chunk : MonoBehaviour, IDataPersistenceRequester
 
     public static event Action<ChunkPos, int, TileScriptableObject> ChunkChanged;
 
-    public event Action SaveRequested;
+    //public event Action SaveRequested;
+    //public event Func<bool> LoadRequested;
 
     private ChunkManager chunkManager;
 
@@ -66,7 +67,8 @@ public class Chunk : MonoBehaviour, IDataPersistenceRequester
 
         Chunk chunk = unusedChunk.GetComponent<Chunk>();
 
-        chunk.SaveRequested?.Invoke();
+        //chunk.SaveRequested?.Invoke();
+        DataPersistenceManager.Instance.SaveObject(chunk.SaveData);
 
         chunk.chunkPos = chunkPos;
 
@@ -120,6 +122,16 @@ public class Chunk : MonoBehaviour, IDataPersistenceRequester
 
     public TileScriptableObject[] PopulateWith(Func<ChunkPos, ChunkData> generate)
     {
+        BoundsInt bounds = new(0, 0, 0, ChunkManager.ChunkSize, ChunkManager.ChunkSize, 1);
+
+        if (DataPersistenceManager.Instance.LoadObject(LoadData))
+        {
+            Debug.Log(tiles.Count);
+            tilemap.SetWorldTilesBlock(bounds, tiles.ToArray());
+
+            return tiles.ToArray();
+        }
+
         ChunkData generatedChunk = generate(chunkPos);
 
         tiles.AddRange(generatedChunk.tiles);
@@ -133,7 +145,9 @@ public class Chunk : MonoBehaviour, IDataPersistenceRequester
                 feature.pos);
         }
 
-        BoundsInt bounds = new(0, 0, 0, ChunkManager.ChunkSize, ChunkManager.ChunkSize, 1);
+        //BoundsInt bounds = new(0, 0, 0, ChunkManager.ChunkSize, ChunkManager.ChunkSize, 1);
+
+        Debug.Log(generatedChunk.tiles.Count());
 
         tilemap.SetWorldTilesBlock(bounds, generatedChunk.tiles);
 
@@ -159,8 +173,24 @@ public class Chunk : MonoBehaviour, IDataPersistenceRequester
         displayTilemapRenderer.sortingOrder = displayOrder;
     }
 
-    public void LoadData(GameData data)
+    public bool LoadData(GameData data)
     {
+        if (!data.chunks.ContainsKey(chunkPos))
+        {
+            return false;
+        }
+
+        tiles.Clear();
+        tiles.AddRange(data.chunks[chunkPos].tiles.Select(t => TileRegistry.Instance.GetEntry(t)));
+
+        features.AddRange(data.chunks[chunkPos].features.Select(f =>
+            Feature.Create(
+                featurePrefab,
+                this,
+                FeatureRegistry.Instance.GetEntry(f.feature),
+                f.pos)));
+
+        return true;
     }
 
     public void SaveData(ref GameData data)
@@ -171,7 +201,7 @@ public class Chunk : MonoBehaviour, IDataPersistenceRequester
                 .ToArray(),
             features
                 .Where(f => f != null)
-                .Select(f => (FeatureRegistry.Instance.GetId(f.FeatureScriptableObject), (Vector2)f.transform.position))
+                .Select(f => (FeatureRegistry.Instance.GetId(f.FeatureScriptableObject), (Vector2)f.transform.localPosition))
                 .ToArray());
     }
 }

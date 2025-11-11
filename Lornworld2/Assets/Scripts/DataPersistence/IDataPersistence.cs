@@ -1,5 +1,5 @@
 public interface IDataPersistence
 {
-    void LoadData(GameData data);
+    bool LoadData(GameData data);
     void SaveData(ref GameData data);
 }
