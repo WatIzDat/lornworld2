@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3198291104567318863}
   - component: {fileID: 5337815252709301048}
   - component: {fileID: 5689603282861799343}
+  - component: {fileID: 518751686277653235}
   m_Layer: 0
   m_Name: Feature
   m_TagString: Untagged
@@ -150,3 +151,16 @@ MonoBehaviour:
   baseHealth: 10
   <MaxHealth>k__BackingField: 10
   droppedItemPrefab: {fileID: 5804108876306653333, guid: 9a7543d4a28f3c846bec4d736d973589, type: 3}
+--- !u!114 &518751686277653235
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5713798668993390691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55b60efd8c00c804d80a52fbc04d5aa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: 50
