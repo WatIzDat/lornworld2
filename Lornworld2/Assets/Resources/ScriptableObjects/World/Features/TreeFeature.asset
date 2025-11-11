@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8b63b2caa836714a8493425795e2934, type: 3}
   m_Name: TreeFeature
   m_EditorClassIdentifier: 
+  prefab: {fileID: 5713798668993390691, guid: d454ea6c8ee3a9f458c1907bb26024c8, type: 3}
   maxHealth: 10
   itemDrops:
   - item: {fileID: 11400000, guid: 97d8bc31be883db4bbc9dc6c9c0b61c6, type: 2}

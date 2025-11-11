@@ -139,7 +139,6 @@ public class Chunk : MonoBehaviour, IDataPersistence
         foreach ((FeatureScriptableObject feature, Vector2 pos) feature in generatedChunk.features)
         {
             Feature.Create(
-                featurePrefab,
                 this,
                 feature.feature,
                 feature.pos);
@@ -185,7 +184,6 @@ public class Chunk : MonoBehaviour, IDataPersistence
 
         features.AddRange(data.chunks[chunkPos].features.Select(f =>
             Feature.Create(
-                featurePrefab,
                 this,
                 FeatureRegistry.Instance.GetEntry(f.feature),
                 f.pos)));

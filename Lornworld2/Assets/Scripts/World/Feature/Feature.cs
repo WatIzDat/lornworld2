@@ -8,10 +8,10 @@ public class Feature : Entity
 
     public FeatureScriptableObject FeatureScriptableObject { get; private set; }
 
-    public static Feature Create(GameObject featurePrefab, Chunk chunk, FeatureScriptableObject featureScriptableObject, Vector2 position, bool worldPositionStays = false)
+    public static Feature Create(Chunk chunk, FeatureScriptableObject featureScriptableObject, Vector2 position, bool worldPositionStays = false)
     {
         Feature feature = Instantiate(
-            featurePrefab,
+            featureScriptableObject.prefab,
             position,
             Quaternion.identity).GetComponent<Feature>();
 
