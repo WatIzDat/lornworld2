@@ -98,6 +98,8 @@ public class DataPersistenceManager : MonoBehaviour
     private void OnApplicationQuit()
     {
         SaveGame();
+
+        dataHandler.Terminate();
     }
 
     public bool LoadObject<T>(Func<T, bool> func, string dataFileName) where T : IGameData

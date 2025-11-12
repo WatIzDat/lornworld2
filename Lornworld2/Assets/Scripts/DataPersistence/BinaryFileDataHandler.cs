@@ -1,6 +1,8 @@
 using MemoryPack;
 using System;
+using System.Collections.Concurrent;
 using System.IO;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class BinaryFileDataHandler
@@ -8,10 +10,15 @@ public class BinaryFileDataHandler
     private readonly string dataDirPath;
     //private readonly string dataFileName;
 
+    private readonly BlockingCollection<(string fullPath, byte[] bytes)> writeQueue = new();
+    private readonly Task writeTask;
+
     public BinaryFileDataHandler(string dataDirPath)
     {
         this.dataDirPath = dataDirPath;
         //this.dataFileName = dataFileName;
+
+        writeTask = Task.Factory.StartNew(ConsumeWriteQueue, TaskCreationOptions.LongRunning);
     }
 
     public T Load<T>(string dataFileName) where T : IGameData
@@ -58,7 +65,9 @@ public class BinaryFileDataHandler
 
             byte[] dataToStore = MemoryPackSerializer.Serialize(data);
 
-            File.WriteAllBytes(fullPath, dataToStore);
+            //File.WriteAllBytes(fullPath, dataToStore);
+
+            writeQueue.Add((fullPath, dataToStore));
 
             //using FileStream stream = new(fullPath, FileMode.Create);
             //using StreamWriter writer = new(stream);
@@ -68,6 +77,21 @@ public class BinaryFileDataHandler
         catch (Exception e)
         {
             Debug.LogError($"Error occurred when trying to save data to file: {fullPath}\n{e}");
+        }
+    }
+
+    public void Terminate()
+    {
+        writeQueue.CompleteAdding();
+
+        writeTask.Wait();
+    }
+
+    private void ConsumeWriteQueue()
+    {
+        foreach ((string fullPath, byte[] bytes) in writeQueue.GetConsumingEnumerable())
+        {
+            File.WriteAllBytes(fullPath, bytes);
         }
     }
 }
