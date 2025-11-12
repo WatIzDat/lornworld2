@@ -113,6 +113,31 @@ public class ChunkArray : MonoBehaviour
         return chunk;
     }
 
+    public void CenterChunksAround(ChunkPos centerPos, Func<ChunkPos, ChunkData> generate)
+    {
+        Chunk[] newChunks = new Chunk[chunks.Length];
+        List<int> pendingChunkUpdateIndices = new(SideLength);
+
+        for (int i = 0; i < chunks.Length; i++)
+        {
+            ChunkPos pos = new(new Vector2Int(
+                centerPos.pos.x - (SideLength / 2) + (i % SideLength),
+                centerPos.pos.y - (SideLength / 2) + (i / SideLength)));
+
+            Chunk chunk = PopulateNewChunk(pos, generate);
+
+            newChunks[i] = chunk;
+            pendingChunkUpdateIndices.Add(i);
+        }
+
+        chunks = newChunks;
+
+        foreach (int index in pendingChunkUpdateIndices)
+        {
+            newChunks[index].SetDisplayTiles();
+        }
+    }
+
     // TODO: make shifting right and shifting down iterate backwards to avoid instantiating chunks
     public void ShiftHorizontal(bool shiftLeft, Func<ChunkPos, ChunkData> generate)
     {

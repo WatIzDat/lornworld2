@@ -50,6 +50,13 @@ public class ChunkManager : MonoBehaviour
     {
         IWorldGenerator generator = new BasicWorldGenerator();
 
+        if (Vector2Int.Distance(player.ChunkPos.pos, loadedChunks.Center.chunkPos.pos) >= LoadedChunksSideLength)
+        {
+            loadedChunks.CenterChunksAround(player.ChunkPos, generator.Generate);
+
+            return;
+        }
+
         // moved off a chunk
         if (player.ChunkPos.pos.x - loadedChunks.Center.chunkPos.pos.x > 0)
         {
