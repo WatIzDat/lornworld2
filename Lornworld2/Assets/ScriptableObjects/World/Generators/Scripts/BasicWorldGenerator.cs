@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BasicWorldGenerator : IWorldGenerator
+[CreateAssetMenu(fileName = "BasicWorldGenerator", menuName = "Scriptable Objects/World/Generators/Basic")]
+public class BasicWorldGenerator : WorldGeneratorScriptableObject
 {
-    public ChunkData Generate(ChunkPos pos)
+    public override ChunkData Generate(ChunkPos pos)
     {
         TileScriptableObject[] tiles = new TileScriptableObject[ChunkManager.ChunkArea];
         

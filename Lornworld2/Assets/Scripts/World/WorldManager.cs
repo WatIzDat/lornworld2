@@ -2,15 +2,24 @@ using UnityEngine;
 
 public class WorldManager : MonoBehaviour
 {
-    [SerializeField]
+    //[SerializeField]
     private ChunkManager chunkManager;
 
     [SerializeField]
+    private WorldGeneratorScriptableObject worldGenerator;
+
+    //[SerializeField]
     private PathfindingGrid pathfindingGrid;
+
+    private void Awake()
+    {
+        chunkManager = FindFirstObjectByType<ChunkManager>();
+        pathfindingGrid = FindFirstObjectByType<PathfindingGrid>();
+    }
 
     private void Start()
     {
-        Generate(new BasicWorldGenerator());
+        Generate(worldGenerator);
     }
 
     public void Generate(IWorldGenerator generator)

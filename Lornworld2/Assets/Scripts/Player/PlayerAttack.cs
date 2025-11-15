@@ -28,6 +28,13 @@ public class PlayerAttack : MonoBehaviour
                 {
                     entity.TakeDamage(player.AttackDamage);
                 }
+
+                bool isSceneEntrance = raycastHit.transform.TryGetComponent(out SceneEntrance sceneEntrance);
+
+                if (isSceneEntrance)
+                {
+                    sceneEntrance.EnterScene();
+                }
             }
 
             attackNextUpdate = false;

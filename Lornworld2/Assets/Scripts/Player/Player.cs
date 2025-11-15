@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player : Entity, IDataPersistence<GameData>
 {
@@ -29,6 +30,8 @@ public class Player : Entity, IDataPersistence<GameData>
     {
         //DataPersistenceManager.LoadTriggered += LoadData;
         DataPersistenceManager.SaveTriggered += SaveData;
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
 
         PlayerInventory.HotbarSelectedIndexChanged += OnHotbarSelectedIndexChanged;
 
@@ -76,6 +79,11 @@ public class Player : Entity, IDataPersistence<GameData>
         {
             regenTimer = regenSpeed;
         }
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
+    {
+        transform.position = Vector2.zero;
     }
 
     private void OnArmorChanged(int index, InventoryItem[] items)

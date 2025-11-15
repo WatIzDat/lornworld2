@@ -24,6 +24,8 @@ public class ChunkManager : MonoBehaviour
 
     private ChunkArray loadedChunks;
 
+    private IWorldGenerator worldGenerator;
+
     public int LoadedChunksSideLength => loadedChunks.SideLength;
 
     public static event Action<Vector2Int> LoadedChunksShifted;
@@ -48,11 +50,9 @@ public class ChunkManager : MonoBehaviour
     // Don't have to check every frame (change later)
     private void Update()
     {
-        IWorldGenerator generator = new BasicWorldGenerator();
-
         if (Vector2Int.Distance(player.ChunkPos.pos, loadedChunks.Center.chunkPos.pos) >= LoadedChunksSideLength)
         {
-            loadedChunks.CenterChunksAround(player.ChunkPos, generator.Generate);
+            loadedChunks.CenterChunksAround(player.ChunkPos, worldGenerator.Generate);
 
             return;
         }
@@ -60,25 +60,25 @@ public class ChunkManager : MonoBehaviour
         // moved off a chunk
         if (player.ChunkPos.pos.x - loadedChunks.Center.chunkPos.pos.x > 0)
         {
-            loadedChunks.ShiftHorizontal(true, generator.Generate);
+            loadedChunks.ShiftHorizontal(true, worldGenerator.Generate);
 
             LoadedChunksShifted?.Invoke(Vector2Int.left);
         }
         else if (player.ChunkPos.pos.x - loadedChunks.Center.chunkPos.pos.x < 0)
         {
-            loadedChunks.ShiftHorizontal(false, generator.Generate);
+            loadedChunks.ShiftHorizontal(false, worldGenerator.Generate);
 
             LoadedChunksShifted?.Invoke(Vector2Int.right);
         }
         else if (player.ChunkPos.pos.y - loadedChunks.Center.chunkPos.pos.y > 0)
         {
-            loadedChunks.ShiftVertical(true, generator.Generate);
+            loadedChunks.ShiftVertical(true, worldGenerator.Generate);
 
             LoadedChunksShifted?.Invoke(Vector2Int.down);
         }
         else if (player.ChunkPos.pos.y - loadedChunks.Center.chunkPos.pos.y < 0)
         {
-            loadedChunks.ShiftVertical(false, generator.Generate);
+            loadedChunks.ShiftVertical(false, worldGenerator.Generate);
 
             LoadedChunksShifted?.Invoke(Vector2Int.up);
         }
@@ -129,6 +129,8 @@ public class ChunkManager : MonoBehaviour
 
     public TileScriptableObject[][] Generate(IWorldGenerator generator)
     {
+        worldGenerator = generator;
+
         return loadedChunks.PopulateChunksWith(generator.Generate);
     }
 }
