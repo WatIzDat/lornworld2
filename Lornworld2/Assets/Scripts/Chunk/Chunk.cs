@@ -131,45 +131,55 @@ public class Chunk : MonoBehaviour, IDataPersistence<ChunkDataPersistence>
         //}
     }
 
-    public TileScriptableObject[] PopulateWith(Func<ChunkPos, ChunkData> generate)
+    public void PopulateWith(Func<ChunkPos, ChunkData> generate, Action callback)
     {
         BoundsInt bounds = new(0, 0, 0, ChunkManager.ChunkSize, ChunkManager.ChunkSize, 1);
 
-        if (DataPersistenceManager.Instance.LoadObject<ChunkDataPersistence>(LoadData, chunkPos.pos.ToString()))
-        {
-            Debug.Log(tiles.Count);
-            tilemap.SetWorldTilesBlock(bounds, tiles.ToArray());
+        DataPersistenceManager.Instance.LoadObject<ChunkDataPersistence>(
+            data =>
+            {
+                LoadData(data);
 
-            return tiles.ToArray();
-        }
+                Debug.Log(tiles.Count);
+                tilemap.SetWorldTilesBlock(bounds, tiles.ToArray());
 
-        ChunkData generatedChunk = generate(chunkPos);
+                callback();
 
-        tiles.AddRange(generatedChunk.tiles);
+                //return tiles.ToArray();
+            },
+            () =>
+            {
+                ChunkData generatedChunk = generate(chunkPos);
 
-        foreach ((FeatureScriptableObject feature, Vector2 pos) feature in generatedChunk.features)
-        {
-            Feature.Create(
-                this,
-                feature.feature,
-                feature.pos);
-        }
+                tiles.AddRange(generatedChunk.tiles);
 
-        //BoundsInt bounds = new(0, 0, 0, ChunkManager.ChunkSize, ChunkManager.ChunkSize, 1);
+                foreach ((FeatureScriptableObject feature, Vector2 pos) feature in generatedChunk.features)
+                {
+                    Feature.Create(
+                        this,
+                        feature.feature,
+                        feature.pos);
+                }
 
-        Debug.Log(generatedChunk.tiles.Count());
+                //BoundsInt bounds = new(0, 0, 0, ChunkManager.ChunkSize, ChunkManager.ChunkSize, 1);
 
-        tilemap.SetWorldTilesBlock(bounds, generatedChunk.tiles);
+                Debug.Log(generatedChunk.tiles.Count());
 
-        return generatedChunk.tiles;
+                tilemap.SetWorldTilesBlock(bounds, generatedChunk.tiles);
+
+                callback();
+
+                //return generatedChunk.tiles;
+            },
+            chunkPos.pos.ToString());
     }
 
-    public void PopulateAndSetDisplayTilesWith(Func<ChunkPos, ChunkData> generate)
-    {
-        PopulateWith(generate);
+    //public void PopulateAndSetDisplayTilesWith(Func<ChunkPos, ChunkData> generate)
+    //{
+    //    PopulateWith(generate);
 
-        SetDisplayTiles();
-    }
+    //    SetDisplayTiles();
+    //}
 
     public void SetDisplayTiles()
     {
@@ -190,10 +200,10 @@ public class Chunk : MonoBehaviour, IDataPersistence<ChunkDataPersistence>
         //    return false;
         //}
 
-        if (data == null)
-        {
-            return false;
-        }
+        //if (data == null)
+        //{
+        //    return false;
+        //}
 
         tiles.Clear();
         tiles.AddRange(data.tiles.Select(t => TileRegistry.Instance.GetEntry(t)));

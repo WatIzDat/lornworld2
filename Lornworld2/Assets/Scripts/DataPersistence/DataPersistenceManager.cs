@@ -20,6 +20,8 @@ public class DataPersistenceManager : MonoBehaviour
 
     private BinaryFileDataHandler dataHandler;
 
+    private readonly Queue<(Action<byte[]> action, byte[] data)> readCallbacks = new();
+
     //public delegate T LoadCallback<T>(string dataFileName) where T : IGameData;
     //public static event Func<LoadCallback, bool> LoadTriggered;
 
@@ -39,15 +41,25 @@ public class DataPersistenceManager : MonoBehaviour
             Instance = this;
         }
 
-        dataHandler = new(Path.Combine(Application.persistentDataPath, "data"));
+        dataHandler = new(Path.Combine(Application.persistentDataPath, "data"), readCallbacks);
     }
 
-    private void Start()
-    {
-        //dataHandler = new BinaryFileDataHandler(Application.persistentDataPath);
-        //dataPersistenceObjects = FindAllDataPersistenceObjects();
+    //private void Start()
+    //{
+    //dataHandler = new BinaryFileDataHandler(Application.persistentDataPath);
+    //dataPersistenceObjects = FindAllDataPersistenceObjects();
 
-        //LoadGame();
+    //LoadGame();
+    //}
+
+    private void Update()
+    {
+        while (readCallbacks.Count > 0)
+        {
+            (Action<byte[]> action, byte[] data) = readCallbacks.Dequeue();
+
+            action(data);
+        }
     }
 
     public void NewGame()
@@ -55,16 +67,16 @@ public class DataPersistenceManager : MonoBehaviour
         gameData = new GameData(Vector2.zero);
     }
 
-    public void LoadGame()
-    {
-        gameData = dataHandler.Load<GameData>("data");
+    //public void LoadGame()
+    //{
+        //gameData = dataHandler.Load<GameData>("data");
 
-        if (gameData == null)
-        {
-            Debug.Log("new game");
+        //if (gameData == null)
+        //{
+        //    Debug.Log("new game");
 
-            NewGame();
-        }
+        //    NewGame();
+        //}
 
         //foreach (IDataPersistence dataPersistenceObj in dataPersistenceObjects)
         //{
@@ -75,8 +87,8 @@ public class DataPersistenceManager : MonoBehaviour
 
         //LoadTriggered?.Invoke(load);
 
-        Debug.Log("loaded pos: " + gameData.playerPosition);
-    }
+    //    Debug.Log("loaded pos: " + gameData.playerPosition);
+    //}
 
     public void SaveGame()
     {
@@ -102,9 +114,10 @@ public class DataPersistenceManager : MonoBehaviour
         dataHandler.Terminate();
     }
 
-    public bool LoadObject<T>(Func<T, bool> func, string dataFileName) where T : IGameData
+    public void LoadObject<T>(Action<T> successCallback, Action failCallback, string dataFileName) where T : IGameData
     {
-        return func(dataHandler.Load<T>(dataFileName));
+        //return func(dataHandler.Load<T>(dataFileName));
+        dataHandler.Load(dataFileName, successCallback, failCallback);
     }
 
     public void SaveObject(SaveAction action)

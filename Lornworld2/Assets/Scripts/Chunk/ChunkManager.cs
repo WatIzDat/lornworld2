@@ -49,40 +49,89 @@ public class ChunkManager : MonoBehaviour
         //loadedChunks.ChunkUnloaded -= OnChunkUnloaded;
     }
 
+    private bool isShiftingChunks;
+
     // Don't have to check every frame (change later)
     private void Update()
     {
-        if (Vector2Int.Distance(player.ChunkPos.pos, loadedChunks.Center.chunkPos.pos) >= LoadedChunksSideLength)
+        if (isShiftingChunks)
         {
-            loadedChunks.CenterChunksAround(player.ChunkPos, worldGenerator.Generate);
-
             return;
         }
+
+        //if (Vector2Int.Distance(player.ChunkPos.pos, loadedChunks.Center.chunkPos.pos) >= LoadedChunksSideLength)
+        //{
+        //    isShiftingChunks = true;
+
+        //    StartCoroutine(loadedChunks.CenterChunksAround(player.ChunkPos, worldGenerator.Generate));
+
+        //    return;
+        //}
 
         // moved off a chunk
         if (player.ChunkPos.pos.x - loadedChunks.Center.chunkPos.pos.x > 0)
         {
-            loadedChunks.ShiftHorizontal(true, worldGenerator.Generate);
-
-            LoadedChunksShifted?.Invoke(Vector2Int.left);
+            isShiftingChunks = true;
+            Debug.Log("moved off chunk");
+            
+            StartCoroutine(
+                loadedChunks.ShiftHorizontal(
+                    true,
+                    worldGenerator.Generate,
+                    () =>
+                    {
+                        Debug.Log("callback");
+                        isShiftingChunks = false;
+                        LoadedChunksShifted?.Invoke(Vector2Int.left);
+                    }));
         }
         else if (player.ChunkPos.pos.x - loadedChunks.Center.chunkPos.pos.x < 0)
         {
-            loadedChunks.ShiftHorizontal(false, worldGenerator.Generate);
+            isShiftingChunks = true;
+            Debug.Log("moved off chunk");
 
-            LoadedChunksShifted?.Invoke(Vector2Int.right);
+            StartCoroutine(
+                loadedChunks.ShiftHorizontal(
+                    false,
+                    worldGenerator.Generate,
+                    () =>
+                    {
+                        Debug.Log("callback");
+                        isShiftingChunks = false;
+                        LoadedChunksShifted?.Invoke(Vector2Int.right);
+                    }));
         }
         else if (player.ChunkPos.pos.y - loadedChunks.Center.chunkPos.pos.y > 0)
         {
-            loadedChunks.ShiftVertical(true, worldGenerator.Generate);
+            isShiftingChunks = true;
+            Debug.Log("moved off chunk");
 
-            LoadedChunksShifted?.Invoke(Vector2Int.down);
+            StartCoroutine(
+                loadedChunks.ShiftVertical(
+                    true,
+                    worldGenerator.Generate,
+                    () =>
+                    {
+                        Debug.Log("callback");
+                        isShiftingChunks = false;
+                        LoadedChunksShifted?.Invoke(Vector2Int.down);
+                    }));
         }
         else if (player.ChunkPos.pos.y - loadedChunks.Center.chunkPos.pos.y < 0)
         {
-            loadedChunks.ShiftVertical(false, worldGenerator.Generate);
+            isShiftingChunks = true;
+            Debug.Log("moved off chunk");
 
-            LoadedChunksShifted?.Invoke(Vector2Int.up);
+            StartCoroutine(
+                loadedChunks.ShiftVertical(
+                    false,
+                    worldGenerator.Generate,
+                    () =>
+                    {
+                        Debug.Log("callback");
+                        isShiftingChunks = false;
+                        LoadedChunksShifted?.Invoke(Vector2Int.up);
+                    }));
         }
     }
 
@@ -129,10 +178,10 @@ public class ChunkManager : MonoBehaviour
         return loadedChunks.FindChunkAt(chunkPos);
     }
 
-    public TileScriptableObject[][] Generate(IWorldGenerator generator)
+    public void Generate(IWorldGenerator generator)
     {
         worldGenerator = generator;
 
-        return loadedChunks.PopulateChunksWith(generator.Generate);
+        StartCoroutine(loadedChunks.PopulateChunksWith(generator.Generate));
     }
 }

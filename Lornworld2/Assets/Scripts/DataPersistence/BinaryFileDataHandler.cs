@@ -1,6 +1,7 @@
 using MemoryPack;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -8,51 +9,58 @@ using UnityEngine;
 public class BinaryFileDataHandler
 {
     private readonly string dataDirPath;
-    //private readonly string dataFileName;
+    private readonly Queue<(Action<byte[]>, byte[])> readCallbacks;
 
-    private readonly BlockingCollection<(string fullPath, byte[] bytes)> writeQueue = new();
-    private readonly Task writeTask;
+    private readonly BlockingCollection<(string fullPath, byte[] bytes, Action<byte[]> readCallback)> fileOperationsQueue = new();
+    private readonly Task fileOperationsTask;
 
-    public BinaryFileDataHandler(string dataDirPath)
+    public BinaryFileDataHandler(string dataDirPath, Queue<(Action<byte[]>, byte[])> readCallbacks)
     {
         this.dataDirPath = dataDirPath;
-        //this.dataFileName = dataFileName;
+        this.readCallbacks = readCallbacks;
 
-        writeTask = Task.Factory.StartNew(ConsumeWriteQueue, TaskCreationOptions.LongRunning);
+        fileOperationsTask = Task.Factory.StartNew(ConsumeFileOperationsQueue, TaskCreationOptions.LongRunning);
     }
 
-    public T Load<T>(string dataFileName) where T : IGameData
+    public void Load<T>(string dataFileName, Action<T> successCallback, Action failCallback) where T : IGameData
     {
         string fullPath = Path.Combine(dataDirPath, dataFileName);
 
-        T loadedData = default;
+        //T loadedData = default;
 
         if (File.Exists(fullPath))
         {
             try
             {
-                byte[] dataToLoad = File.ReadAllBytes(fullPath);
-
-                Debug.Log(dataFileName + dataToLoad.Length);
-
-                //loadedData = MemoryPackSerializer.Deserialize<T>(dataToLoad);
-
-                if (MemoryPackSerializer.Deserialize<IGameData>(dataToLoad) is T convertedData)
+                fileOperationsQueue.Add((fullPath, null, dataToLoad =>
                 {
-                    loadedData = convertedData;
+                    if (MemoryPackSerializer.Deserialize<IGameData>(dataToLoad) is T convertedData)
+                    {
+                        //loadedData = convertedData;
+                        successCallback(convertedData);
+                    }
+                    else
+                    {
+                        Debug.LogError($"Data from file {fullPath} could not be converted to target type.");
+                    }
                 }
-                else
-                {
-                    Debug.LogError($"Data from file {fullPath} could not be converted to target type.");
-                }
+                ));
+
+                //fileOperationsTask.Wait();
             }
             catch (Exception e)
             {
                 Debug.LogError($"Error occurred when trying to load data from file: {fullPath}\n{e}");
             }
         }
+        else
+        {
+            failCallback();
+        }
 
-        return loadedData;
+        Debug.Log("hello");
+
+        //return loadedData;
     }
 
     public void Save(IGameData data, string dataFileName)
@@ -65,14 +73,7 @@ public class BinaryFileDataHandler
 
             byte[] dataToStore = MemoryPackSerializer.Serialize(data);
 
-            //File.WriteAllBytes(fullPath, dataToStore);
-
-            writeQueue.Add((fullPath, dataToStore));
-
-            //using FileStream stream = new(fullPath, FileMode.Create);
-            //using StreamWriter writer = new(stream);
-
-            //writer.Write(dataToStore);
+            fileOperationsQueue.Add((fullPath, dataToStore, null));
         }
         catch (Exception e)
         {
@@ -82,16 +83,24 @@ public class BinaryFileDataHandler
 
     public void Terminate()
     {
-        writeQueue.CompleteAdding();
+        fileOperationsQueue.CompleteAdding();
 
-        writeTask.Wait();
+        fileOperationsTask.Wait();
     }
 
-    private void ConsumeWriteQueue()
+    private void ConsumeFileOperationsQueue()
     {
-        foreach ((string fullPath, byte[] bytes) in writeQueue.GetConsumingEnumerable())
+        foreach ((string fullPath, byte[] bytes, Action<byte[]> readCallback) in fileOperationsQueue.GetConsumingEnumerable())
         {
-            File.WriteAllBytes(fullPath, bytes);
+            if (readCallback != null)
+            {
+                //readCallback(File.ReadAllBytes(fullPath));
+                readCallbacks.Enqueue((readCallback, File.ReadAllBytes(fullPath)));
+            }
+            else
+            {
+                File.WriteAllBytes(fullPath, bytes);
+            }
         }
     }
 }

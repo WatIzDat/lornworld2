@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -100,22 +101,25 @@ public class ChunkArray : MonoBehaviour
         return Chunk.Pool(pos, unloadedChunk);
     }
 
-    private Chunk PopulateNewChunk(ChunkPos pos, Func<ChunkPos, ChunkData> generate)
+    private void PopulateNewChunk(ChunkPos pos, Func<ChunkPos, ChunkData> generate, int index, Action<Chunk, int> callback)
     {
         Chunk chunk = PoolOrCreate(pos);
-        chunk.PopulateWith(generate);
 
-        // hacky solution to avoid recalculating chunk boundaries twice by drawing new chunk boundaries on top of old one
-        // however, TODO: decrease ALL display orders when it hits the max of short max value
         maxDisplayOrder++;
         chunk.SetDisplayOrder(maxDisplayOrder);
 
-        return chunk;
+        chunk.PopulateWith(generate, () => callback(chunk, index));
+
+        // hacky solution to avoid recalculating chunk boundaries twice by drawing new chunk boundaries on top of old one
+        // however, TODO: decrease ALL display orders when it hits the max of short max value
+
+        //return chunk;
     }
 
-    public void CenterChunksAround(ChunkPos centerPos, Func<ChunkPos, ChunkData> generate)
+    public IEnumerator CenterChunksAround(ChunkPos centerPos, Func<ChunkPos, ChunkData> generate)
     {
         Chunk[] newChunks = new Chunk[chunks.Length];
+        int chunksPopulated = 0;
         List<int> pendingChunkUpdateIndices = new(SideLength);
 
         for (int i = 0; i < chunks.Length; i++)
@@ -124,28 +128,47 @@ public class ChunkArray : MonoBehaviour
                 centerPos.pos.x - (SideLength / 2) + (i % SideLength),
                 centerPos.pos.y - (SideLength / 2) + (i / SideLength)));
 
-            Chunk chunk = PopulateNewChunk(pos, generate);
-
-            newChunks[i] = chunk;
-            pendingChunkUpdateIndices.Add(i);
+            PopulateNewChunk(pos, generate, i, (chunk, i) =>
+            {
+                newChunks[i] = chunk;
+                chunksPopulated++;
+                pendingChunkUpdateIndices.Add(i);
+            });
         }
 
-        chunks = newChunks;
-
-        foreach (int index in pendingChunkUpdateIndices)
+        if (chunksPopulated == chunks.Length)
         {
-            newChunks[index].SetDisplayTiles();
+            chunks = newChunks;
+
+            foreach (int index in pendingChunkUpdateIndices)
+            {
+                newChunks[index].SetDisplayTiles();
+            }
+
+            yield break;
         }
+
+        yield return null;
     }
 
     // TODO: make shifting right and shifting down iterate backwards to avoid instantiating chunks
-    public void ShiftHorizontal(bool shiftLeft, Func<ChunkPos, ChunkData> generate)
+    public IEnumerator ShiftHorizontal(bool shiftLeft, Func<ChunkPos, ChunkData> generate, Action callback)
     {
         Chunk[] newChunks = new Chunk[chunks.Length];
+        int chunksPopulated = 0;
         List<int> pendingChunkUpdateIndices = new(SideLength);
 
         for (int i = 0; i < chunks.Length; i++)
         {
+            //Debug.Log(i);
+            void populateCallback(Chunk chunk, int i)
+            {
+                //Debug.Log(i);
+                newChunks[i] = chunk;
+                chunksPopulated++;
+                pendingChunkUpdateIndices.Add(i);
+            }
+
             if (shiftLeft)
             {
                 if (i % SideLength == 0)
@@ -157,14 +180,16 @@ public class ChunkArray : MonoBehaviour
                 {
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.right);
 
-                    Chunk chunk = PopulateNewChunk(pos, generate);
+                    PopulateNewChunk(pos, generate, i, populateCallback);
 
-                    newChunks[i] = chunk;
-                    pendingChunkUpdateIndices.Add(i);
+                    //newChunks[i] = chunk;
+                    //pendingChunkUpdateIndices.Add(i);
                 }
                 else
                 {
                     newChunks[i] = chunks[i + 1];
+
+                    chunksPopulated++;
                 }
             }
             else
@@ -178,16 +203,23 @@ public class ChunkArray : MonoBehaviour
                 {
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.left);
 
-                    Chunk chunk = PopulateNewChunk(pos, generate);
+                    PopulateNewChunk(pos, generate, i, populateCallback);
 
-                    newChunks[i] = chunk;
-                    pendingChunkUpdateIndices.Add(i);
+                    //newChunks[i] = chunk;
+                    //pendingChunkUpdateIndices.Add(i);
                 }
                 else
                 {
                     newChunks[i] = chunks[i - 1];
+
+                    chunksPopulated++;
                 }
             }
+        }
+
+        while (chunksPopulated != chunks.Length)
+        {
+            yield return null;
         }
 
         chunks = newChunks;
@@ -196,15 +228,25 @@ public class ChunkArray : MonoBehaviour
         {
             newChunks[index].SetDisplayTiles();
         }
+
+        callback();
     }
 
-    public void ShiftVertical(bool shiftDown, Func<ChunkPos, ChunkData> generate)
+    public IEnumerator ShiftVertical(bool shiftDown, Func<ChunkPos, ChunkData> generate, Action callback)
     {
         Chunk[] newChunks = new Chunk[chunks.Length];
+        int chunksPopulated = 0;
         List<int> pendingChunkUpdateIndices = new(SideLength);
 
         for (int i = 0; i < chunks.Length; i++)
         {
+            void populateCallback(Chunk chunk, int i)
+            {
+                newChunks[i] = chunk;
+                chunksPopulated++;
+                pendingChunkUpdateIndices.Add(i);
+            }
+
             if (shiftDown)
             {
                 if (i / SideLength == 0)
@@ -214,16 +256,19 @@ public class ChunkArray : MonoBehaviour
 
                 if (i / SideLength == SideLength - 1)
                 {
+                    Debug.Log(chunks[i]);
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.up);
 
-                    Chunk chunk = PopulateNewChunk(pos, generate);
+                    PopulateNewChunk(pos, generate, i, populateCallback);
 
-                    newChunks[i] = chunk;
-                    pendingChunkUpdateIndices.Add(i);
+                    //newChunks[i] = chunk;
+                    //pendingChunkUpdateIndices.Add(i);
                 }
                 else
                 {
                     newChunks[i] = chunks[i + SideLength];
+
+                    chunksPopulated++;
                 }
             }
             else
@@ -237,16 +282,23 @@ public class ChunkArray : MonoBehaviour
                 {
                     ChunkPos pos = new(chunks[i].chunkPos.pos + Vector2Int.down);
 
-                    Chunk chunk = PopulateNewChunk(pos, generate);
+                    PopulateNewChunk(pos, generate, i, populateCallback);
 
-                    newChunks[i] = chunk;
-                    pendingChunkUpdateIndices.Add(i);
+                    //newChunks[i] = chunk;
+                    //pendingChunkUpdateIndices.Add(i);
                 }
                 else
                 {
                     newChunks[i] = chunks[i - SideLength];
+
+                    chunksPopulated++;
                 }
             }
+        }
+
+        while (chunksPopulated != chunks.Length)
+        {
+            yield return null;
         }
 
         chunks = newChunks;
@@ -255,17 +307,34 @@ public class ChunkArray : MonoBehaviour
         {
             newChunks[index].SetDisplayTiles();
         }
+
+        callback();
     }
 
-    public TileScriptableObject[][] PopulateChunksWith(Func<ChunkPos, ChunkData> generate)
+    //private int chunksPopulated;
+
+    //private void IncrementChunksPopulated()
+    //{
+    //    chunksPopulated++;
+    //}
+
+    public IEnumerator PopulateChunksWith(Func<ChunkPos, ChunkData> generate)
     {
-        TileScriptableObject[][] tilesInChunks = new TileScriptableObject[chunks.Length][];
+        //TileScriptableObject[][] tilesInChunks = new TileScriptableObject[chunks.Length][];
+
+        int chunksPopulated = 0;
 
         for (int i = 0; i < chunks.Length; i++)
         {
-            TileScriptableObject[] tiles = chunks[i].PopulateWith(generate);
+            //TileScriptableObject[] tiles = 
+            chunks[i].PopulateWith(generate, () => chunksPopulated++);
 
-            tilesInChunks[i] = tiles;
+            //tilesInChunks[i] = tiles;
+        }
+
+        while (chunksPopulated != chunks.Length)
+        {
+            yield return null;
         }
 
         foreach (Chunk chunk in chunks)
@@ -273,6 +342,19 @@ public class ChunkArray : MonoBehaviour
             chunk.SetDisplayTiles();
         }
 
-        return tilesInChunks;
+        //return tilesInChunks;
     }
+
+    //private void Update()
+    //{
+    //    if (chunksPopulated == chunks.Length)
+    //    {
+    //        foreach (Chunk chunk in chunks)
+    //        {
+    //            chunk.SetDisplayTiles();
+    //        }
+
+    //        chunksPopulated = 0;
+    //    }
+    //}
 }

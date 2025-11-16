@@ -50,7 +50,7 @@ public class Player : Entity, IDataPersistence<GameData>
 
     private void Start()
     {
-        DataPersistenceManager.Instance.LoadObject<GameData>(LoadData, "player");
+        DataPersistenceManager.Instance.LoadObject<GameData>(data => LoadData(data), () => transform.position = Vector2.zero, "player");
     }
 
     protected override void Update()
@@ -129,7 +129,7 @@ public class Player : Entity, IDataPersistence<GameData>
 
     public bool LoadData(GameData data)
     {
-        transform.position = data == null ? Vector2.zero : data.playerPosition;
+        transform.position = data.playerPosition;
 
         return true;
     }
