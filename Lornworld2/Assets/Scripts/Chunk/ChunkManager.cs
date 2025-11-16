@@ -59,14 +59,22 @@ public class ChunkManager : MonoBehaviour
             return;
         }
 
-        //if (Vector2Int.Distance(player.ChunkPos.pos, loadedChunks.Center.chunkPos.pos) >= LoadedChunksSideLength)
-        //{
-        //    isShiftingChunks = true;
+        if (Vector2Int.Distance(player.ChunkPos.pos, loadedChunks.Center.chunkPos.pos) >= LoadedChunksSideLength)
+        {
+            isShiftingChunks = true;
 
-        //    StartCoroutine(loadedChunks.CenterChunksAround(player.ChunkPos, worldGenerator.Generate));
+            StartCoroutine(
+                loadedChunks.CenterChunksAround(
+                    player.ChunkPos,
+                    worldGenerator.Generate,
+                    () =>
+                    {
+                        Debug.Log("callback");
+                        isShiftingChunks = false;
+                    }));
 
-        //    return;
-        //}
+            return;
+        }
 
         // moved off a chunk
         if (player.ChunkPos.pos.x - loadedChunks.Center.chunkPos.pos.x > 0)

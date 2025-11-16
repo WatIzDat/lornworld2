@@ -116,7 +116,7 @@ public class ChunkArray : MonoBehaviour
         //return chunk;
     }
 
-    public IEnumerator CenterChunksAround(ChunkPos centerPos, Func<ChunkPos, ChunkData> generate)
+    public IEnumerator CenterChunksAround(ChunkPos centerPos, Func<ChunkPos, ChunkData> generate, Action callback)
     {
         Chunk[] newChunks = new Chunk[chunks.Length];
         int chunksPopulated = 0;
@@ -124,6 +124,8 @@ public class ChunkArray : MonoBehaviour
 
         for (int i = 0; i < chunks.Length; i++)
         {
+            ChunkUnloaded?.Invoke(i);
+
             ChunkPos pos = new(new Vector2Int(
                 centerPos.pos.x - (SideLength / 2) + (i % SideLength),
                 centerPos.pos.y - (SideLength / 2) + (i / SideLength)));
@@ -136,19 +138,19 @@ public class ChunkArray : MonoBehaviour
             });
         }
 
-        if (chunksPopulated == chunks.Length)
+        while (chunksPopulated != chunks.Length)
         {
-            chunks = newChunks;
-
-            foreach (int index in pendingChunkUpdateIndices)
-            {
-                newChunks[index].SetDisplayTiles();
-            }
-
-            yield break;
+            yield return null;
         }
 
-        yield return null;
+        chunks = newChunks;
+
+        foreach (int index in pendingChunkUpdateIndices)
+        {
+            newChunks[index].SetDisplayTiles();
+        }
+
+        callback();
     }
 
     // TODO: make shifting right and shifting down iterate backwards to avoid instantiating chunks
