@@ -7,7 +7,7 @@ public class PathfindingGrid : MonoBehaviour
     //private Vector2 gridCenter;
     private PathfindingNode[,] grid;
 
-    [SerializeField]
+    //[SerializeField]
     private ChunkManager chunkManager;
 
     //[SerializeField]
@@ -22,6 +22,8 @@ public class PathfindingGrid : MonoBehaviour
 
     private void Awake()
     {
+        chunkManager = FindFirstObjectByType<ChunkManager>();
+        
         transform.position = Vector2.one * (ChunkManager.ChunkSize / 2);
 
         // TODO: separate render distance from simulation distance

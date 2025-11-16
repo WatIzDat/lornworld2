@@ -1,23 +1,27 @@
-//public class DebugWorldGenerator : IWorldGenerator
-//{
-//    public TileScriptableObject[] Generate(ChunkPos pos)
-//    {
-//        TileScriptableObject[] tiles = new TileScriptableObject[ChunkManager.ChunkArea];
+using System;
+using UnityEngine;
 
-//        TileScriptableObject tile = TileRegistry.Instance.GetEntry(TileIds.WaterTile);
+[CreateAssetMenu(fileName = "DebugWorldGenerator", menuName = "Scriptable Objects/World/Generators/Debug")]
+public class DebugWorldGenerator : WorldGeneratorScriptableObject
+{
+    public override ChunkData Generate(ChunkPos pos)
+    {
+        TileScriptableObject[] tiles = new TileScriptableObject[ChunkManager.ChunkArea];
 
-//        // checkerboard pattern, if both coordinates are even or both coordinates are odd set to grass
-//        if ((pos.pos.x % 2 == 0 && pos.pos.y % 2 == 0) ||
-//            (pos.pos.x % 2 != 0 && pos.pos.y % 2 != 0))
-//        {
-//            tile = TileRegistry.Instance.GetEntry(TileIds.GrassTile);
-//        }
+        TileScriptableObject tile = TileRegistry.Instance.GetEntry(TileIds.WaterTile);
 
-//        for (int i = 0; i < tiles.Length; i++)
-//        {
-//            tiles[i] = tile;
-//        }
+        // checkerboard pattern, if both coordinates are even or both coordinates are odd set to grass
+        if ((pos.pos.x % 2 == 0 && pos.pos.y % 2 == 0) ||
+            (pos.pos.x % 2 != 0 && pos.pos.y % 2 != 0))
+        {
+            tile = TileRegistry.Instance.GetEntry(TileIds.GrassTile);
+        }
 
-//        return tiles;
-//    }
-//}
+        for (int i = 0; i < tiles.Length; i++)
+        {
+            tiles[i] = tile;
+        }
+
+        return new ChunkData(tiles, Array.Empty<(FeatureScriptableObject feature, Vector2 pos)>());
+    }
+}

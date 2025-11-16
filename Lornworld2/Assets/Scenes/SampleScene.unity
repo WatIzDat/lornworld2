@@ -363,7 +363,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 514829019}
-  - {fileID: 704853193}
   - {fileID: 2082054970}
   - {fileID: 1783659000}
   - {fileID: 1878168014}
@@ -874,7 +873,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 414364310}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &740460308
 GameObject:
@@ -966,7 +965,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   worldGenerator: {fileID: 11400000, guid: 82653d4db0404454f87bf83f0d3a9fb8, type: 2}
-  pathfindingGrid: {fileID: 2082054971}
 --- !u!1 &799005947
 GameObject:
   m_ObjectHideFlags: 0
@@ -1491,6 +1489,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 414364310}
   - {fileID: 741615470}
+  - {fileID: 704853193}
   - {fileID: 1070029687}
   - {fileID: 1856961947}
   - {fileID: 153686616}

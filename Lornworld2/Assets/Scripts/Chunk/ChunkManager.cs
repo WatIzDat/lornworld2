@@ -16,7 +16,7 @@ public class ChunkManager : MonoBehaviour
     [SerializeField]
     private int renderDistance;
 
-    [SerializeField]
+    //[SerializeField]
     private Player player;
 
     [SerializeField]
@@ -33,6 +33,8 @@ public class ChunkManager : MonoBehaviour
     private void Awake()
     {
         loadedChunks = ChunkArray.AddChunkArrayComponent(gameObject, renderDistance, chunkPrefab, chunkParent, this);
+
+        player = FindFirstObjectByType<Player>();
     }
 
     private void OnEnable()
