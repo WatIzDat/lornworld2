@@ -209,10 +209,13 @@ public class Chunk : MonoBehaviour, IDataPersistence<ChunkDataPersistence>
         tiles.AddRange(data.tiles.Select(t => TileRegistry.Instance.GetEntry(t)));
 
         features.AddRange(data.features.Select(f =>
-            Feature.Create(
+            FeatureRegistry.Instance.GetEntry(f.feature).featureInitBehavior.Init(
+                Feature.Create(
                 this,
                 FeatureRegistry.Instance.GetEntry(f.feature),
-                f.pos)));
+                f.pos),
+                new EmptyFeatureData()))
+            );
 
         return true;
     }

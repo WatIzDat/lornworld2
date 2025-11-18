@@ -1,12 +1,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//public class Feature : Feature<EmptyFeatureData>
+//{
+//}
+
+//public interface IFeature
+//{
+//    FeatureScriptableObject<FeatureData> FeatureScriptableObject { get; set; }
+//}
+
 public class Feature : Entity
 {
     [SerializeField]
     private GameObject droppedItemPrefab;
 
-    public FeatureScriptableObject FeatureScriptableObject { get; private set; }
+    //public FeatureScriptableObject FeatureScriptableObject { get; set; }
+
+    public FeatureScriptableObject FeatureScriptableObject { get; protected set; }
 
     public static Feature Create(Chunk chunk, FeatureScriptableObject featureScriptableObject, Vector2 position, bool worldPositionStays = false)
     {
