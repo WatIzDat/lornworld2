@@ -21,6 +21,7 @@ public class DataPersistenceManager : MonoBehaviour
     private BinaryFileDataHandler dataHandler;
 
     private readonly Queue<(Action<byte[]> action, byte[] data)> readCallbacks = new();
+    private readonly Queue<Action> writeCallbacks = new();
 
     //public delegate T LoadCallback<T>(string dataFileName) where T : IGameData;
     //public static event Func<LoadCallback, bool> LoadTriggered;
@@ -41,7 +42,7 @@ public class DataPersistenceManager : MonoBehaviour
             Instance = this;
         }
 
-        dataHandler = new(Path.Combine(Application.persistentDataPath, "data"), readCallbacks);
+        dataHandler = new(Path.Combine(Application.persistentDataPath, "data"), readCallbacks, writeCallbacks);
     }
 
     //private void Start()
@@ -59,6 +60,13 @@ public class DataPersistenceManager : MonoBehaviour
             (Action<byte[]> action, byte[] data) = readCallbacks.Dequeue();
 
             action(data);
+        }
+
+        while (writeCallbacks.Count > 0)
+        {
+            Action action = writeCallbacks.Dequeue();
+
+            action();
         }
     }
 
@@ -99,7 +107,7 @@ public class DataPersistenceManager : MonoBehaviour
 
         SaveTriggered?.Invoke((data, fileName) =>
         {
-            dataHandler.Save(data, fileName);
+            dataHandler.Save(data, fileName, () => { });
         });
 
         Debug.Log("saved pos: " + gameData.playerPosition);
@@ -120,11 +128,11 @@ public class DataPersistenceManager : MonoBehaviour
         dataHandler.Load(dataFileName, successCallback, failCallback);
     }
 
-    public void SaveObject(SaveAction action)
+    public void SaveObject(SaveAction action, Action callback)
     {
         action((data, fileName) =>
         {
-            dataHandler.Save(data, fileName);
+            dataHandler.Save(data, fileName, callback);
         });
     }
 

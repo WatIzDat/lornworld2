@@ -70,7 +70,7 @@ public class Chunk : MonoBehaviour, IDataPersistence<ChunkDataPersistence>
         return chunk;
     }
 
-    public static Chunk Pool(ChunkPos chunkPos, GameObject unusedChunk)
+    public static void Pool(ChunkPos chunkPos, GameObject unusedChunk, Action<Chunk> callback)
     {
         unusedChunk.transform.position = new Vector3(chunkPos.pos.x, chunkPos.pos.y, 0) * ChunkManager.ChunkSize;
         unusedChunk.SetActive(true);
@@ -79,24 +79,27 @@ public class Chunk : MonoBehaviour, IDataPersistence<ChunkDataPersistence>
         Chunk chunk = unusedChunk.GetComponent<Chunk>();
 
         //chunk.SaveRequested?.Invoke();
-        DataPersistenceManager.Instance.SaveObject(chunk.SaveData);
-
-        chunk.chunkPos = chunkPos;
-
-        chunk.tilemap.ClearAllTiles();
-        chunk.tiles.Clear();
-
-        foreach (Feature feature in chunk.features)
+        DataPersistenceManager.Instance.SaveObject(chunk.SaveData, () =>
         {
-            if (feature != null)
+            chunk.chunkPos = chunkPos;
+
+            chunk.tilemap.ClearAllTiles();
+            chunk.tiles.Clear();
+
+            foreach (Feature feature in chunk.features)
             {
-                Destroy(feature.gameObject);
+                if (feature != null)
+                {
+                    Destroy(feature.gameObject);
+                }
             }
-        }
 
-        chunk.features.Clear();
+            chunk.features.Clear();
 
-        return chunk;
+            callback(chunk);
+        });
+
+        //return chunk;
     }
 
     public TileScriptableObject GetTile(Vector2Int pos)
@@ -152,7 +155,6 @@ public class Chunk : MonoBehaviour, IDataPersistence<ChunkDataPersistence>
                 ChunkData generatedChunk = generate(chunkPos);
 
                 tiles.AddRange(generatedChunk.tiles);
-
 
                 foreach ((FeatureScriptableObject feature, Vector2 pos, FeatureData data) feature in generatedChunk.features)
                 {
@@ -210,13 +212,24 @@ public class Chunk : MonoBehaviour, IDataPersistence<ChunkDataPersistence>
         tiles.Clear();
         tiles.AddRange(data.tiles.Select(t => TileRegistry.Instance.GetEntry(t)));
 
-        features.Clear();
-        features.AddRange(data.features.Select(f =>
+        //Debug.Log(features.Count);
+        //features.Clear();
+        Debug.Log("Loaded: " + data.features.Count());
+        //data.features.Select(f =>
+        //    Feature.Create(
+        //        this,
+        //        FeatureRegistry.Instance.GetEntry(f.feature),
+        //        f.pos,
+        //        new EmptyFeatureData()));
+
+        foreach ((FeatureIdentifier feature, Vector2 pos, FeatureData data) feature in data.features)
+        {
             Feature.Create(
                 this,
-                FeatureRegistry.Instance.GetEntry(f.feature),
-                f.pos,
-                new EmptyFeatureData())));
+                FeatureRegistry.Instance.GetEntry(feature.feature),
+                feature.pos,
+                feature.data);
+        }
 
         return true;
     }
@@ -232,6 +245,7 @@ public class Chunk : MonoBehaviour, IDataPersistence<ChunkDataPersistence>
         //        .Select(f => (FeatureRegistry.Instance.GetId(f.FeatureScriptableObject), (Vector2)f.transform.localPosition))
         //        .ToArray());
 
+        Debug.Log("Saved: " + features.Count);
         ChunkDataPersistence chunkData = new(
             tiles
                 .Select(t => TileRegistry.Instance.GetId(t))

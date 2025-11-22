@@ -10,14 +10,16 @@ public class BinaryFileDataHandler
 {
     private readonly string dataDirPath;
     private readonly Queue<(Action<byte[]>, byte[])> readCallbacks;
+    private readonly Queue<Action> writeCallbacks;
 
-    private readonly BlockingCollection<(string fullPath, byte[] bytes, Action<byte[]> readCallback)> fileOperationsQueue = new();
+    private readonly BlockingCollection<(string fullPath, byte[] bytes, Action<byte[]> readCallback, Action writeCallback)> fileOperationsQueue = new();
     private readonly Task fileOperationsTask;
 
-    public BinaryFileDataHandler(string dataDirPath, Queue<(Action<byte[]>, byte[])> readCallbacks)
+    public BinaryFileDataHandler(string dataDirPath, Queue<(Action<byte[]>, byte[])> readCallbacks, Queue<Action> writeCallbacks)
     {
         this.dataDirPath = dataDirPath;
         this.readCallbacks = readCallbacks;
+        this.writeCallbacks = writeCallbacks;
 
         fileOperationsTask = Task.Factory.StartNew(ConsumeFileOperationsQueue, TaskCreationOptions.LongRunning);
     }
@@ -43,8 +45,8 @@ public class BinaryFileDataHandler
                     {
                         Debug.LogError($"Data from file {fullPath} could not be converted to target type.");
                     }
-                }
-                ));
+                },
+                null));
 
                 //fileOperationsTask.Wait();
             }
@@ -63,7 +65,7 @@ public class BinaryFileDataHandler
         //return loadedData;
     }
 
-    public void Save(IGameData data, string dataFileName)
+    public void Save(IGameData data, string dataFileName, Action callback)
     {
         string fullPath = Path.Combine(dataDirPath, dataFileName);
 
@@ -73,7 +75,7 @@ public class BinaryFileDataHandler
 
             byte[] dataToStore = MemoryPackSerializer.Serialize(data);
 
-            fileOperationsQueue.Add((fullPath, dataToStore, null));
+            fileOperationsQueue.Add((fullPath, dataToStore, null, callback));
         }
         catch (Exception e)
         {
@@ -90,7 +92,7 @@ public class BinaryFileDataHandler
 
     private void ConsumeFileOperationsQueue()
     {
-        foreach ((string fullPath, byte[] bytes, Action<byte[]> readCallback) in fileOperationsQueue.GetConsumingEnumerable())
+        foreach ((string fullPath, byte[] bytes, Action<byte[]> readCallback, Action writeCallback) in fileOperationsQueue.GetConsumingEnumerable())
         {
             if (readCallback != null)
             {
@@ -100,6 +102,8 @@ public class BinaryFileDataHandler
             else
             {
                 File.WriteAllBytes(fullPath, bytes);
+
+                writeCallbacks.Enqueue(writeCallback);
             }
         }
     }

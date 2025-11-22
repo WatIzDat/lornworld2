@@ -87,7 +87,7 @@ public class ChunkArray : MonoBehaviour
         ChunkChanged?.Invoke(chunkPos, index, tile);
     }
 
-    private Chunk PoolOrCreate(ChunkPos pos)
+    private void PoolOrCreate(ChunkPos pos, Action<Chunk> callback)
     {
         bool unloadedChunkExists = unloadedChunks.TryDequeue(out GameObject unloadedChunk);
 
@@ -95,23 +95,27 @@ public class ChunkArray : MonoBehaviour
         {
             Debug.LogWarning("Unloaded chunk doesn't exist, instantiating chunk instead");
 
-            return Chunk.Create(pos, chunkPrefab, chunkParent, chunkManager);
+            callback(Chunk.Create(pos, chunkPrefab, chunkParent, chunkManager));
+
+            return;
         }
 
-        return Chunk.Pool(pos, unloadedChunk);
+        Debug.Log(unloadedChunk);
+
+        Chunk.Pool(pos, unloadedChunk, callback);
     }
 
     private void PopulateNewChunk(ChunkPos pos, Func<ChunkPos, ChunkData> generate, int index, Action<Chunk, int> callback)
     {
-        Chunk chunk = PoolOrCreate(pos);
+        PoolOrCreate(pos, chunk =>
+        {
+            // hacky solution to avoid recalculating chunk boundaries twice by drawing new chunk boundaries on top of old one
+            // however, TODO: decrease ALL display orders when it hits the max of short max value
+            maxDisplayOrder++;
+            chunk.SetDisplayOrder(maxDisplayOrder);
 
-        maxDisplayOrder++;
-        chunk.SetDisplayOrder(maxDisplayOrder);
-
-        chunk.PopulateWith(generate, () => callback(chunk, index));
-
-        // hacky solution to avoid recalculating chunk boundaries twice by drawing new chunk boundaries on top of old one
-        // however, TODO: decrease ALL display orders when it hits the max of short max value
+            chunk.PopulateWith(generate, () => callback(chunk, index));
+        });
 
         //return chunk;
     }
@@ -311,6 +315,8 @@ public class ChunkArray : MonoBehaviour
         }
 
         callback();
+
+
     }
 
     //private int chunksPopulated;
