@@ -153,12 +153,14 @@ public class Chunk : MonoBehaviour, IDataPersistence<ChunkDataPersistence>
 
                 tiles.AddRange(generatedChunk.tiles);
 
-                foreach ((FeatureScriptableObject feature, Vector2 pos) feature in generatedChunk.features)
+
+                foreach ((FeatureScriptableObject feature, Vector2 pos, FeatureData data) feature in generatedChunk.features)
                 {
                     Feature.Create(
                         this,
                         feature.feature,
-                        feature.pos);
+                        feature.pos,
+                        feature.data);
                 }
 
                 //BoundsInt bounds = new(0, 0, 0, ChunkManager.ChunkSize, ChunkManager.ChunkSize, 1);
@@ -208,14 +210,13 @@ public class Chunk : MonoBehaviour, IDataPersistence<ChunkDataPersistence>
         tiles.Clear();
         tiles.AddRange(data.tiles.Select(t => TileRegistry.Instance.GetEntry(t)));
 
+        features.Clear();
         features.AddRange(data.features.Select(f =>
-            FeatureRegistry.Instance.GetEntry(f.feature).featureInitBehavior.Init(
-                Feature.Create(
+            Feature.Create(
                 this,
                 FeatureRegistry.Instance.GetEntry(f.feature),
-                f.pos),
-                new EmptyFeatureData()))
-            );
+                f.pos,
+                new EmptyFeatureData())));
 
         return true;
     }
@@ -237,7 +238,7 @@ public class Chunk : MonoBehaviour, IDataPersistence<ChunkDataPersistence>
                 .ToArray(),
             features
                 .Where(f => f != null)
-                .Select(f => (FeatureRegistry.Instance.GetId(f.FeatureScriptableObject), (Vector2)f.transform.localPosition))
+                .Select(f => (FeatureRegistry.Instance.GetId(f.FeatureScriptableObject), (Vector2)f.transform.localPosition, f.data))
                 .ToArray());
 
         saveCallback(chunkData, chunkPos.pos.ToString());

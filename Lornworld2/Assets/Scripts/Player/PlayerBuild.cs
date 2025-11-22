@@ -47,7 +47,7 @@ public class PlayerBuild : MonoBehaviour
 
             Chunk chunk = chunkManager.FindChunkAt(new ChunkPos(Vector2Int.FloorToInt(pos / ChunkManager.ChunkSize)));
 
-            Feature.Create(chunk, featureToPlace, pos, true);
+            Feature.Create(chunk, featureToPlace, pos, worldPositionStays: true);
 
             placeFeatureNextUpdate = false;
         }

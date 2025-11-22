@@ -12,4 +12,5 @@ public class FeatureScriptableObject : ScriptableObject
     public float maxHealth;
     public InventoryItem[] itemDrops;
     public BaseFeatureInitBehaviorScriptableObject featureInitBehavior;
+    public BaseFeatureHitBehaviorScriptableObject featureHitBehavior;
 }

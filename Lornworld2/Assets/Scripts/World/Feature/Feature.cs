@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 //public class Feature : Feature<EmptyFeatureData>
@@ -17,9 +16,11 @@ public class Feature : Entity
 
     //public FeatureScriptableObject FeatureScriptableObject { get; set; }
 
+    public FeatureData data;
+
     public FeatureScriptableObject FeatureScriptableObject { get; protected set; }
 
-    public static Feature Create(Chunk chunk, FeatureScriptableObject featureScriptableObject, Vector2 position, bool worldPositionStays = false)
+    public static Feature Create(Chunk chunk, FeatureScriptableObject featureScriptableObject, Vector2 position, FeatureData data = null, bool worldPositionStays = false)
     {
         Feature feature = Instantiate(
             featureScriptableObject.prefab,
@@ -34,6 +35,11 @@ public class Feature : Entity
 
         feature.FeatureScriptableObject = featureScriptableObject;
 
+        if (data != null)
+        {
+            featureScriptableObject.featureInitBehavior.Init(feature, data);
+        }
+
         chunk.features.Add(feature);
 
         return feature;
@@ -44,6 +50,8 @@ public class Feature : Entity
         base.TakeDamage(damage);
 
         Debug.Log(Health);
+
+        FeatureScriptableObject.featureHitBehavior.Hit(data);
     }
 
     protected override void OnDeath()

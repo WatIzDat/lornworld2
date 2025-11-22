@@ -22,6 +22,6 @@ public class DebugWorldGenerator : WorldGeneratorScriptableObject
             tiles[i] = tile;
         }
 
-        return new ChunkData(tiles, Array.Empty<(FeatureScriptableObject feature, Vector2 pos)>());
+        return new ChunkData(tiles, Array.Empty<(FeatureScriptableObject feature, Vector2 pos, FeatureData data)>());
     }
 }

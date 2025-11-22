@@ -1,3 +1,6 @@
-public class EmptyFeatureData : FeatureData
+using MemoryPack;
+
+[MemoryPackable]
+public partial class EmptyFeatureData : FeatureData
 {
 }

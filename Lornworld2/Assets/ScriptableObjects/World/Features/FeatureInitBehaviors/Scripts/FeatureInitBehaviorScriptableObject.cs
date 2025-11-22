@@ -28,6 +28,8 @@ public abstract class FeatureInitBehaviorScriptableObject<T> : BaseFeatureInitBe
             return null;
         }
 
+        feature.data = data;
+
         return feature;
     }
 }

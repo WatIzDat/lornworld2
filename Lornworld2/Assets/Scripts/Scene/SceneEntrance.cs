@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class SceneEntrance : MonoBehaviour
+public class SceneEntrance : Feature
 {
     [SerializeField]
     private int sceneBuildIndex;

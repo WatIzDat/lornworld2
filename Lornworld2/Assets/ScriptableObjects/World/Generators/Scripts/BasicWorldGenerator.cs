@@ -40,7 +40,7 @@ public class BasicWorldGenerator : WorldGeneratorScriptableObject
             }
         }
 
-        List<(FeatureScriptableObject feature, Vector2 pos)> features = new();
+        List<(FeatureScriptableObject feature, Vector2 pos, FeatureData data)> features = new();
 
         int spacing = 4;
         float jitter = 2f;
@@ -68,7 +68,7 @@ public class BasicWorldGenerator : WorldGeneratorScriptableObject
                     continue;
                 }
 
-                features.Add((FeatureRegistry.Instance.GetEntry(FeatureIds.TreeFeature), featurePos));
+                features.Add((FeatureRegistry.Instance.GetEntry(FeatureIds.TreeFeature), featurePos, new EmptyFeatureData()));
             }
         }
 
