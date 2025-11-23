@@ -72,7 +72,7 @@ public class BasicWorldGenerator : WorldGeneratorScriptableObject
             }
         }
 
-        features.Add((FeatureRegistry.Instance.GetEntry(FeatureIds.SceneEntranceFeature), Vector2.zero, new SceneEntranceFeatureData(1)));
+        features.Add((FeatureRegistry.Instance.GetEntry(FeatureIds.SceneEntranceFeature), Vector2.zero, new SceneEntranceFeatureData(1, System.Guid.NewGuid().ToString())));
 
         return new ChunkData(tiles, features.ToArray());
     }

@@ -17,6 +17,10 @@ public class SceneEntranceFeatureHitBehavior : FeatureHitBehaviorScriptableObjec
 
         Debug.Log(sceneEntranceData.sceneBuildIndex);
 
-        SceneManager.LoadSceneAsync(sceneEntranceData.sceneBuildIndex);
+        DataPersistenceManager.Instance.OnSceneChanged();
+
+        ScenePersistentInfo.SceneId = sceneEntranceData.sceneId;
+
+        SceneManager.LoadScene(sceneEntranceData.sceneBuildIndex);
     }
 }

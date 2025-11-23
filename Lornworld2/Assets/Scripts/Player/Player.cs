@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -32,6 +33,7 @@ public class Player : Entity, IDataPersistence<GameData>
         DataPersistenceManager.SaveTriggered += SaveData;
 
         SceneManager.sceneLoaded += OnSceneLoaded;
+        //SceneManager.activeSceneChanged += OnActiveSceneChanged;
 
         PlayerInventory.HotbarSelectedIndexChanged += OnHotbarSelectedIndexChanged;
 
@@ -42,6 +44,9 @@ public class Player : Entity, IDataPersistence<GameData>
     {
         //DataPersistenceManager.LoadTriggered -= LoadData;
         DataPersistenceManager.SaveTriggered -= SaveData;
+
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        //SceneManager.activeSceneChanged -= OnActiveSceneChanged;
 
         PlayerInventory.HotbarSelectedIndexChanged -= OnHotbarSelectedIndexChanged;
 
@@ -83,8 +88,18 @@ public class Player : Entity, IDataPersistence<GameData>
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
     {
-        transform.position = Vector2.zero;
+        Debug.Log("Scene: " + ScenePersistentInfo.SceneId);
+
+        DataPersistenceManager.Instance.LoadObject<GameData>(
+            data => LoadData(data),
+            () => transform.position = Vector2.zero,
+            Path.Combine(ScenePersistentInfo.SceneId, "player"));
     }
+
+    //private void OnActiveSceneChanged(Scene fromScene, Scene toScene)
+    //{
+    //    DataPersistenceManager.Instance.SaveObject(SaveData, () => { });
+    //}
 
     private void OnArmorChanged(int index, InventoryItem[] items)
     {
@@ -129,6 +144,8 @@ public class Player : Entity, IDataPersistence<GameData>
 
     public bool LoadData(GameData data)
     {
+        Debug.Log("Pos: " + data.playerPosition);
+
         transform.position = data.playerPosition;
 
         return true;
@@ -138,6 +155,6 @@ public class Player : Entity, IDataPersistence<GameData>
     {
         //data.playerPosition = transform.position;
 
-        saveCallback(new GameData(transform.position), "player");
+        saveCallback(new GameData(transform.position), Path.Combine(ScenePersistentInfo.SceneId, "player"));
     }
 }

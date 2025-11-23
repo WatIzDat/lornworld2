@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -175,7 +176,7 @@ public class Chunk : MonoBehaviour, IDataPersistence<ChunkDataPersistence>
 
                 //return generatedChunk.tiles;
             },
-            chunkPos.pos.ToString());
+            Path.Combine(ScenePersistentInfo.SceneId, chunkPos.pos.ToString()));
     }
 
     //public void PopulateAndSetDisplayTilesWith(Func<ChunkPos, ChunkData> generate)
@@ -255,6 +256,6 @@ public class Chunk : MonoBehaviour, IDataPersistence<ChunkDataPersistence>
                 .Select(f => (FeatureRegistry.Instance.GetId(f.FeatureScriptableObject), (Vector2)f.transform.localPosition, f.data))
                 .ToArray());
 
-        saveCallback(chunkData, chunkPos.pos.ToString());
+        saveCallback(chunkData, Path.Combine(ScenePersistentInfo.SceneId, chunkPos.pos.ToString()));
     }
 }

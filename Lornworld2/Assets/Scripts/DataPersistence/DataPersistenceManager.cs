@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DataPersistenceManager : MonoBehaviour
 {
@@ -29,6 +30,8 @@ public class DataPersistenceManager : MonoBehaviour
     public delegate void SaveAction(Action<IGameData, string> saveCallback);
     public static event SaveAction SaveTriggered;
 
+    private bool isFirstSceneChange = true;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -43,6 +46,32 @@ public class DataPersistenceManager : MonoBehaviour
         }
 
         dataHandler = new(Path.Combine(Application.persistentDataPath, "data"), readCallbacks, writeCallbacks);
+    }
+
+    //private void OnEnable()
+    //{
+    //    SceneManager.activeSceneChanged += OnActiveSceneChanged;
+    //}
+
+    //private void OnDisable()
+    //{
+    //    SceneManager.activeSceneChanged -= OnActiveSceneChanged;
+    //}
+
+    public void OnSceneChanged()
+    {
+        //if (isFirstSceneChange)
+        //{
+        //    Debug.Log("didn't work");
+
+        //    isFirstSceneChange = false;
+
+        //    return;
+        //}
+
+        SaveGame();
+
+        Debug.Log("game saved");
     }
 
     //private void Start()

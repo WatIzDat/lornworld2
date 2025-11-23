@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "DebugWorldGenerator", menuName = "Scriptable Objects/World/Generators/Debug")]
@@ -22,6 +21,11 @@ public class DebugWorldGenerator : WorldGeneratorScriptableObject
             tiles[i] = tile;
         }
 
-        return new ChunkData(tiles, Array.Empty<(FeatureScriptableObject feature, Vector2 pos, FeatureData data)>());
+        (FeatureScriptableObject feature, Vector2 pos, FeatureData data)[] features = new (FeatureScriptableObject, Vector2, FeatureData)[]
+        {
+            (FeatureRegistry.Instance.GetEntry(FeatureIds.SceneEntranceFeature), Vector2.zero, new SceneEntranceFeatureData(0, ScenePersistentInfo.PrevSceneId))
+        };
+
+        return new ChunkData(tiles, features);
     }
 }
