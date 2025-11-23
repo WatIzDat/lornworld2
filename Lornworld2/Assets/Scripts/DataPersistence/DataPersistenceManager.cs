@@ -30,8 +30,6 @@ public class DataPersistenceManager : MonoBehaviour
     public delegate void SaveAction(Action<IGameData, string> saveCallback);
     public static event SaveAction SaveTriggered;
 
-    private bool isFirstSceneChange = true;
-
     private void Awake()
     {
         if (Instance != null && Instance != this)
