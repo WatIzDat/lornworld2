@@ -14,6 +14,9 @@ public abstract class Entity : MonoBehaviour
     [field: SerializeField]
     public float MaxHealth { get; protected set; }
 
+    [SerializeField]
+    private bool isInvulnerable;
+
     private Vector2 prevPosition;
 
     protected virtual void Update()
@@ -25,6 +28,11 @@ public abstract class Entity : MonoBehaviour
 
     public virtual void TakeDamage(float damage)
     {
+        if (isInvulnerable)
+        {
+            return;
+        }
+
         Health -= damage;
 
         if (Health <= 0)

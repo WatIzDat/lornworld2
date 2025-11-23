@@ -37,7 +37,14 @@ public class Feature : Entity
 
         if (data != null)
         {
-            featureScriptableObject.featureInitBehavior.Init(feature, data);
+            if (featureScriptableObject.featureInitBehavior == null)
+            {
+                feature.data = data;
+            }
+            else
+            {
+                featureScriptableObject.featureInitBehavior.Init(feature, data);
+            }
         }
 
         chunk.features.Add(feature);
