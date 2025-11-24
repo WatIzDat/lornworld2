@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class Player : Entity, IDataPersistence<GameData>
 {
+    private ChunkManager chunkManager;
+
     [SerializeField]
     private float baseAttackDamage;
 
@@ -20,9 +22,13 @@ public class Player : Entity, IDataPersistence<GameData>
 
     private PlayerInventory playerInventory;
 
+    private bool isNewScene;
+
     private void Awake()
     {
         playerInventory = GetComponent<PlayerInventory>();
+
+        chunkManager = FindFirstObjectByType<ChunkManager>();
 
         Health = MaxHealth;
     }
@@ -34,6 +40,8 @@ public class Player : Entity, IDataPersistence<GameData>
 
         SceneManager.sceneLoaded += OnSceneLoaded;
         //SceneManager.activeSceneChanged += OnActiveSceneChanged;
+
+        ChunkManager.InitialChunksGenerated += OnInitialChunksGenerated;
 
         PlayerInventory.HotbarSelectedIndexChanged += OnHotbarSelectedIndexChanged;
 
@@ -47,6 +55,8 @@ public class Player : Entity, IDataPersistence<GameData>
 
         SceneManager.sceneLoaded -= OnSceneLoaded;
         //SceneManager.activeSceneChanged -= OnActiveSceneChanged;
+
+        ChunkManager.InitialChunksGenerated -= OnInitialChunksGenerated;
 
         PlayerInventory.HotbarSelectedIndexChanged -= OnHotbarSelectedIndexChanged;
 
@@ -92,8 +102,16 @@ public class Player : Entity, IDataPersistence<GameData>
 
         DataPersistenceManager.Instance.LoadObject<GameData>(
             data => LoadData(data),
-            () => transform.position = Vector2.zero,
+            () => isNewScene = true,
             Path.Combine(ScenePersistentInfo.SceneId, "player"));
+    }
+
+    private void OnInitialChunksGenerated()
+    {
+        if (isNewScene)
+        {
+            transform.position = chunkManager.GetSpawnpoint() ?? Vector2.zero;
+        }
     }
 
     //private void OnActiveSceneChanged(Scene fromScene, Scene toScene)

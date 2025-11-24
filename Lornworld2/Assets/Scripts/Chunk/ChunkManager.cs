@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ChunkManager : MonoBehaviour
@@ -29,6 +31,9 @@ public class ChunkManager : MonoBehaviour
     public int LoadedChunksSideLength => loadedChunks.SideLength;
 
     public static event Action<Vector2Int> LoadedChunksShifted;
+
+    public static event Action InitialChunksGenerated;
+    private bool areInitialChunksGenerated;
 
     private void Awake()
     {
@@ -186,10 +191,79 @@ public class ChunkManager : MonoBehaviour
         return loadedChunks.FindChunkAt(chunkPos);
     }
 
+    public Vector2? GetSpawnpoint()
+    {
+        if (!areInitialChunksGenerated)
+        {
+            return null;
+        }
+
+        Vector2? spawnpoint = null;
+        ChunkPos chunkPos = new(Vector2Int.zero);
+        int i = 0;
+
+        while (spawnpoint == null)
+        {
+            Chunk chunk = FindChunkAt(chunkPos);
+
+            List<Vector2> spawnableTiles = new();
+
+            for (int y = 0; y < ChunkSize; y++)
+            {
+                for (int x = 0; x < ChunkSize; x++)
+                {
+                    Vector2Int tilePos = new(x, y);
+
+                    TileScriptableObject tile = chunk.GetTile(tilePos);
+
+                    if (tile == TileRegistry.Instance.GetEntry(TileIds.GrassTile))
+                    {
+                        spawnableTiles.Add(tilePos);
+                    }
+                }
+            }
+
+            if (spawnableTiles.Count > 0)
+            {
+                spawnpoint = spawnableTiles[UnityEngine.Random.Range(0, spawnableTiles.Count)];
+            }
+            else
+            {
+                int spiralSideLength = (i / 2) + 1;
+
+                // Checks in a spiral
+                if (i % 4 == 0)
+                {
+                    chunkPos = new ChunkPos(new Vector2Int(chunkPos.pos.x, chunkPos.pos.y + spiralSideLength));
+                }
+                else if (i % 4 == 1)
+                {
+                    chunkPos = new ChunkPos(new Vector2Int(chunkPos.pos.x + spiralSideLength, chunkPos.pos.y));
+                }
+                else if (i % 4 == 2)
+                {
+                    chunkPos = new ChunkPos(new Vector2Int(chunkPos.pos.x, -chunkPos.pos.y));
+                }
+                else if (i % 4 == 3)
+                {
+                    chunkPos = new ChunkPos(new Vector2Int(-chunkPos.pos.x, chunkPos.pos.y));
+                }
+            }
+
+            i++;
+        }
+
+        return spawnpoint;
+    }
+
     public void Generate(IWorldGenerator generator)
     {
         worldGenerator = generator;
 
-        StartCoroutine(loadedChunks.PopulateChunksWith(generator.Generate));
+        StartCoroutine(loadedChunks.PopulateChunksWith(generator.Generate, () =>
+        {
+            areInitialChunksGenerated = true;
+            InitialChunksGenerated?.Invoke();
+        }));
     }
 }

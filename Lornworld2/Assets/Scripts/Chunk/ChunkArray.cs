@@ -326,7 +326,7 @@ public class ChunkArray : MonoBehaviour
     //    chunksPopulated++;
     //}
 
-    public IEnumerator PopulateChunksWith(Func<ChunkPos, ChunkData> generate)
+    public IEnumerator PopulateChunksWith(Func<ChunkPos, ChunkData> generate, Action callback)
     {
         //TileScriptableObject[][] tilesInChunks = new TileScriptableObject[chunks.Length][];
 
@@ -349,6 +349,8 @@ public class ChunkArray : MonoBehaviour
         {
             chunk.SetDisplayTiles();
         }
+
+        callback();
 
         //return tilesInChunks;
     }
