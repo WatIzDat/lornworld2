@@ -12,3 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c25718a7222ab85468113f9db61da030, type: 3}
   m_Name: BasicWorldGenerator
   m_EditorClassIdentifier: 
+  noiseFrequency: 0.5
+  waterThreshold: 0.25

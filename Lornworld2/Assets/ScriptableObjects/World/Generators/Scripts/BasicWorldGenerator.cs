@@ -4,6 +4,12 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "BasicWorldGenerator", menuName = "Scriptable Objects/World/Generators/Basic")]
 public class BasicWorldGenerator : WorldGeneratorScriptableObject
 {
+    [SerializeField]
+    private float noiseFrequency;
+
+    [SerializeField]
+    private float waterThreshold;
+
     public override ChunkData Generate(ChunkPos pos)
     {
         TileScriptableObject[] tiles = new TileScriptableObject[ChunkManager.ChunkArea];
@@ -12,14 +18,18 @@ public class BasicWorldGenerator : WorldGeneratorScriptableObject
         {
             for (int x = 0; x < ChunkManager.ChunkSize; x++)
             {
-                float noiseX = ((x / (float)ChunkManager.ChunkSize) - 0.5f + (pos.pos.x)) / 5f;
-                float noiseY = ((y / (float)ChunkManager.ChunkSize) - 0.5f + (pos.pos.y)) / 5f;
+                float noiseX = (x / (float)ChunkManager.ChunkSize) - 0.5f + pos.pos.x;
+                float noiseY = (y / (float)ChunkManager.ChunkSize) - 0.5f + pos.pos.y;
+
+                FastNoiseLite noise = new();
+                noise.SetFrequency(noiseFrequency);
+                noise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
 
                 // adding large number to avoid symmetry around 0, 0
                 float e =
-                    1f * Mathf.PerlinNoise(1f * noiseX + 100, 1f * noiseY + 100) +
-                  0.5f * Mathf.PerlinNoise(2f * noiseX + 100, 2f * noiseY + 100) +
-                 0.25f * Mathf.PerlinNoise(4f * noiseX + 100, 4f * noiseY + 100);
+                    1f * ((noise.GetNoise(1f * noiseX + 100, 1f * noiseY + 100) / 2) + 0.5f) +
+                  0.5f * ((noise.GetNoise(2f * noiseX + 100, 2f * noiseY + 100) / 2) + 0.5f) +
+                 0.25f * ((noise.GetNoise(4f * noiseX + 100, 4f * noiseY + 100) / 2) + 0.5f);
 
                 e /= 1f + 0.5f + 0.25f;
 
@@ -29,7 +39,7 @@ public class BasicWorldGenerator : WorldGeneratorScriptableObject
 
                 //Debug.Log(e);
 
-                if (e < 0.2f)
+                if (e < waterThreshold)
                 {
                     tiles[index] = TileRegistry.Instance.GetEntry(TileIds.WaterTile);
                 }
