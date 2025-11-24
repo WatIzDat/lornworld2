@@ -25,11 +25,10 @@ public class BasicWorldGenerator : WorldGeneratorScriptableObject
                 noise.SetFrequency(noiseFrequency);
                 noise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
 
-                // adding large number to avoid symmetry around 0, 0
                 float e =
-                    1f * ((noise.GetNoise(1f * noiseX + 100, 1f * noiseY + 100) / 2) + 0.5f) +
-                  0.5f * ((noise.GetNoise(2f * noiseX + 100, 2f * noiseY + 100) / 2) + 0.5f) +
-                 0.25f * ((noise.GetNoise(4f * noiseX + 100, 4f * noiseY + 100) / 2) + 0.5f);
+                    1f * ((noise.GetNoise(1f * noiseX, 1f * noiseY) / 2) + 0.5f) +
+                  0.5f * ((noise.GetNoise(2f * noiseX, 2f * noiseY) / 2) + 0.5f) +
+                 0.25f * ((noise.GetNoise(4f * noiseX, 4f * noiseY) / 2) + 0.5f);
 
                 e /= 1f + 0.5f + 0.25f;
 
