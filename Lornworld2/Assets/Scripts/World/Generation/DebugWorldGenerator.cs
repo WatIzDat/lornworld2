@@ -1,31 +1,35 @@
+using System;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "DebugWorldGenerator", menuName = "Scriptable Objects/World/Generators/Debug")]
 public class DebugWorldGenerator : WorldGeneratorScriptableObject
 {
-    public override ChunkData Generate(ChunkPos pos)
+    public override Func<ChunkPos, ChunkData> GetGenerator(int seed)
     {
-        TileScriptableObject[] tiles = new TileScriptableObject[ChunkManager.ChunkArea];
-
-        TileScriptableObject tile = TileRegistry.Instance.GetEntry(TileIds.WaterTile);
-
-        // checkerboard pattern, if both coordinates are even or both coordinates are odd set to grass
-        if ((pos.pos.x % 2 == 0 && pos.pos.y % 2 == 0) ||
-            (pos.pos.x % 2 != 0 && pos.pos.y % 2 != 0))
+        return pos =>
         {
-            tile = TileRegistry.Instance.GetEntry(TileIds.GrassTile);
-        }
+            TileScriptableObject[] tiles = new TileScriptableObject[ChunkManager.ChunkArea];
 
-        for (int i = 0; i < tiles.Length; i++)
-        {
-            tiles[i] = tile;
-        }
+            TileScriptableObject tile = TileRegistry.Instance.GetEntry(TileIds.WaterTile);
 
-        (FeatureScriptableObject feature, Vector2 pos, FeatureData data)[] features = new (FeatureScriptableObject, Vector2, FeatureData)[]
-        {
-            (FeatureRegistry.Instance.GetEntry(FeatureIds.SceneEntranceFeature), Vector2.zero, new SceneEntranceFeatureData(0, ScenePersistentInfo.PrevSceneId))
+            // checkerboard pattern, if both coordinates are even or both coordinates are odd set to grass
+            if ((pos.pos.x % 2 == 0 && pos.pos.y % 2 == 0) ||
+                (pos.pos.x % 2 != 0 && pos.pos.y % 2 != 0))
+            {
+                tile = TileRegistry.Instance.GetEntry(TileIds.GrassTile);
+            }
+
+            for (int i = 0; i < tiles.Length; i++)
+            {
+                tiles[i] = tile;
+            }
+
+            (FeatureScriptableObject feature, Vector2 pos, FeatureData data)[] features = new (FeatureScriptableObject, Vector2, FeatureData)[]
+            {
+                (FeatureRegistry.Instance.GetEntry(FeatureIds.SceneEntranceFeature), Vector2.zero, new SceneEntranceFeatureData(0, ScenePersistentInfo.PrevSceneId))
+            };
+
+            return new ChunkData(tiles, features);
         };
-
-        return new ChunkData(tiles, features);
     }
 }

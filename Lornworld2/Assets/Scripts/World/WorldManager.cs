@@ -1,7 +1,11 @@
+using System.IO;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class WorldManager : MonoBehaviour
+public class WorldManager : MonoBehaviour, IDataPersistence<WorldData>
 {
+    public int worldSeed;
+
     //[SerializeField]
     private ChunkManager chunkManager;
 
@@ -17,14 +21,42 @@ public class WorldManager : MonoBehaviour
         pathfindingGrid = FindFirstObjectByType<PathfindingGrid>();
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        Generate(worldGenerator);
+        SceneManager.sceneLoaded += OnSceneLoaded;
+
+        DataPersistenceManager.SaveTriggered += SaveData;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+
+        DataPersistenceManager.SaveTriggered -= SaveData;
+    }
+
+    //private void Start()
+    //{
+    //    Generate(worldGenerator);
+    //}
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
+    {
+        DataPersistenceManager.Instance.LoadObject<WorldData>(
+            data => LoadData(data),
+            () =>
+            {
+                worldSeed = Random.Range(int.MinValue, int.MaxValue);
+
+                Generate(worldGenerator);
+            },
+            Path.Combine(ScenePersistentInfo.SceneId, "world"));
     }
 
     public void Generate(IWorldGenerator generator)
     {
-        chunkManager.Generate(generator);
+        Debug.Log(worldSeed);
+        chunkManager.Generate(generator.GetGenerator(worldSeed));
 
         pathfindingGrid.Initialize();
 
@@ -32,5 +64,21 @@ public class WorldManager : MonoBehaviour
         //{
         //    loadedTiles.AddRange(tiles);
         //}
+    }
+
+    public bool LoadData(WorldData data)
+    {
+        Debug.Log("Loaded Seed: " + data.worldSeed);
+        worldSeed = data.worldSeed;
+
+        Generate(worldGenerator);
+
+        return true;
+    }
+
+    public void SaveData(System.Action<IGameData, string> saveCallback)
+    {
+        Debug.Log("Saved Seed: " + worldSeed);
+        saveCallback(new WorldData(worldSeed), Path.Combine(ScenePersistentInfo.SceneId, "world"));
     }
 }

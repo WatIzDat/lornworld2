@@ -3,7 +3,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Player : Entity, IDataPersistence<GameData>
+public class Player : Entity, IDataPersistence<PlayerData>
 {
     private ChunkManager chunkManager;
 
@@ -65,7 +65,7 @@ public class Player : Entity, IDataPersistence<GameData>
 
     private void Start()
     {
-        DataPersistenceManager.Instance.LoadObject<GameData>(data => LoadData(data), () => transform.position = Vector2.zero, "player");
+        DataPersistenceManager.Instance.LoadObject<PlayerData>(data => LoadData(data), () => transform.position = Vector2.zero, "player");
     }
 
     protected override void Update()
@@ -100,7 +100,7 @@ public class Player : Entity, IDataPersistence<GameData>
     {
         Debug.Log("Scene: " + ScenePersistentInfo.SceneId);
 
-        DataPersistenceManager.Instance.LoadObject<GameData>(
+        DataPersistenceManager.Instance.LoadObject<PlayerData>(
             data => LoadData(data),
             () => isNewScene = true,
             Path.Combine(ScenePersistentInfo.SceneId, "player"));
@@ -160,7 +160,7 @@ public class Player : Entity, IDataPersistence<GameData>
         Debug.Log("death");
     }
 
-    public bool LoadData(GameData data)
+    public bool LoadData(PlayerData data)
     {
         Debug.Log("Pos: " + data.playerPosition);
 
@@ -173,6 +173,6 @@ public class Player : Entity, IDataPersistence<GameData>
     {
         //data.playerPosition = transform.position;
 
-        saveCallback(new GameData(transform.position), Path.Combine(ScenePersistentInfo.SceneId, "player"));
+        saveCallback(new PlayerData(transform.position), Path.Combine(ScenePersistentInfo.SceneId, "player"));
     }
 }

@@ -1,4 +1,6 @@
+using System;
+
 public interface IWorldGenerator
 {
-    ChunkData Generate(ChunkPos pos);
+    Func<ChunkPos, ChunkData> GetGenerator(int seed);
 }

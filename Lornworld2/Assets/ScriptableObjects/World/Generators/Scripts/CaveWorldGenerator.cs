@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "CaveWorldGenerator", menuName = "Scriptable Objects/World/Generators/Cave")]
@@ -7,35 +8,38 @@ public class CaveWorldGenerator : WorldGeneratorScriptableObject
     [Range(0, 1)]
     private float randomFillPercent;
 
-    public override ChunkData Generate(ChunkPos pos)
+    public override Func<ChunkPos, ChunkData> GetGenerator(int seed)
     {
-        TileScriptableObject[] tiles = new TileScriptableObject[ChunkManager.ChunkArea];
-
-        for (int y = 0; y < ChunkManager.ChunkSize; y++)
+        return pos =>
         {
-            for (int x = 0; x < ChunkManager.ChunkSize; x++)
+            TileScriptableObject[] tiles = new TileScriptableObject[ChunkManager.ChunkArea];
+
+            for (int y = 0; y < ChunkManager.ChunkSize; y++)
             {
-                float noiseX = ((x / (float)ChunkManager.ChunkSize) - 0.5f + (pos.pos.x)) / 0.75f;
-                float noiseY = ((y / (float)ChunkManager.ChunkSize) - 0.5f + (pos.pos.y)) / 0.75f;
+                for (int x = 0; x < ChunkManager.ChunkSize; x++)
+                {
+                    float noiseX = ((x / (float)ChunkManager.ChunkSize) - 0.5f + (pos.pos.x)) / 0.75f;
+                    float noiseY = ((y / (float)ChunkManager.ChunkSize) - 0.5f + (pos.pos.y)) / 0.75f;
 
-                float randValue = Mathf.PerlinNoise(noiseX + 100, noiseY + 100);
+                    float randValue = Mathf.PerlinNoise(noiseX + 100, noiseY + 100);
 
-                int index = (y * ChunkManager.ChunkSize) + x;
+                    int index = (y * ChunkManager.ChunkSize) + x;
 
-                //Debug.Log(noiseX + " " + noiseY);
+                    //Debug.Log(noiseX + " " + noiseY);
 
-                tiles[index] = randValue < randomFillPercent 
-                    ? TileRegistry.Instance.GetEntry(TileIds.WaterTile)
-                    : TileRegistry.Instance.GetEntry(TileIds.GrassTile);
+                    tiles[index] = randValue < randomFillPercent
+                        ? TileRegistry.Instance.GetEntry(TileIds.WaterTile)
+                        : TileRegistry.Instance.GetEntry(TileIds.GrassTile);
+                }
             }
-        }
 
-        for (int i = 0; i < 5; i++)
-        {
-            tiles = SmoothMap(tiles, pos);
-        }
+            for (int i = 0; i < 5; i++)
+            {
+                tiles = SmoothMap(tiles, pos);
+            }
 
-        return new ChunkData(tiles, System.Array.Empty<(FeatureScriptableObject, Vector2, FeatureData)>());
+            return new ChunkData(tiles, System.Array.Empty<(FeatureScriptableObject, Vector2, FeatureData)>());
+        };
     }
 
     private TileScriptableObject[] SmoothMap(TileScriptableObject[] tiles, ChunkPos pos)

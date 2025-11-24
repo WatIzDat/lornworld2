@@ -26,7 +26,7 @@ public class ChunkManager : MonoBehaviour
 
     private ChunkArray loadedChunks;
 
-    private IWorldGenerator worldGenerator;
+    private Func<ChunkPos, ChunkData> worldGenerator;
 
     public int LoadedChunksSideLength => loadedChunks.SideLength;
 
@@ -71,7 +71,7 @@ public class ChunkManager : MonoBehaviour
             StartCoroutine(
                 loadedChunks.CenterChunksAround(
                     player.ChunkPos,
-                    worldGenerator.Generate,
+                    worldGenerator,
                     () =>
                     {
                         Debug.Log("callback");
@@ -90,7 +90,7 @@ public class ChunkManager : MonoBehaviour
             StartCoroutine(
                 loadedChunks.ShiftHorizontal(
                     true,
-                    worldGenerator.Generate,
+                    worldGenerator,
                     () =>
                     {
                         Debug.Log("callback");
@@ -106,7 +106,7 @@ public class ChunkManager : MonoBehaviour
             StartCoroutine(
                 loadedChunks.ShiftHorizontal(
                     false,
-                    worldGenerator.Generate,
+                    worldGenerator,
                     () =>
                     {
                         Debug.Log("callback");
@@ -122,7 +122,7 @@ public class ChunkManager : MonoBehaviour
             StartCoroutine(
                 loadedChunks.ShiftVertical(
                     true,
-                    worldGenerator.Generate,
+                    worldGenerator,
                     () =>
                     {
                         Debug.Log("callback");
@@ -138,7 +138,7 @@ public class ChunkManager : MonoBehaviour
             StartCoroutine(
                 loadedChunks.ShiftVertical(
                     false,
-                    worldGenerator.Generate,
+                    worldGenerator,
                     () =>
                     {
                         Debug.Log("callback");
@@ -256,11 +256,11 @@ public class ChunkManager : MonoBehaviour
         return spawnpoint;
     }
 
-    public void Generate(IWorldGenerator generator)
+    public void Generate(Func<ChunkPos, ChunkData> generator)
     {
         worldGenerator = generator;
 
-        StartCoroutine(loadedChunks.PopulateChunksWith(generator.Generate, () =>
+        StartCoroutine(loadedChunks.PopulateChunksWith(generator, () =>
         {
             areInitialChunksGenerated = true;
             InitialChunksGenerated?.Invoke();

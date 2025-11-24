@@ -19,7 +19,7 @@ public class DataPersistenceManager : MonoBehaviour
     [SerializeField]
     private bool dontPersistData;
 
-    private GameData gameData = new(Vector2.zero);
+    //private PlayerData gameData = new(Vector2.zero);
 
     //private List<IDataPersistence> dataPersistenceObjects;
 
@@ -101,10 +101,10 @@ public class DataPersistenceManager : MonoBehaviour
         }
     }
 
-    public void NewGame()
-    {
-        gameData = new GameData(Vector2.zero);
-    }
+    //public void NewGame()
+    //{
+    //    gameData = new PlayerData(Vector2.zero);
+    //}
 
     //public void LoadGame()
     //{
@@ -145,7 +145,7 @@ public class DataPersistenceManager : MonoBehaviour
             dataHandler.Save(data, fileName, () => { });
         });
 
-        Debug.Log("saved pos: " + gameData.playerPosition);
+        //Debug.Log("saved pos: " + gameData.playerPosition);
 
         //dataHandler.Save(gameData);
     }
