@@ -15,6 +15,10 @@ public class DataPersistenceManager : MonoBehaviour
     [SerializeField]
     private string fileName;
 
+    [Header("Debug")]
+    [SerializeField]
+    private bool dontPersistData;
+
     private GameData gameData = new(Vector2.zero);
 
     //private List<IDataPersistence> dataPersistenceObjects;
@@ -127,6 +131,10 @@ public class DataPersistenceManager : MonoBehaviour
 
     public void SaveGame()
     {
+        if (dontPersistData)
+        {
+            return;
+        }
         //foreach (IDataPersistence dataPersistenceObj in dataPersistenceObjects)
         //{
         //    dataPersistenceObj.SaveData(ref gameData);
@@ -157,6 +165,13 @@ public class DataPersistenceManager : MonoBehaviour
 
     public void SaveObject(SaveAction action, Action callback)
     {
+        if (dontPersistData)
+        {
+            callback();
+
+            return;
+        }
+
         action((data, fileName) =>
         {
             dataHandler.Save(data, fileName, callback);
