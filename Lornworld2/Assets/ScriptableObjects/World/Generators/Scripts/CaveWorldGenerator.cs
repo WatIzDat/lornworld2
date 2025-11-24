@@ -15,10 +15,10 @@ public class CaveWorldGenerator : WorldGeneratorScriptableObject
         {
             for (int x = 0; x < ChunkManager.ChunkSize; x++)
             {
-                int noiseX = x + pos.pos.x * ChunkManager.ChunkSize;
-                int noiseY = y + pos.pos.y * ChunkManager.ChunkSize;
+                float noiseX = ((x / (float)ChunkManager.ChunkSize) - 0.5f + (pos.pos.x)) / 0.75f;
+                float noiseY = ((y / (float)ChunkManager.ChunkSize) - 0.5f + (pos.pos.y)) / 0.75f;
 
-                float randValue = MathHelper.WhiteNoise(0, noiseX + 100, noiseY + 100);
+                float randValue = Mathf.PerlinNoise(noiseX + 100, noiseY + 100);
 
                 int index = (y * ChunkManager.ChunkSize) + x;
 
@@ -89,10 +89,10 @@ public class CaveWorldGenerator : WorldGeneratorScriptableObject
                     }
                     else
                     {
-                        int noiseX = neighborX + pos.pos.x * ChunkManager.ChunkSize;
-                        int noiseY = neighborY + pos.pos.y * ChunkManager.ChunkSize;
+                        float noiseX = ((x / (float)ChunkManager.ChunkSize) - 0.5f + (pos.pos.x)) / 0.75f;
+                        float noiseY = ((y / (float)ChunkManager.ChunkSize) - 0.5f + (pos.pos.y)) / 0.75f;
 
-                        float randValue = MathHelper.WhiteNoise(0, noiseX + 100, noiseY + 100);
+                        float randValue = Mathf.PerlinNoise(noiseX + 100, noiseY + 100);
 
                         wallCount += randValue < randomFillPercent ? 1 : 0;
                     }
