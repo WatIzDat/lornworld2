@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PathfindingGrid : MonoBehaviour
 {
@@ -15,20 +16,10 @@ public class PathfindingGrid : MonoBehaviour
 
     public int GridArea => gridSize.x * gridSize.y;
 
-    private bool displayGridGizmos;
+    private bool displayGridGizmos = true;
 
     //[SerializeField]
     //private Player player;
-
-    private void Awake()
-    {
-        chunkManager = FindFirstObjectByType<ChunkManager>();
-        
-        transform.position = Vector2.one * (ChunkManager.ChunkSize / 2);
-
-        // TODO: separate render distance from simulation distance
-        gridSize = ChunkManager.ChunkSize * chunkManager.LoadedChunksSideLength * Vector2Int.one;
-    }
 
     private void OnEnable()
     {
@@ -49,6 +40,13 @@ public class PathfindingGrid : MonoBehaviour
 
     public void Initialize()
     {
+        transform.position = Vector2.one * (ChunkManager.ChunkSize / 2);
+
+        chunkManager = FindFirstObjectByType<ChunkManager>();
+
+        // TODO: separate render distance from simulation distance
+        gridSize = ChunkManager.ChunkSize * chunkManager.LoadedChunksSideLength * Vector2Int.one;
+
         CreateGrid();
     }
 

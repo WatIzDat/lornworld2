@@ -25,12 +25,16 @@ public class WorldManager : MonoBehaviour, IDataPersistence<WorldData>
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
 
+        ChunkManager.InitialChunksGenerated += OnInitialChunksGenerated;
+
         DataPersistenceManager.SaveTriggered += SaveData;
     }
 
     private void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
+
+        ChunkManager.InitialChunksGenerated -= OnInitialChunksGenerated;
 
         DataPersistenceManager.SaveTriggered -= SaveData;
     }
@@ -53,12 +57,17 @@ public class WorldManager : MonoBehaviour, IDataPersistence<WorldData>
             Path.Combine(ScenePersistentInfo.SceneId, "world"));
     }
 
+    private void OnInitialChunksGenerated()
+    {
+        pathfindingGrid.Initialize();
+    }
+
     public void Generate(IWorldGenerator generator)
     {
         Debug.Log(worldSeed);
         chunkManager.Generate(generator.GetGenerator(worldSeed));
 
-        pathfindingGrid.Initialize();
+        //pathfindingGrid.Initialize();
 
         //foreach (TileScriptableObject[] tiles in tilesInChunks)
         //{
