@@ -191,7 +191,7 @@ public class ChunkManager : MonoBehaviour
         return loadedChunks.FindChunkAt(chunkPos);
     }
 
-    public Vector2? GetSpawnpoint()
+    public Vector2? GetSpawnpoint(bool createSceneEntrance = false)
     {
         if (!areInitialChunksGenerated)
         {
@@ -226,6 +226,15 @@ public class ChunkManager : MonoBehaviour
             if (spawnableTiles.Count > 0)
             {
                 spawnpoint = spawnableTiles[UnityEngine.Random.Range(0, spawnableTiles.Count)];
+
+                if (createSceneEntrance)
+                {
+                    Feature.Create(
+                        chunk,
+                        FeatureRegistry.Instance.GetEntry(FeatureIds.SceneEntranceFeature),
+                        (Vector2)spawnpoint,
+                        new SceneEntranceFeatureData(0, ScenePersistentInfo.PrevSceneId));
+                }
             }
             else
             {

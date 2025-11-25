@@ -148,7 +148,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af837e1b97df66a49bb76524ea43f6f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  worldGenerator: {fileID: 11400000, guid: 08368ac374bbf9049a0edb0ac25dd78f, type: 2}
+  worldSeed: 0
+  worldGenerator: {fileID: 11400000, guid: 87caca09fc1947d4182dec8c186d9ac0, type: 2}
 --- !u!4 &1208579801
 Transform:
   m_ObjectHideFlags: 0

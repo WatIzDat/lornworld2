@@ -5,8 +5,6 @@ using UnityEngine.SceneManagement;
 
 public class Player : Entity, IDataPersistence<PlayerData>
 {
-    private ChunkManager chunkManager;
-
     [SerializeField]
     private float baseAttackDamage;
 
@@ -27,8 +25,6 @@ public class Player : Entity, IDataPersistence<PlayerData>
     private void Awake()
     {
         playerInventory = GetComponent<PlayerInventory>();
-
-        chunkManager = FindFirstObjectByType<ChunkManager>();
 
         Health = MaxHealth;
     }
@@ -105,7 +101,12 @@ public class Player : Entity, IDataPersistence<PlayerData>
     {
         if (isNewScene)
         {
-            transform.position = chunkManager.GetSpawnpoint() ?? Vector2.zero;
+            ChunkManager chunkManager = FindFirstObjectByType<ChunkManager>();
+            bool createSceneEntrance = ScenePersistentInfo.SceneId != "surface";
+
+            transform.position = chunkManager.GetSpawnpoint(createSceneEntrance) ?? Vector2.zero;
+
+            isNewScene = false;
         }
     }
 
