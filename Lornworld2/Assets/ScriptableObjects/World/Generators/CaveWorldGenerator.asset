@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac64107dd0ad64f4b9fbec9e4a6615c9, type: 3}
   m_Name: CaveWorldGenerator
   m_EditorClassIdentifier: 
+  noiseFrequency: 1
   randomFillPercent: 0.45

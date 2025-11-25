@@ -5,6 +5,9 @@ using UnityEngine;
 public class CaveWorldGenerator : WorldGeneratorScriptableObject
 {
     [SerializeField]
+    private float noiseFrequency;
+
+    [SerializeField]
     [Range(0, 1)]
     private float randomFillPercent;
 
@@ -12,16 +15,20 @@ public class CaveWorldGenerator : WorldGeneratorScriptableObject
     {
         return pos =>
         {
+            FastNoiseLite noise = new(seed);
+            noise.SetFrequency(noiseFrequency);
+            noise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
+
             TileScriptableObject[] tiles = new TileScriptableObject[ChunkManager.ChunkArea];
 
             for (int y = 0; y < ChunkManager.ChunkSize; y++)
             {
                 for (int x = 0; x < ChunkManager.ChunkSize; x++)
                 {
-                    float noiseX = ((x / (float)ChunkManager.ChunkSize) - 0.5f + (pos.pos.x)) / 0.75f;
-                    float noiseY = ((y / (float)ChunkManager.ChunkSize) - 0.5f + (pos.pos.y)) / 0.75f;
+                    float noiseX = (x / (float)ChunkManager.ChunkSize) - 0.5f + pos.pos.x;
+                    float noiseY = (y / (float)ChunkManager.ChunkSize) - 0.5f + pos.pos.y;
 
-                    float randValue = Mathf.PerlinNoise(noiseX + 100, noiseY + 100);
+                    float randValue = (noise.GetNoise(noiseX, noiseY) / 2) + 0.5f;
 
                     int index = (y * ChunkManager.ChunkSize) + x;
 
@@ -35,14 +42,14 @@ public class CaveWorldGenerator : WorldGeneratorScriptableObject
 
             for (int i = 0; i < 5; i++)
             {
-                tiles = SmoothMap(tiles, pos);
+                tiles = SmoothMap(tiles, pos, noise);
             }
 
-            return new ChunkData(tiles, System.Array.Empty<(FeatureScriptableObject, Vector2, FeatureData)>());
+            return new ChunkData(tiles, Array.Empty<(FeatureScriptableObject, Vector2, FeatureData)>());
         };
     }
 
-    private TileScriptableObject[] SmoothMap(TileScriptableObject[] tiles, ChunkPos pos)
+    private TileScriptableObject[] SmoothMap(TileScriptableObject[] tiles, ChunkPos pos, FastNoiseLite noise)
     {
         TileScriptableObject[] newTiles = new TileScriptableObject[ChunkManager.ChunkArea];
 
@@ -52,7 +59,7 @@ public class CaveWorldGenerator : WorldGeneratorScriptableObject
             {
                 int index = (y * ChunkManager.ChunkSize) + x;
 
-                int wallCount = GetSurroundingWallCount(tiles, x, y, pos);
+                int wallCount = GetSurroundingWallCount(tiles, x, y, pos, noise);
 
                 //Debug.Log(wallCount);
 
@@ -74,7 +81,7 @@ public class CaveWorldGenerator : WorldGeneratorScriptableObject
         return newTiles;
     }
 
-    private int GetSurroundingWallCount(TileScriptableObject[] tiles, int x, int y, ChunkPos pos)
+    private int GetSurroundingWallCount(TileScriptableObject[] tiles, int x, int y, ChunkPos pos, FastNoiseLite noise)
     {
         int wallCount = 0;
 
@@ -93,10 +100,10 @@ public class CaveWorldGenerator : WorldGeneratorScriptableObject
                     }
                     else
                     {
-                        float noiseX = ((x / (float)ChunkManager.ChunkSize) - 0.5f + (pos.pos.x)) / 0.75f;
-                        float noiseY = ((y / (float)ChunkManager.ChunkSize) - 0.5f + (pos.pos.y)) / 0.75f;
+                        float noiseX = (x / (float)ChunkManager.ChunkSize) - 0.5f + pos.pos.x;
+                        float noiseY = (y / (float)ChunkManager.ChunkSize) - 0.5f + pos.pos.y;
 
-                        float randValue = Mathf.PerlinNoise(noiseX + 100, noiseY + 100);
+                        float randValue = (noise.GetNoise(noiseX, noiseY) / 2) + 0.5f;
 
                         wallCount += randValue < randomFillPercent ? 1 : 0;
                     }
