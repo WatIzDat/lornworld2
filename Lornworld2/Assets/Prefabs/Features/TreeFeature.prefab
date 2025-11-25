@@ -8,9 +8,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3198291104567318863, guid: 1b111fc0355f5a44bae329da98c46277, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 930a1a04df45e7c48850b1cc6e5548b9, type: 3}
     - target: {fileID: 5269188878959487426, guid: 1b111fc0355f5a44bae329da98c46277, type: 3}
       propertyPath: m_LocalScale.y
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5269188878959487426, guid: 1b111fc0355f5a44bae329da98c46277, type: 3}
       propertyPath: m_LocalPosition.x
@@ -54,15 +58,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5337815252709301048, guid: 1b111fc0355f5a44bae329da98c46277, type: 3}
       propertyPath: m_Size.y
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5337815252709301048, guid: 1b111fc0355f5a44bae329da98c46277, type: 3}
       propertyPath: m_Offset.y
-      value: -0.25
+      value: -0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5337815252709301048, guid: 1b111fc0355f5a44bae329da98c46277, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.y
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5713798668993390691, guid: 1b111fc0355f5a44bae329da98c46277, type: 3}
       propertyPath: m_Name
-      value: Feature Variant
+      value: TreeFeature
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
