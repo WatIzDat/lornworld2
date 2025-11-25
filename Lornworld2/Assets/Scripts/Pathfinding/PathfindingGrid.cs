@@ -16,7 +16,7 @@ public class PathfindingGrid : MonoBehaviour
 
     public int GridArea => gridSize.x * gridSize.y;
 
-    private bool displayGridGizmos = true;
+    private bool displayGridGizmos;
 
     //[SerializeField]
     //private Player player;

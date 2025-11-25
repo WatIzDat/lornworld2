@@ -191,6 +191,11 @@ public class ChunkManager : MonoBehaviour
         return loadedChunks.FindChunkAt(chunkPos);
     }
 
+    public Chunk GetRandomLoadedChunk()
+    {
+        return loadedChunks.GetRandomChunk();
+    }
+
     public Vector2? GetSpawnpoint(bool createSceneEntrance = false)
     {
         if (!areInitialChunksGenerated)

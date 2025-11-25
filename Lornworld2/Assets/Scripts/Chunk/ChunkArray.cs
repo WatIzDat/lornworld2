@@ -74,6 +74,11 @@ public class ChunkArray : MonoBehaviour
         return null;
     }
 
+    public Chunk GetRandomChunk()
+    {
+        return chunks[UnityEngine.Random.Range(0, chunks.Length)];
+    }
+
     private void OnChunkUnloaded(int index)
     {
         chunks[index].gameObject.SetActive(false);

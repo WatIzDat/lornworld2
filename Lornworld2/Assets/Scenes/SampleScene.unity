@@ -1187,8 +1187,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mobPrefab: {fileID: 7742050174860863901, guid: 2329679e9ec4abf4ab260edb283b5aab, type: 3}
-  mobParent: {fileID: 1856961947}
+  mobParentTag: MobParent
   player: {fileID: 514829023}
+  maxMobCount: 10
+  minMobSpawnChunkDistance: 1
 --- !u!1 &1856961946
 GameObject:
   m_ObjectHideFlags: 0
@@ -1200,7 +1202,7 @@ GameObject:
   - component: {fileID: 1856961947}
   m_Layer: 0
   m_Name: Mobs
-  m_TagString: Untagged
+  m_TagString: MobParent
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1265,7 +1267,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fileName: data
-  dontPersistData: 0
+  dontPersistData: 1
 --- !u!1 &2082054969
 GameObject:
   m_ObjectHideFlags: 0
