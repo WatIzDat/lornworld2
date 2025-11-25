@@ -59,7 +59,7 @@ public class ChunkManager : MonoBehaviour
     // Don't have to check every frame (change later)
     private void Update()
     {
-        if (isShiftingChunks)
+        if (isShiftingChunks || worldGenerator == null)
         {
             return;
         }
