@@ -218,7 +218,7 @@ public class ChunkManager : MonoBehaviour
 
                     if (tile == TileRegistry.Instance.GetEntry(TileIds.GrassTile))
                     {
-                        spawnableTiles.Add(tilePos);
+                        spawnableTiles.Add(tilePos + (chunk.chunkPos.pos * ChunkSize));
                     }
                 }
             }
@@ -252,6 +252,8 @@ public class ChunkManager : MonoBehaviour
 
             i++;
         }
+
+        Debug.Log(spawnpoint);
 
         return spawnpoint;
     }

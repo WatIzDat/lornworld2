@@ -63,11 +63,6 @@ public class Player : Entity, IDataPersistence<PlayerData>
         InventoryUIManager.ArmorChanged -= OnArmorChanged;
     }
 
-    private void Start()
-    {
-        DataPersistenceManager.Instance.LoadObject<PlayerData>(data => LoadData(data), () => transform.position = Vector2.zero, "player");
-    }
-
     protected override void Update()
     {
         base.Update();
