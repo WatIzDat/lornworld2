@@ -46,6 +46,19 @@ public class WorldManager : MonoBehaviour, IDataPersistence<WorldData>
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
     {
+        if (ScenePersistentInfo.PrevSceneId == null)
+        {
+            DataPersistenceManager.Instance.LoadObject<GameData>(
+                data =>
+                {
+                    ScenePersistentInfo.SceneId = data.sceneId;
+
+                    SceneManager.LoadScene(data.sceneBuildIndex);
+                },
+                () => { },
+                "game");
+        }
+
         DataPersistenceManager.Instance.LoadObject<WorldData>(
             data => LoadData(data),
             () =>
@@ -85,9 +98,14 @@ public class WorldManager : MonoBehaviour, IDataPersistence<WorldData>
         return true;
     }
 
-    public void SaveData(System.Action<IGameData, string> saveCallback)
+    public void SaveData(System.Action<IGameData, string> saveCallback, bool gameExit)
     {
         Debug.Log("Saved Seed: " + worldSeed);
         saveCallback(new WorldData(worldSeed), Path.Combine(ScenePersistentInfo.SceneId, "world"));
+
+        if (gameExit)
+        {
+            saveCallback(new GameData(ScenePersistentInfo.SceneId, SceneManager.GetActiveScene().buildIndex), "game");
+        }
     }
 }

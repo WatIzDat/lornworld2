@@ -31,7 +31,7 @@ public class DataPersistenceManager : MonoBehaviour
     //public delegate T LoadCallback<T>(string dataFileName) where T : IGameData;
     //public static event Func<LoadCallback, bool> LoadTriggered;
 
-    public delegate void SaveAction(Action<IGameData, string> saveCallback);
+    public delegate void SaveAction(Action<IGameData, string> saveCallback, bool gameExit);
     public static event SaveAction SaveTriggered;
 
     private void Awake()
@@ -71,7 +71,7 @@ public class DataPersistenceManager : MonoBehaviour
         //    return;
         //}
 
-        SaveGame();
+        SaveGame(false);
 
         Debug.Log("game saved");
     }
@@ -129,7 +129,7 @@ public class DataPersistenceManager : MonoBehaviour
     //    Debug.Log("loaded pos: " + gameData.playerPosition);
     //}
 
-    public void SaveGame()
+    public void SaveGame(bool gameExit)
     {
         if (dontPersistData)
         {
@@ -143,7 +143,8 @@ public class DataPersistenceManager : MonoBehaviour
         SaveTriggered?.Invoke((data, fileName) =>
         {
             dataHandler.Save(data, fileName, () => { });
-        });
+        },
+        gameExit);
 
         //Debug.Log("saved pos: " + gameData.playerPosition);
 
@@ -152,7 +153,7 @@ public class DataPersistenceManager : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        SaveGame();
+        SaveGame(true);
 
         dataHandler.Terminate();
     }
@@ -175,7 +176,8 @@ public class DataPersistenceManager : MonoBehaviour
         action((data, fileName) =>
         {
             dataHandler.Save(data, fileName, callback);
-        });
+        },
+        false);
     }
 
     //private List<IDataPersistence> FindAllDataPersistenceObjects()

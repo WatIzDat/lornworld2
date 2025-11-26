@@ -235,7 +235,7 @@ public class Chunk : MonoBehaviour, IDataPersistence<ChunkDataPersistence>
         return true;
     }
 
-    public void SaveData(Action<IGameData, string> saveCallback)
+    public void SaveData(Action<IGameData, string> saveCallback, bool gameExit)
     {
         //data.chunkFilePaths[chunkPos] = new ChunkDataPersistence(
         //    tiles

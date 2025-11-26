@@ -4,5 +4,5 @@ using System;
 public interface IDataPersistence<T> where T : IGameData
 {
     bool LoadData(T data);
-    void SaveData(Action<IGameData, string> saveCallback);
+    void SaveData(Action<IGameData, string> saveCallback, bool gameExit);
 }

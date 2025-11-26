@@ -498,8 +498,13 @@ public class InventoryUIManager : MonoBehaviour, IDataPersistence<InventoryData>
         return true;
     }
 
-    public void SaveData(Action<IGameData, string> saveCallback)
+    public void SaveData(Action<IGameData, string> saveCallback, bool gameExit)
     {
+        if (!gameExit)
+        {
+            return;
+        }
+
         saveCallback(
             new InventoryData(
                 items.Select(

@@ -165,7 +165,7 @@ public class Player : Entity, IDataPersistence<PlayerData>
         return true;
     }
 
-    public void SaveData(Action<IGameData, string> saveCallback)
+    public void SaveData(Action<IGameData, string> saveCallback, bool gameExit)
     {
         //data.playerPosition = transform.position;
 
