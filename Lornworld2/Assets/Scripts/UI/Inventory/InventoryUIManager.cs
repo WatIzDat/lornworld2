@@ -7,7 +7,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class InventoryUIManager : MonoBehaviour
+public class InventoryUIManager : MonoBehaviour, IDataPersistence<InventoryData>
 {
     public const int InventoryWidth = 9;
     public const int InventoryHeight = 4; // including hotbar
@@ -106,8 +106,13 @@ public class InventoryUIManager : MonoBehaviour
 
     private void Start()
     {
-        AddItem(ItemRegistry.Instance.GetEntry(ItemIds.GrassItem), 39);
-        AddItem(ItemRegistry.Instance.GetEntry(ItemIds.StoneItem), 17);
+        DataPersistenceManager.Instance.LoadObject<InventoryData>(
+            data => LoadData(data),
+            () => { },
+            "inventory");
+
+        //AddItem(ItemRegistry.Instance.GetEntry(ItemIds.GrassItem), 39);
+        //AddItem(ItemRegistry.Instance.GetEntry(ItemIds.StoneItem), 17);
 
         //AddItem(testItem, 1);
         //AddItem(testItem, 1);
@@ -134,11 +139,15 @@ public class InventoryUIManager : MonoBehaviour
     private void OnEnable()
     {
         items.CollectionChanged += OnItemsChanged;
+
+        DataPersistenceManager.SaveTriggered += SaveData;
     }
 
     private void OnDisable()
     {
         items.CollectionChanged -= OnItemsChanged;
+
+        DataPersistenceManager.SaveTriggered -= SaveData;
     }
 
     public void OpenInventory()
@@ -465,5 +474,40 @@ public class InventoryUIManager : MonoBehaviour
         }
 
         return false;
+    }
+
+    public bool LoadData(InventoryData data)
+    {
+        List<InventoryItem> dataItems = data.items.Select(
+            item => item != null
+            ? new InventoryItem(ItemRegistry.Instance.GetEntry(item.item), item.stackSize)
+            : null)
+            .ToList();
+
+        Debug.Log("Items count: " + dataItems.Count);
+
+        //items.Clear();
+
+        //items.AddRange(dataItems);
+
+        for (int i = 0; i < inventorySlots.Length; i++)
+        {
+            items[i] = dataItems[i];
+        }
+
+        return true;
+    }
+
+    public void SaveData(Action<IGameData, string> saveCallback)
+    {
+        saveCallback(
+            new InventoryData(
+                items.Select(
+                    item => item != null 
+                    ? new InventoryItemData(
+                        ItemRegistry.Instance.GetId(item.item),
+                        item.stackSize) 
+                    : null)),
+            "inventory");
     }
 }

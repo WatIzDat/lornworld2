@@ -1,3 +1,5 @@
+using MemoryPack;
+
 [System.Serializable]
 public record InventoryItem
 {
@@ -32,5 +34,18 @@ public record InventoryItem
         {
             item.itemUseBehavior.UseItem();
         }
+    }
+}
+
+[MemoryPackable]
+public partial record InventoryItemData : IGameData
+{
+    public ItemIdentifier item;
+    public int stackSize;
+
+    public InventoryItemData(ItemIdentifier item, int stackSize)
+    {
+        this.item = item;
+        this.stackSize = stackSize;
     }
 }

@@ -4,6 +4,8 @@ using MemoryPack;
 [MemoryPackUnion(0, typeof(PlayerData))]
 [MemoryPackUnion(1, typeof(ChunkDataPersistence))]
 [MemoryPackUnion(2, typeof(WorldData))]
+[MemoryPackUnion(3, typeof(InventoryData))]
+[MemoryPackUnion(4, typeof(InventoryItemData))]
 public partial interface IGameData
 {
 }
