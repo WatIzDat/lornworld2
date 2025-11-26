@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6ab7ad8b367f5bc4c84d64b95d0ca26f, type: 3}
-  m_Name: GrassTile
+  m_Name: CaveWallTile
   m_EditorClassIdentifier: 
-  tileName: Grass
-  placeholderTile: {fileID: 11400000, guid: d712a6f0ae2fc844fb2a2ebbc171c728, type: 2}
-  order: 10
-  isWalkable: 1
+  tileName: CaveWall
+  placeholderTile: {fileID: 11400000, guid: a4d329f945ff23044a8ae587907bec9c, type: 2}
+  order: 0
+  isWalkable: 0

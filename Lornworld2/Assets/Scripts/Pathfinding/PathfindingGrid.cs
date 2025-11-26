@@ -90,9 +90,9 @@ public class PathfindingGrid : MonoBehaviour
                 //Debug.Log(tile + "  " + chunkPos + "  " + relativeTilePos);
 
                 // add an isWalkable field to tile scriptable objects
-                bool walkable = tile != TileRegistry.Instance.GetEntry(TileIds.WaterTile);
+                //bool walkable = tile != TileRegistry.Instance.GetEntry(TileIds.WaterTile);
 
-                grid[x, y] = new PathfindingNode(walkable, tilePos, x, y);
+                grid[x, y] = new PathfindingNode(tile.isWalkable, tilePos, x, y);
             }
         }
     }

@@ -221,7 +221,7 @@ public class ChunkManager : MonoBehaviour
 
                     TileScriptableObject tile = chunk.GetTile(tilePos);
 
-                    if (tile == TileRegistry.Instance.GetEntry(TileIds.GrassTile))
+                    if (tile.isWalkable)
                     {
                         spawnableTiles.Add(tilePos + (chunk.chunkPos.pos * ChunkSize));
                     }

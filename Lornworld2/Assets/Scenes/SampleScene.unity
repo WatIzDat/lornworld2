@@ -1267,7 +1267,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fileName: data
-  dontPersistData: 1
+  dontPersistData: 0
 --- !u!1 &2082054969
 GameObject:
   m_ObjectHideFlags: 0

@@ -7,4 +7,5 @@ public class TileScriptableObject : ScriptableObject
     public string tileName;
     public Tile placeholderTile;
     public int order;
+    public bool isWalkable;
 }

@@ -76,7 +76,7 @@ public class MobManager : MonoBehaviour
 
                         TileScriptableObject tile = chunk.GetTile(tilePos);
 
-                        if (tile == TileRegistry.Instance.GetEntry(TileIds.GrassTile))
+                        if (tile.isWalkable)
                         {
                             spawnableTiles.Add(worldPos);
                         }

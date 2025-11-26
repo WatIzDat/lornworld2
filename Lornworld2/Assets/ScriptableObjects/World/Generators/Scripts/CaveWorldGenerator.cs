@@ -35,8 +35,8 @@ public class CaveWorldGenerator : WorldGeneratorScriptableObject
                     //Debug.Log(noiseX + " " + noiseY);
 
                     tiles[index] = randValue < randomFillPercent
-                        ? TileRegistry.Instance.GetEntry(TileIds.WaterTile)
-                        : TileRegistry.Instance.GetEntry(TileIds.GrassTile);
+                        ? TileRegistry.Instance.GetEntry(TileIds.CaveWallTile)
+                        : TileRegistry.Instance.GetEntry(TileIds.CaveFloorTile);
                 }
             }
 
@@ -65,11 +65,11 @@ public class CaveWorldGenerator : WorldGeneratorScriptableObject
 
                 if (wallCount > 4)
                 {
-                    newTiles[index] = TileRegistry.Instance.GetEntry(TileIds.WaterTile);
+                    newTiles[index] = TileRegistry.Instance.GetEntry(TileIds.CaveWallTile);
                 }
                 else if (wallCount < 4)
                 {
-                    newTiles[index] = TileRegistry.Instance.GetEntry(TileIds.GrassTile);
+                    newTiles[index] = TileRegistry.Instance.GetEntry(TileIds.CaveFloorTile);
                 }
                 else
                 {
@@ -96,7 +96,7 @@ public class CaveWorldGenerator : WorldGeneratorScriptableObject
                     {
                         int index = (neighborY * ChunkManager.ChunkSize) + neighborX;
 
-                        wallCount += tiles[index] == TileRegistry.Instance.GetEntry(TileIds.WaterTile) ? 1 : 0;
+                        wallCount += tiles[index] == TileRegistry.Instance.GetEntry(TileIds.CaveWallTile) ? 1 : 0;
                     }
                     else
                     {
