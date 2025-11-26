@@ -9,12 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a7c9e5d0a2d4a248a76cb965631334a, type: 3}
-  m_Name: WoodItem
+  m_Script: {fileID: 11500000, guid: 383b49a8516522a4b87c145096419d74, type: 3}
+  m_Name: OreFeatureInitBehavior
   m_EditorClassIdentifier: 
-  itemName: Wood
-  sprite: {fileID: 21300000, guid: 4fc2949ccf06a7949828fc8d21dd6277, type: 3}
-  maxStackSize: 40
-  itemUseBehavior: {fileID: 0}
-  statScaleBehavior: {fileID: 0}
-  isArmor: 0
+  oreTypeToSpriteMap:
+  - oreType: 0
+    sprite: {fileID: 21300000, guid: 7767a9c0be4c43440af535472dcedf6f, type: 3}

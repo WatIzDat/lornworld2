@@ -45,7 +45,7 @@ public class CaveWorldGenerator : WorldGeneratorScriptableObject
                 tiles = SmoothMap(tiles, pos, noise);
             }
 
-            return new ChunkData(tiles, Array.Empty<(FeatureScriptableObject, Vector2, FeatureData)>());
+            return new ChunkData(tiles, new (FeatureScriptableObject, Vector2, FeatureData)[] { (FeatureRegistry.Instance.GetEntry(FeatureIds.OreFeature), Vector2.zero, new OreFeatureData(OreType.Coal)) });
         };
     }
 

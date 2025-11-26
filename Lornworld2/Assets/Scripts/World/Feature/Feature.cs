@@ -58,7 +58,10 @@ public class Feature : Entity
 
         Debug.Log(Health);
 
-        FeatureScriptableObject.featureHitBehavior.Hit(data);
+        if (FeatureScriptableObject.featureHitBehavior != null)
+        {
+            FeatureScriptableObject.featureHitBehavior.Hit(data);
+        }
     }
 
     protected override void OnDeath()

@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: 4fc2949ccf06a7949828fc8d21dd6277
+guid: 7767a9c0be4c43440af535472dcedf6f
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2067898546876541913
-    second: Wood_0
+      213: -228819513787663229
+    second: Coal_0
+  - first:
+      213: -3285142160099517490
+    second: Coal_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,12 +103,34 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Wood_0
+      name: Coal_0
       rect:
         serializedVersion: 2
         x: 0
+        y: 3
+        width: 5
+        height: 5
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38c32035dd113dcf0800000000000000
+      internalID: -228819513787663229
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Coal_1
+      rect:
+        serializedVersion: 2
+        x: 1
         y: 0
-        width: 8
+        width: 7
         height: 8
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -115,8 +140,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 72490e15a395d43e0800000000000000
-      internalID: -2067898546876541913
+      spriteID: ecbdb9e5c94d862d0800000000000000
+      internalID: -3285142160099517490
       vertices: []
       indices: 
       edges: []
@@ -135,7 +160,8 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Wood_0: -2067898546876541913
+      Coal_0: -228819513787663229
+      Coal_1: -3285142160099517490
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
