@@ -230,7 +230,7 @@ public class ChunkManager : MonoBehaviour
 
             if (spawnableTiles.Count > 0)
             {
-                spawnpoint = spawnableTiles[UnityEngine.Random.Range(0, spawnableTiles.Count)];
+                spawnpoint = spawnableTiles[UnityEngine.Random.Range(0, spawnableTiles.Count)] + (Vector2.one * 0.5f);
 
                 if (createSceneEntrance)
                 {
