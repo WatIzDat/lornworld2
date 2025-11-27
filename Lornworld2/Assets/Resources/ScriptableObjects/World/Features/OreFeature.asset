@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8b63b2caa836714a8493425795e2934, type: 3}
   m_Name: OreFeature
   m_EditorClassIdentifier: 
-  prefab: {fileID: 5713798668993390691, guid: 1b111fc0355f5a44bae329da98c46277, type: 3}
+  prefab: {fileID: 3913593654835976557, guid: e90fc720042fdc14cb63825819a4aa44, type: 3}
   maxHealth: 20
   itemDrops:
   - item: {fileID: 11400000, guid: 8d430d96e645ef540a72e921d9ae0aaf, type: 2}

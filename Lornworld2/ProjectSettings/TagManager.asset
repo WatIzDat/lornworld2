@@ -45,6 +45,9 @@ TagManager:
   - name: DisplayTiles
     uniqueID: 1431191769
     locked: 0
+  - name: TileFeatures
+    uniqueID: 1678156995
+    locked: 0
   - name: DroppedItems
     uniqueID: 764557499
     locked: 0
