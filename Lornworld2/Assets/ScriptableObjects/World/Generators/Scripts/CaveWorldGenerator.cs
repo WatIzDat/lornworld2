@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "CaveWorldGenerator", menuName = "Scriptable Objects/World/Generators/Cave")]
@@ -10,6 +11,22 @@ public class CaveWorldGenerator : WorldGeneratorScriptableObject
     [SerializeField]
     [Range(0, 1)]
     private float randomFillPercent;
+
+    [SerializeField]
+    private float oreNoiseFrequency;
+
+    [SerializeField]
+    private float oreNoisePower;
+
+    [SerializeField]
+    private OreTypeToThresholdMap[] oreTypeToThresholdMap;
+
+    [Serializable]
+    private class OreTypeToThresholdMap
+    {
+        public OreType oreType;
+        public float threshold;
+    }
 
     public override Func<ChunkPos, ChunkData> GetGenerator(int seed)
     {
@@ -45,8 +62,50 @@ public class CaveWorldGenerator : WorldGeneratorScriptableObject
                 tiles = SmoothMap(tiles, pos, noise);
             }
 
-            return new ChunkData(tiles, new (FeatureScriptableObject, Vector2, FeatureData)[] { (FeatureRegistry.Instance.GetEntry(FeatureIds.OreFeature), Vector2.zero, new OreFeatureData(OreType.Coal)) });
+            List<(FeatureScriptableObject, Vector2, FeatureData)> features = new();
+
+            for (int y = 0; y < ChunkManager.ChunkSize; y++)
+            {
+                for (int x = 0; x < ChunkManager.ChunkSize; x++)
+                {
+                    int index = (y * ChunkManager.ChunkSize) + x;
+
+                    if (tiles[index] == TileRegistry.Instance.GetEntry(TileIds.CaveWallTile))
+                    {
+                        continue;
+                    }
+
+                    foreach (OreTypeToThresholdMap map in oreTypeToThresholdMap)
+                    {
+                        AddOreAt(ref features, map.oreType, x, y, pos, map.threshold, noise, seed);
+                    }
+                }
+            }
+
+            Debug.Log("Ores: " + features.Count);
+
+            return new ChunkData(tiles, features.ToArray());
         };
+    }
+
+    private void AddOreAt(ref List<(FeatureScriptableObject, Vector2, FeatureData)> features, OreType oreType, int x, int y, ChunkPos pos, float oreThreshold, FastNoiseLite noise, int seed)
+    {
+        noise.SetSeed(seed + oreType.GetHashCode() + 1);
+        noise.SetFrequency(oreNoiseFrequency);
+
+        float noiseX = (x / (float)ChunkManager.ChunkSize) - 0.5f + pos.pos.x;
+        float noiseY = (y / (float)ChunkManager.ChunkSize) - 0.5f + pos.pos.y;
+
+        float oreNoiseValue = (noise.GetNoise(noiseX, noiseY) / 2) + 0.5f;
+
+        oreNoiseValue = Mathf.Pow(oreNoiseValue * 1.2f, oreNoisePower);
+
+        Debug.Log(oreNoiseValue);
+
+        if (oreNoiseValue > oreThreshold)
+        {
+            features.Add((FeatureRegistry.Instance.GetEntry(FeatureIds.OreFeature), new Vector2(x, y) + (Vector2.one * 0.5f), new OreFeatureData(oreType)));
+        }
     }
 
     private TileScriptableObject[] SmoothMap(TileScriptableObject[] tiles, ChunkPos pos, FastNoiseLite noise)

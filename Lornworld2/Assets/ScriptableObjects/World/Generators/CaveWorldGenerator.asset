@@ -14,3 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   noiseFrequency: 1
   randomFillPercent: 0.45
+  oreNoiseFrequency: 5
+  oreNoisePower: 10
+  oreTypeToThresholdMap:
+  - oreType: 0
+    threshold: 0.72
