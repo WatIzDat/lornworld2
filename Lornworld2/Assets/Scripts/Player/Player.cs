@@ -22,6 +22,8 @@ public class Player : Entity, IDataPersistence<PlayerData>
 
     private bool isNewScene;
 
+    private GameObject currentHeldObject;
+
     private void Awake()
     {
         playerInventory = GetComponent<PlayerInventory>();
@@ -139,8 +141,27 @@ public class Player : Entity, IDataPersistence<PlayerData>
 
     private void OnHotbarSelectedIndexChanged(int index)
     {
-        playerInventory.PrevSelectedItem?.item.itemSelectBehavior.DeselectItem();
-        playerInventory.SelectedItem?.item.itemSelectBehavior.SelectItem();
+        if (playerInventory.PrevSelectedItem != null)
+        {
+            playerInventory.PrevSelectedItem.item.itemSelectBehavior.DeselectItem();
+
+            if (playerInventory.PrevSelectedItem.item.itemSelectBehavior is InstantiateGameObjectItemSelectBehavior prevInstantiateGameObjectItemSelectBehavior)
+            {
+                prevInstantiateGameObjectItemSelectBehavior.ItemSelected -= OnItemSelected;
+                prevInstantiateGameObjectItemSelectBehavior.ItemDeselected -= OnItemDeselected;
+            }
+        }
+
+        if (playerInventory.SelectedItem != null)
+        {
+            if (playerInventory.SelectedItem.item.itemSelectBehavior is InstantiateGameObjectItemSelectBehavior instantiateGameObjectItemSelectBehavior)
+            {
+                instantiateGameObjectItemSelectBehavior.ItemSelected += OnItemSelected;
+                instantiateGameObjectItemSelectBehavior.ItemDeselected += OnItemDeselected;
+            }
+
+            playerInventory.SelectedItem?.item.itemSelectBehavior.SelectItem();
+        }
 
         if (playerInventory.SelectedItem == null ||
             playerInventory.SelectedItem.item.statScaleBehavior == null)
@@ -153,6 +174,16 @@ public class Player : Entity, IDataPersistence<PlayerData>
         StatScaleInfo statScaleInfo = playerInventory.SelectedItem.item.statScaleBehavior.GetStatScaleInfo();
 
         AttackDamage = baseAttackDamage * statScaleInfo.AttackDamageScaler;
+    }
+
+    private void OnItemSelected(GameObject gameObject)
+    {
+        currentHeldObject = Instantiate(gameObject, transform);
+    }
+
+    private void OnItemDeselected()
+    {
+        Destroy(currentHeldObject);
     }
 
     protected override void OnDeath()
