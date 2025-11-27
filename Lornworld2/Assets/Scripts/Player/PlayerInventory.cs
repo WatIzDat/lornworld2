@@ -27,14 +27,36 @@ public class PlayerInventory : MonoBehaviour
     public InventoryItem PrevSelectedItem => inventoryUIManager.HotbarItems[prevSelectedIndex];
     public InventoryItem SelectedItem => inventoryUIManager.HotbarItems[SelectedIndex];
 
-    public static event Action<int> HotbarSelectedIndexChanged;
+    public static event Action<int, InventoryItem, InventoryItem> HotbarSelectedItemChanged;
 
     private bool dropItemStackModifierPressed;
     private bool pickUpItemNextUpdate;
 
-    private void Start()
+    private void OnEnable()
     {
-        HotbarSelectedIndexChanged?.Invoke(0);
+        InventoryUIManager.InventoryInitialized += OnInventoryInitialized;
+
+        InventoryUIManager.HotbarChanged += OnHotbarChanged;
+    }
+
+    private void OnDisable()
+    {
+        InventoryUIManager.InventoryInitialized -= OnInventoryInitialized;
+
+        InventoryUIManager.HotbarChanged -= OnHotbarChanged;
+    }
+
+    private void OnInventoryInitialized()
+    {
+        HotbarSelectedItemChanged?.Invoke(0, inventoryUIManager.HotbarItems[0], inventoryUIManager.HotbarItems[0]);
+    }
+
+    private void OnHotbarChanged(int index, InventoryItem oldInventoryItem, InventoryItem newInventoryItem)
+    {
+        if (index == SelectedIndex)
+        {
+            HotbarSelectedItemChanged?.Invoke(index, oldInventoryItem, newInventoryItem);
+        }
     }
 
     private void FixedUpdate()
@@ -105,13 +127,13 @@ public class PlayerInventory : MonoBehaviour
         {
             SelectedIndex++;
 
-            HotbarSelectedIndexChanged?.Invoke(SelectedIndex);
+            HotbarSelectedItemChanged?.Invoke(SelectedIndex, PrevSelectedItem, SelectedItem);
         }
         else if (direction < 0 && SelectedIndex > 0)
         {
             SelectedIndex--;
 
-            HotbarSelectedIndexChanged?.Invoke(SelectedIndex);
+            HotbarSelectedItemChanged?.Invoke(SelectedIndex, PrevSelectedItem, SelectedItem);
         }
 
         //Debug.Log(selectedIndex + " " + SelectedItem);

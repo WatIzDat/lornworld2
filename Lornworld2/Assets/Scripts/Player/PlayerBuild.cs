@@ -22,12 +22,12 @@ public class PlayerBuild : MonoBehaviour
 
     private void OnEnable()
     {
-        PlayerInventory.HotbarSelectedIndexChanged += OnHotbarSelectedIndexChanged;
+        PlayerInventory.HotbarSelectedItemChanged += OnHotbarSelectedItemChanged;
     }
 
     private void OnDisable()
     {
-        PlayerInventory.HotbarSelectedIndexChanged -= OnHotbarSelectedIndexChanged;
+        PlayerInventory.HotbarSelectedItemChanged -= OnHotbarSelectedItemChanged;
     }
 
     private void FixedUpdate()
@@ -53,7 +53,7 @@ public class PlayerBuild : MonoBehaviour
         }
     }
 
-    private void OnHotbarSelectedIndexChanged(int obj)
+    private void OnHotbarSelectedItemChanged(int index, InventoryItem oldInventoryItem, InventoryItem newInventoryItem)
     {
         if (prevFeatureItemUseBehavior != null)
         {
@@ -62,12 +62,12 @@ public class PlayerBuild : MonoBehaviour
             prevFeatureItemUseBehavior = null;
         }
 
-        if (playerInventory.SelectedItem == null)
+        if (newInventoryItem == null)
         {
             return;
         }
 
-        if (playerInventory.SelectedItem.item.itemUseBehavior is FeatureItemUseBehavior featureItemUseBehavior)
+        if (newInventoryItem.item.itemUseBehavior is FeatureItemUseBehavior featureItemUseBehavior)
         {
             featureItemUseBehavior.ItemUsed += PlaceFeature;
 

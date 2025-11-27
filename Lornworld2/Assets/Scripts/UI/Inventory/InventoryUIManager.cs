@@ -46,7 +46,9 @@ public class InventoryUIManager : MonoBehaviour, IDataPersistence<InventoryData>
 
     public bool IsInventoryOpen { get; private set; }
 
+    public static event Action InventoryInitialized;
     public static event Action<int, InventoryItem> InventoryChanged;
+    public static event Action<int, InventoryItem, InventoryItem> HotbarChanged;
     public static event Action<int, InventoryItem[]> ArmorChanged;
 
     private void Awake()
@@ -107,8 +109,13 @@ public class InventoryUIManager : MonoBehaviour, IDataPersistence<InventoryData>
     private void Start()
     {
         DataPersistenceManager.Instance.LoadObject<InventoryData>(
-            data => LoadData(data),
-            () => { },
+            data =>
+            {
+                LoadData(data);
+
+                InventoryInitialized?.Invoke();
+            },
+            () => InventoryInitialized?.Invoke(),
             "inventory");
 
         //AddItem(ItemRegistry.Instance.GetEntry(ItemIds.GrassItem), 39);
@@ -364,9 +371,15 @@ public class InventoryUIManager : MonoBehaviour, IDataPersistence<InventoryData>
 
         InventorySlot slot = inventorySlots[e.NewStartingIndex];
 
+        InventoryItem oldInventoryItem = (InventoryItem)e.OldItems[0];
         InventoryItem newInventoryItem = (InventoryItem)e.NewItems[0];
 
         InventoryChanged?.Invoke(e.NewStartingIndex, newInventoryItem);
+
+        if (e.NewStartingIndex < InventoryWidth)
+        {
+            HotbarChanged?.Invoke(e.NewStartingIndex, oldInventoryItem, newInventoryItem);
+        }
 
         if (slot.isArmorSlot)
         {

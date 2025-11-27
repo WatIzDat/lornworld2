@@ -41,7 +41,7 @@ public class Player : Entity, IDataPersistence<PlayerData>
 
         ChunkManager.InitialChunksGenerated += OnInitialChunksGenerated;
 
-        PlayerInventory.HotbarSelectedIndexChanged += OnHotbarSelectedIndexChanged;
+        PlayerInventory.HotbarSelectedItemChanged += OnHotbarSelectedItemChanged;
 
 
         InventoryUIManager.ArmorChanged += OnArmorChanged;
@@ -57,7 +57,7 @@ public class Player : Entity, IDataPersistence<PlayerData>
 
         ChunkManager.InitialChunksGenerated -= OnInitialChunksGenerated;
 
-        PlayerInventory.HotbarSelectedIndexChanged -= OnHotbarSelectedIndexChanged;
+        PlayerInventory.HotbarSelectedItemChanged -= OnHotbarSelectedItemChanged;
 
         InventoryUIManager.ArmorChanged -= OnArmorChanged;
     }
@@ -139,39 +139,39 @@ public class Player : Entity, IDataPersistence<PlayerData>
         Debug.Log(MaxHealth);
     }
 
-    private void OnHotbarSelectedIndexChanged(int index)
+    private void OnHotbarSelectedItemChanged(int index, InventoryItem oldInventoryItem, InventoryItem newInventoryItem)
     {
-        if (playerInventory.PrevSelectedItem != null)
+        if (oldInventoryItem != null)
         {
-            playerInventory.PrevSelectedItem.item.itemSelectBehavior.DeselectItem();
+            oldInventoryItem.item.itemSelectBehavior.DeselectItem();
 
-            if (playerInventory.PrevSelectedItem.item.itemSelectBehavior is InstantiateGameObjectItemSelectBehavior prevInstantiateGameObjectItemSelectBehavior)
+            if (oldInventoryItem.item.itemSelectBehavior is InstantiateGameObjectItemSelectBehavior prevInstantiateGameObjectItemSelectBehavior)
             {
                 prevInstantiateGameObjectItemSelectBehavior.ItemSelected -= OnItemSelected;
                 prevInstantiateGameObjectItemSelectBehavior.ItemDeselected -= OnItemDeselected;
             }
         }
 
-        if (playerInventory.SelectedItem != null)
+        if (newInventoryItem != null)
         {
-            if (playerInventory.SelectedItem.item.itemSelectBehavior is InstantiateGameObjectItemSelectBehavior instantiateGameObjectItemSelectBehavior)
+            if (newInventoryItem.item.itemSelectBehavior is InstantiateGameObjectItemSelectBehavior instantiateGameObjectItemSelectBehavior)
             {
                 instantiateGameObjectItemSelectBehavior.ItemSelected += OnItemSelected;
                 instantiateGameObjectItemSelectBehavior.ItemDeselected += OnItemDeselected;
             }
 
-            playerInventory.SelectedItem?.item.itemSelectBehavior.SelectItem();
+            newInventoryItem?.item.itemSelectBehavior.SelectItem();
         }
 
-        if (playerInventory.SelectedItem == null ||
-            playerInventory.SelectedItem.item.statScaleBehavior == null)
+        if (newInventoryItem == null ||
+            newInventoryItem.item.statScaleBehavior == null)
         {
             AttackDamage = baseAttackDamage;
 
             return;
         }
 
-        StatScaleInfo statScaleInfo = playerInventory.SelectedItem.item.statScaleBehavior.GetStatScaleInfo();
+        StatScaleInfo statScaleInfo = newInventoryItem.item.statScaleBehavior.GetStatScaleInfo();
 
         AttackDamage = baseAttackDamage * statScaleInfo.AttackDamageScaler;
     }

@@ -51,17 +51,17 @@ public class HotbarUIManager : MonoBehaviour
     {
         InventoryUIManager.InventoryChanged += OnInventoryChanged;
 
-        PlayerInventory.HotbarSelectedIndexChanged += OnHotbarSelectedIndexChanged;
+        PlayerInventory.HotbarSelectedItemChanged += OnHotbarSelectedItemChanged;
     }
 
     private void OnDisable()
     {
         InventoryUIManager.InventoryChanged -= OnInventoryChanged;
 
-        PlayerInventory.HotbarSelectedIndexChanged -= OnHotbarSelectedIndexChanged;
+        PlayerInventory.HotbarSelectedItemChanged -= OnHotbarSelectedItemChanged;
     }
 
-    private void OnHotbarSelectedIndexChanged(int newIndex)
+    private void OnHotbarSelectedItemChanged(int newIndex, InventoryItem oldInventoryItem, InventoryItem newInventoryItem)
     {
         selectedHotbarSlot.RemoveFromClassList("hotbar-selected-slot");
 
