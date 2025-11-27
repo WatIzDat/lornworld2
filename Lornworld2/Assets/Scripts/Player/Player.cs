@@ -41,6 +41,7 @@ public class Player : Entity, IDataPersistence<PlayerData>
 
         PlayerInventory.HotbarSelectedIndexChanged += OnHotbarSelectedIndexChanged;
 
+
         InventoryUIManager.ArmorChanged += OnArmorChanged;
     }
 
@@ -138,6 +139,9 @@ public class Player : Entity, IDataPersistence<PlayerData>
 
     private void OnHotbarSelectedIndexChanged(int index)
     {
+        playerInventory.PrevSelectedItem?.item.itemSelectBehavior.DeselectItem();
+        playerInventory.SelectedItem?.item.itemSelectBehavior.SelectItem();
+
         if (playerInventory.SelectedItem == null ||
             playerInventory.SelectedItem.item.statScaleBehavior == null)
         {

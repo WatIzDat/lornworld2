@@ -11,8 +11,21 @@ public class PlayerInventory : MonoBehaviour
     [SerializeField]
     private CraftingMenuUIManager craftingMenuUIManager;
 
+    private int prevSelectedIndex;
+
     private int selectedIndex;
-    public InventoryItem SelectedItem => inventoryUIManager.HotbarItems[selectedIndex];
+    private int SelectedIndex
+    {
+        get => selectedIndex;
+        set
+        {
+            prevSelectedIndex = selectedIndex;
+            selectedIndex = value;
+        }
+    }
+
+    public InventoryItem PrevSelectedItem => inventoryUIManager.HotbarItems[prevSelectedIndex];
+    public InventoryItem SelectedItem => inventoryUIManager.HotbarItems[SelectedIndex];
 
     public static event Action<int> HotbarSelectedIndexChanged;
 
@@ -48,7 +61,7 @@ public class PlayerInventory : MonoBehaviour
 
     public void RemoveFromSelectedItem()
     {
-        inventoryUIManager.AddStackToItem(selectedIndex, -1);
+        inventoryUIManager.AddStackToItem(SelectedIndex, -1);
     }
 
 #pragma warning disable IDE0051, IDE0060
@@ -88,17 +101,17 @@ public class PlayerInventory : MonoBehaviour
         }
 
         if (direction > 0 &&
-            selectedIndex < inventoryUIManager.HotbarItems.Length - 1)
+            SelectedIndex < inventoryUIManager.HotbarItems.Length - 1)
         {
-            selectedIndex++;
+            SelectedIndex++;
 
-            HotbarSelectedIndexChanged?.Invoke(selectedIndex);
+            HotbarSelectedIndexChanged?.Invoke(SelectedIndex);
         }
-        else if (direction < 0 && selectedIndex > 0)
+        else if (direction < 0 && SelectedIndex > 0)
         {
-            selectedIndex--;
+            SelectedIndex--;
 
-            HotbarSelectedIndexChanged?.Invoke(selectedIndex);
+            HotbarSelectedIndexChanged?.Invoke(SelectedIndex);
         }
 
         //Debug.Log(selectedIndex + " " + SelectedItem);
