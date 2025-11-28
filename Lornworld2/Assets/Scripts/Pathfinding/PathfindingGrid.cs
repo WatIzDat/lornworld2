@@ -16,6 +16,7 @@ public class PathfindingGrid : MonoBehaviour
 
     public int GridArea => gridSize.x * gridSize.y;
 
+    [SerializeField]
     private bool displayGridGizmos;
 
     //[SerializeField]
@@ -33,6 +34,8 @@ public class PathfindingGrid : MonoBehaviour
 
     private void OnLoadedChunksShifted(Vector2Int direction)
     {
+        Debug.Log("Shifted: " + direction);
+
         transform.position += (Vector3)(Vector2)(-direction * ChunkManager.ChunkSize);
 
         CreateGrid();
@@ -46,8 +49,6 @@ public class PathfindingGrid : MonoBehaviour
 
         // TODO: separate render distance from simulation distance
         gridSize = ChunkManager.ChunkSize * chunkManager.LoadedChunksSideLength * Vector2Int.one;
-
-        CreateGrid();
     }
 
     //private bool PlayerOutsideGrid()
@@ -60,7 +61,7 @@ public class PathfindingGrid : MonoBehaviour
     //    return false;
     //}
 
-    private void CreateGrid()
+    public void CreateGrid()
     {
         //gridCenter = transform.position;
 

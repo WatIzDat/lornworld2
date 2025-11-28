@@ -73,6 +73,11 @@ public class WorldManager : MonoBehaviour, IDataPersistence<WorldData>
     private void OnInitialChunksGenerated()
     {
         pathfindingGrid.Initialize();
+
+        if (!chunkManager.IsShiftingChunks)
+        {
+            pathfindingGrid.CreateGrid();
+        }
     }
 
     public void Generate(IWorldGenerator generator)

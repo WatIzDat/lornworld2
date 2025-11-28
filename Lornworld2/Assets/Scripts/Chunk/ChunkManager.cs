@@ -35,6 +35,8 @@ public class ChunkManager : MonoBehaviour
     public static event Action InitialChunksGenerated;
     private bool areInitialChunksGenerated;
 
+    public bool IsShiftingChunks { get; private set; }
+
     private void Awake()
     {
         loadedChunks = ChunkArray.AddChunkArrayComponent(gameObject, renderDistance, chunkPrefab, chunkParent, this);
@@ -54,19 +56,19 @@ public class ChunkManager : MonoBehaviour
         //loadedChunks.ChunkUnloaded -= OnChunkUnloaded;
     }
 
-    private bool isShiftingChunks;
-
     // Don't have to check every frame (change later)
     private void Update()
     {
-        if (isShiftingChunks || worldGenerator == null)
+        if (IsShiftingChunks || worldGenerator == null)
         {
             return;
         }
 
         if (Vector2Int.Distance(player.ChunkPos.pos, loadedChunks.Center.chunkPos.pos) >= LoadedChunksSideLength)
         {
-            isShiftingChunks = true;
+            IsShiftingChunks = true;
+
+            Vector2Int translation = loadedChunks.Center.chunkPos.pos - player.ChunkPos.pos;
 
             StartCoroutine(
                 loadedChunks.CenterChunksAround(
@@ -75,7 +77,8 @@ public class ChunkManager : MonoBehaviour
                     () =>
                     {
                         Debug.Log("callback");
-                        isShiftingChunks = false;
+                        IsShiftingChunks = false;
+                        LoadedChunksShifted?.Invoke(translation);
                     }));
 
             return;
@@ -84,7 +87,7 @@ public class ChunkManager : MonoBehaviour
         // moved off a chunk
         if (player.ChunkPos.pos.x - loadedChunks.Center.chunkPos.pos.x > 0)
         {
-            isShiftingChunks = true;
+            IsShiftingChunks = true;
             Debug.Log("moved off chunk");
             
             StartCoroutine(
@@ -94,13 +97,13 @@ public class ChunkManager : MonoBehaviour
                     () =>
                     {
                         Debug.Log("callback");
-                        isShiftingChunks = false;
+                        IsShiftingChunks = false;
                         LoadedChunksShifted?.Invoke(Vector2Int.left);
                     }));
         }
         else if (player.ChunkPos.pos.x - loadedChunks.Center.chunkPos.pos.x < 0)
         {
-            isShiftingChunks = true;
+            IsShiftingChunks = true;
             Debug.Log("moved off chunk");
 
             StartCoroutine(
@@ -110,13 +113,13 @@ public class ChunkManager : MonoBehaviour
                     () =>
                     {
                         Debug.Log("callback");
-                        isShiftingChunks = false;
+                        IsShiftingChunks = false;
                         LoadedChunksShifted?.Invoke(Vector2Int.right);
                     }));
         }
         else if (player.ChunkPos.pos.y - loadedChunks.Center.chunkPos.pos.y > 0)
         {
-            isShiftingChunks = true;
+            IsShiftingChunks = true;
             Debug.Log("moved off chunk");
 
             StartCoroutine(
@@ -126,13 +129,13 @@ public class ChunkManager : MonoBehaviour
                     () =>
                     {
                         Debug.Log("callback");
-                        isShiftingChunks = false;
+                        IsShiftingChunks = false;
                         LoadedChunksShifted?.Invoke(Vector2Int.down);
                     }));
         }
         else if (player.ChunkPos.pos.y - loadedChunks.Center.chunkPos.pos.y < 0)
         {
-            isShiftingChunks = true;
+            IsShiftingChunks = true;
             Debug.Log("moved off chunk");
 
             StartCoroutine(
@@ -142,7 +145,7 @@ public class ChunkManager : MonoBehaviour
                     () =>
                     {
                         Debug.Log("callback");
-                        isShiftingChunks = false;
+                        IsShiftingChunks = false;
                         LoadedChunksShifted?.Invoke(Vector2Int.up);
                     }));
         }
