@@ -143,7 +143,10 @@ public class Player : Entity, IDataPersistence<PlayerData>
     {
         if (oldInventoryItem != null)
         {
-            oldInventoryItem.item.itemSelectBehavior.DeselectItem();
+            if (oldInventoryItem.item.itemSelectBehavior != null)
+            {
+                oldInventoryItem.item.itemSelectBehavior.DeselectItem();
+            }
 
             if (oldInventoryItem.item.itemSelectBehavior is InstantiateGameObjectItemSelectBehavior prevInstantiateGameObjectItemSelectBehavior)
             {
@@ -160,7 +163,10 @@ public class Player : Entity, IDataPersistence<PlayerData>
                 instantiateGameObjectItemSelectBehavior.ItemDeselected += OnItemDeselected;
             }
 
-            newInventoryItem?.item.itemSelectBehavior.SelectItem();
+            if (newInventoryItem.item.itemSelectBehavior != null)
+            {
+                newInventoryItem.item.itemSelectBehavior.SelectItem();
+            }
         }
 
         if (newInventoryItem == null ||
