@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2a7c9e5d0a2d4a248a76cb965631334a, type: 3}
-  m_Name: WoodItem
+  m_Name: TorchItem
   m_EditorClassIdentifier: 
-  itemName: Wood
-  sprite: {fileID: 21300000, guid: 4fc2949ccf06a7949828fc8d21dd6277, type: 3}
+  itemName: Torch
+  sprite: {fileID: 21300000, guid: 6b7ef0f6e834de44d9bf0c5c7c7c8378, type: 3}
   maxStackSize: 40
-  itemUseBehavior: {fileID: 0}
-  itemSelectBehavior: {fileID: 0}
+  itemUseBehavior: {fileID: 11400000, guid: 9e26cf1056527c642bc6ac3774771dd0, type: 2}
+  itemSelectBehavior: {fileID: 11400000, guid: c793e3e837be0a14a80b008cf43ed098, type: 2}
   statScaleBehavior: {fileID: 0}
   isArmor: 0

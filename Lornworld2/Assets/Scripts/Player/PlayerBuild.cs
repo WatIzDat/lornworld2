@@ -1,8 +1,9 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerBuild : MonoBehaviour
 {
-    [SerializeField]
+    //[SerializeField]
     private ChunkManager chunkManager;
 
     [SerializeField]
@@ -23,11 +24,20 @@ public class PlayerBuild : MonoBehaviour
     private void OnEnable()
     {
         PlayerInventory.HotbarSelectedItemChanged += OnHotbarSelectedItemChanged;
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnDisable()
     {
         PlayerInventory.HotbarSelectedItemChanged -= OnHotbarSelectedItemChanged;
+
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
+    {
+        chunkManager = FindFirstObjectByType<ChunkManager>();
     }
 
     private void FixedUpdate()
