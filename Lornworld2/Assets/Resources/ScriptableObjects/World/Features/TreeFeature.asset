@@ -19,3 +19,4 @@ MonoBehaviour:
     stackSize: 3
   featureInitBehavior: {fileID: 11400000, guid: b592558ccdb156646adbf8ced6fac199, type: 2}
   featureHitBehavior: {fileID: 11400000, guid: 214daccc0d3f7cb4e882c61a7f32b9f7, type: 2}
+  featureDeathBehavior: {fileID: 11400000, guid: 3e82e38e6bcd85848918f878f36f6b95, type: 2}

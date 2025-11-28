@@ -10,7 +10,8 @@ public class FeatureScriptableObject : ScriptableObject
 {
     public GameObject prefab;
     public float maxHealth;
-    public InventoryItem[] itemDrops;
+    //public InventoryItem[] itemDrops;
     public BaseFeatureInitBehaviorScriptableObject featureInitBehavior;
     public BaseFeatureHitBehaviorScriptableObject featureHitBehavior;
+    public BaseFeatureDeathBehaviorScriptableObject featureDeathBehavior;
 }

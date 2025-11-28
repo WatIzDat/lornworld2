@@ -66,13 +66,18 @@ public class Feature : Entity
 
     protected override void OnDeath()
     {
-        foreach (InventoryItem inventoryItem in FeatureScriptableObject.itemDrops)
+        //foreach (InventoryItem inventoryItem in FeatureScriptableObject.itemDrops)
+        //{
+        //    DroppedItem.Create(
+        //        droppedItemPrefab,
+        //        transform.position,
+        //        inventoryItem.item,
+        //        inventoryItem.stackSize);
+        //}
+
+        if (FeatureScriptableObject.featureDeathBehavior != null)
         {
-            DroppedItem.Create(
-                droppedItemPrefab,
-                transform.position,
-                inventoryItem.item,
-                inventoryItem.stackSize);
+            FeatureScriptableObject.featureDeathBehavior.Die(data, transform.position);
         }
 
         Destroy(gameObject);
