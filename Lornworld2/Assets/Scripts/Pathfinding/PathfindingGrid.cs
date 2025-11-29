@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -18,6 +19,8 @@ public class PathfindingGrid : MonoBehaviour
 
     [SerializeField]
     private bool displayGridGizmos;
+
+    public static event Action GridInitialized;
 
     //[SerializeField]
     //private Player player;
@@ -49,6 +52,8 @@ public class PathfindingGrid : MonoBehaviour
 
         // TODO: separate render distance from simulation distance
         gridSize = ChunkManager.ChunkSize * chunkManager.LoadedChunksSideLength * Vector2Int.one;
+
+        GridInitialized?.Invoke();
     }
 
     //private bool PlayerOutsideGrid()

@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
 using System;
+using UnityEngine.SceneManagement;
 
 public class AStarPathfinding : MonoBehaviour
 {
@@ -16,9 +17,32 @@ public class AStarPathfinding : MonoBehaviour
         grid = GetComponent<PathfindingGrid>();
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        Debug.Log(grid.GridArea);
+        SceneManager.sceneLoaded += OnSceneLoaded;
+
+        PathfindingGrid.GridInitialized += OnGridInitialized;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+
+        PathfindingGrid.GridInitialized -= OnGridInitialized;
+    }
+
+    //private void Start()
+    //{
+    //    Debug.Log(grid.GridArea);
+    //}
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
+    {
+        StopAllCoroutines();
+    }
+
+    private void OnGridInitialized()
+    {
         openSet = new Heap<PathfindingNode>(grid.GridArea);
     }
 
@@ -34,6 +58,12 @@ public class AStarPathfinding : MonoBehaviour
     // optimization: check if target node is unwalkable and return early or first search for walkable node
     private IEnumerator FindPath(Vector2 startPos, Vector2 targetPos)
     {
+        //if (openSet == null)
+        //{
+        //    Debug.Log("open set null");
+        //    yield return null;
+        //}
+
         Vector2[] waypoints = new Vector2[0];
         bool pathSuccess = false;
 
@@ -105,7 +135,7 @@ public class AStarPathfinding : MonoBehaviour
             }
         }
 
-        yield return null;
+        //yield return null;
 
         if (pathSuccess)
         {
@@ -113,6 +143,8 @@ public class AStarPathfinding : MonoBehaviour
         }
 
         pathRequestManager.FinishedProcessingPath(waypoints, pathSuccess);
+
+        yield break;
     }
 
     private Vector2[] RetracePath(PathfindingNode startNode, PathfindingNode targetNode)

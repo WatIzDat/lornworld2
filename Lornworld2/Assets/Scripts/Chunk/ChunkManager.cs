@@ -33,7 +33,7 @@ public class ChunkManager : MonoBehaviour
     public static event Action<Vector2Int> LoadedChunksShifted;
 
     public static event Action InitialChunksGenerated;
-    private bool areInitialChunksGenerated;
+    public bool AreInitialChunksGenerated { get; private set; }
 
     public bool IsShiftingChunks { get; private set; }
 
@@ -201,7 +201,7 @@ public class ChunkManager : MonoBehaviour
 
     public Vector2? GetSpawnpoint(bool createSceneEntrance = false)
     {
-        if (!areInitialChunksGenerated)
+        if (!AreInitialChunksGenerated)
         {
             return null;
         }
@@ -281,7 +281,7 @@ public class ChunkManager : MonoBehaviour
 
         StartCoroutine(loadedChunks.PopulateChunksWith(generator, () =>
         {
-            areInitialChunksGenerated = true;
+            AreInitialChunksGenerated = true;
             InitialChunksGenerated?.Invoke();
         }));
     }

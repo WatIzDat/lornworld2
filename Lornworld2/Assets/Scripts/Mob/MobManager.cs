@@ -49,7 +49,7 @@ public class MobManager : MonoBehaviour
 
     private void Update()
     {
-        if (mobParent.childCount < maxMobCount)
+        if (chunkManager.AreInitialChunksGenerated && !chunkManager.IsShiftingChunks && mobParent.childCount < maxMobCount)
         {
             Vector2? spawnpoint = null;
 
