@@ -2,6 +2,8 @@ using System;
 using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using FMOD.Studio;
+using FMODUnity;
 
 public class Player : Entity, IDataPersistence<PlayerData>
 {

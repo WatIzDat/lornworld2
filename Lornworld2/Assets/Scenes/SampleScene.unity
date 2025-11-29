@@ -414,6 +414,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 10
+  playerFootstepsSound:
+    Guid:
+      Data1: -1530171308
+      Data2: 1340062515
+      Data3: 1345226891
+      Data4: 2001125513
+    Path: event:/PlayerFootsteps
 --- !u!114 &514829021
 MonoBehaviour:
   m_ObjectHideFlags: 0
