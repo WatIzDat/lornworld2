@@ -4,9 +4,9 @@ using UnityEngine.SceneManagement;
 [CreateAssetMenu(fileName = "SceneEntranceFeatureHitBehavior", menuName = "Scriptable Objects/World/Features/HitBehaviors/SceneEntrance")]
 public class SceneEntranceFeatureHitBehavior : FeatureHitBehaviorScriptableObject<SceneEntranceFeatureData>
 {
-    public override void Hit(FeatureData data)
+    public override void Hit(FeatureData data, Vector2 pos)
     {
-        base.Hit(data);
+        base.Hit(data, pos);
 
         SceneEntranceFeatureData sceneEntranceData = (SceneEntranceFeatureData)data;
 

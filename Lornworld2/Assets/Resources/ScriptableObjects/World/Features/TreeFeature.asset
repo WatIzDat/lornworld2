@@ -14,9 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefab: {fileID: 5944066345359256524, guid: c8b6846a5c7c4064a9d30cef589845f2, type: 3}
   maxHealth: 10
-  itemDrops:
-  - item: {fileID: 11400000, guid: 99bd64f6409795443a2c22c0d66b88b8, type: 2}
-    stackSize: 3
   featureInitBehavior: {fileID: 11400000, guid: b592558ccdb156646adbf8ced6fac199, type: 2}
-  featureHitBehavior: {fileID: 11400000, guid: 214daccc0d3f7cb4e882c61a7f32b9f7, type: 2}
+  featureHitBehavior: {fileID: 11400000, guid: 676748422299cbb4d9d18337e45bef43, type: 2}
   featureDeathBehavior: {fileID: 11400000, guid: 3e82e38e6bcd85848918f878f36f6b95, type: 2}

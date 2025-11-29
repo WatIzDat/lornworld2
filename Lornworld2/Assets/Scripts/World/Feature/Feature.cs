@@ -60,7 +60,7 @@ public class Feature : Entity
 
         if (FeatureScriptableObject.featureHitBehavior != null)
         {
-            FeatureScriptableObject.featureHitBehavior.Hit(data);
+            FeatureScriptableObject.featureHitBehavior.Hit(data, transform.position);
         }
     }
 
