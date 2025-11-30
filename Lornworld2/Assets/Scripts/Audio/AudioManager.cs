@@ -2,12 +2,15 @@ using UnityEngine;
 using FMODUnity;
 using FMOD.Studio;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
 
     private readonly List<EventInstance> eventInstances = new();
+    private List<StudioEventEmitter> eventEmitters = new();
 
     private void Awake()
     {
@@ -21,6 +24,30 @@ public class AudioManager : MonoBehaviour
         {
             Instance = this;
         }
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.activeSceneChanged += OnActiveSceneChanged;
+
+        ChunkManager.LoadedChunksShifted += OnLoadedChunksShifted;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.activeSceneChanged -= OnActiveSceneChanged;
+
+        ChunkManager.LoadedChunksShifted -= OnLoadedChunksShifted;
+    }
+
+    private void OnActiveSceneChanged(Scene fromScene, Scene toScene)
+    {
+        CleanUp();
+    }
+
+    private void OnLoadedChunksShifted(Vector2Int direction)
+    {
+        RemoveUnusedEventEmitters();
     }
 
     public void PlayOneShot(EventReference sound, Vector2 worldPos)
@@ -37,6 +64,20 @@ public class AudioManager : MonoBehaviour
         return eventInstance;
     }
 
+    public void AddEventEmitter(StudioEventEmitter emitter)
+    {
+        eventEmitters.Add(emitter);
+    }
+
+    public void RemoveUnusedEventEmitters()
+    {
+        Debug.Log("Before: " + eventEmitters.Count);
+
+        eventEmitters = eventEmitters.Where(emitter => emitter != null).ToList();
+
+        Debug.Log("After: " + eventEmitters.Count);
+    }
+
     private void CleanUp()
     {
         foreach (EventInstance eventInstance in eventInstances)
@@ -44,6 +85,15 @@ public class AudioManager : MonoBehaviour
             eventInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
             eventInstance.release();
         }
+
+        eventInstances.Clear();
+
+        foreach (StudioEventEmitter emitter in eventEmitters)
+        {
+            emitter.Stop();
+        }
+
+        eventEmitters.Clear();
     }
 
     private void OnDestroy()
