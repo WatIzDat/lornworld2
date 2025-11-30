@@ -344,6 +344,10 @@ PrefabInstance:
       value: WorldManager
       objectReference: {fileID: 0}
     - target: {fileID: 6848233014813615960, guid: c38c9dfa910bf6a4eaa7ff23937d73ff, type: 3}
+      propertyPath: musicArea
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6848233014813615960, guid: c38c9dfa910bf6a4eaa7ff23937d73ff, type: 3}
       propertyPath: worldGenerator
       value: 
       objectReference: {fileID: 11400000, guid: 87caca09fc1947d4182dec8c186d9ac0, type: 2}

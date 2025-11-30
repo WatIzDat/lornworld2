@@ -19,6 +19,8 @@ public class AudioManager : MonoBehaviour
 
     private EventInstance musicEventInstance;
 
+    private WorldManager worldManager;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -51,9 +53,16 @@ public class AudioManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
     {
-        ambienceEventInstance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+        worldManager = FindFirstObjectByType<WorldManager>();
 
-        WorldManager worldManager = FindFirstObjectByType<WorldManager>();
+        if (ScenePersistentInfo.PrevSceneId == null)
+        {
+            musicEventInstance = InitializePersistentEventInstance(musicEventReference);
+        }
+
+        SetMusicArea(worldManager.musicArea);
+
+        ambienceEventInstance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
 
         if (!worldManager.hasAmbience)
         {
@@ -63,10 +72,11 @@ public class AudioManager : MonoBehaviour
         ambienceEventInstance = InitializePersistentEventInstance(worldManager.ambienceAudio);
     }
 
-    private void Start()
-    {
-        musicEventInstance = InitializePersistentEventInstance(musicEventReference);
-    }
+    //private void Start()
+    //{
+
+    //    SetMusicArea(worldManager.musicArea);
+    //}
 
     private void OnActiveSceneChanged(Scene fromScene, Scene toScene)
     {
@@ -92,13 +102,25 @@ public class AudioManager : MonoBehaviour
         return eventInstance;
     }
 
-    private EventInstance InitializePersistentEventInstance(EventReference sound)
+    public EventInstance CreatePersistentEventInstance(EventReference sound)
     {
         EventInstance eventInstance = RuntimeManager.CreateInstance(sound);
+
+        return eventInstance;
+    }
+
+    public EventInstance InitializePersistentEventInstance(EventReference sound)
+    {
+        EventInstance eventInstance = CreatePersistentEventInstance(sound);
         
         eventInstance.start();
 
         return eventInstance;
+    }
+
+    public void SetMusicArea(MusicArea area)
+    {
+        musicEventInstance.setParameterByName("area", (float)area);
     }
 
     public void AddEventEmitter(StudioEventEmitter emitter)
