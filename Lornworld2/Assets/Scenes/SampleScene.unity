@@ -781,6 +781,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: beb9a20a823f3f144bffa7421ef22373, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  musicEventReference:
+    Guid:
+      Data1: 2041445705
+      Data2: 1119523866
+      Data3: 576380836
+      Data4: 1462918359
+    Path: event:/Music/GameMusic
 --- !u!1 &740460308
 GameObject:
   m_ObjectHideFlags: 0

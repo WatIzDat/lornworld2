@@ -14,6 +14,11 @@ public class AudioManager : MonoBehaviour
 
     private EventInstance ambienceEventInstance;
 
+    [SerializeField]
+    private EventReference musicEventReference;
+
+    private EventInstance musicEventInstance;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -46,6 +51,8 @@ public class AudioManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
     {
+        ambienceEventInstance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+
         WorldManager worldManager = FindFirstObjectByType<WorldManager>();
 
         if (!worldManager.hasAmbience)
@@ -53,7 +60,12 @@ public class AudioManager : MonoBehaviour
             return;
         }
 
-        InitializeAmbience(worldManager.ambienceAudio);
+        ambienceEventInstance = InitializePersistentEventInstance(worldManager.ambienceAudio);
+    }
+
+    private void Start()
+    {
+        musicEventInstance = InitializePersistentEventInstance(musicEventReference);
     }
 
     private void OnActiveSceneChanged(Scene fromScene, Scene toScene)
@@ -80,6 +92,15 @@ public class AudioManager : MonoBehaviour
         return eventInstance;
     }
 
+    private EventInstance InitializePersistentEventInstance(EventReference sound)
+    {
+        EventInstance eventInstance = RuntimeManager.CreateInstance(sound);
+        
+        eventInstance.start();
+
+        return eventInstance;
+    }
+
     public void AddEventEmitter(StudioEventEmitter emitter)
     {
         eventEmitters.Add(emitter);
@@ -92,13 +113,6 @@ public class AudioManager : MonoBehaviour
         eventEmitters = eventEmitters.Where(emitter => emitter != null).ToList();
 
         Debug.Log("After: " + eventEmitters.Count);
-    }
-
-    private void InitializeAmbience(EventReference ambienceEventReference)
-    {
-        ambienceEventInstance = CreateEventInstance(ambienceEventReference);
-        
-        ambienceEventInstance.start();
     }
 
     private void CleanUp()
