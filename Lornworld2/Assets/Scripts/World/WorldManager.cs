@@ -10,6 +10,8 @@ public class WorldManager : MonoBehaviour, IDataPersistence<WorldData>
     public bool hasAmbience;
     public EventReference ambienceAudio;
 
+    public MusicArea musicArea;
+
     //[SerializeField]
     private ChunkManager chunkManager;
 
@@ -50,12 +52,13 @@ public class WorldManager : MonoBehaviour, IDataPersistence<WorldData>
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
     {
-        if (ScenePersistentInfo.PrevSceneId == null)
+        if (ScenePersistentInfo.IsInitialScene)
         {
             DataPersistenceManager.Instance.LoadObject<GameData>(
                 data =>
                 {
-                    ScenePersistentInfo.SceneId = data.sceneId;
+                    //ScenePersistentInfo.SceneId = data.sceneId;
+                    ScenePersistentInfo.InitializeSceneId(data.sceneId);
 
                     SceneManager.LoadScene(data.sceneBuildIndex);
                 },

@@ -27,7 +27,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
-        playerFootstepsInstance = AudioManager.Instance.CreateEventInstance(playerFootstepsSound);
+        playerFootstepsInstance = AudioManager.Instance.CreatePersistentEventInstance(playerFootstepsSound);
     }
 
     private void Update()
