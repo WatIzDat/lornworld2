@@ -1,3 +1,4 @@
+using FMODUnity;
 using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -5,6 +6,9 @@ using UnityEngine.SceneManagement;
 public class WorldManager : MonoBehaviour, IDataPersistence<WorldData>
 {
     public int worldSeed;
+
+    public bool hasAmbience;
+    public EventReference ambienceAudio;
 
     //[SerializeField]
     private ChunkManager chunkManager;

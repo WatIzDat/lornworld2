@@ -12,6 +12,8 @@ public class AudioManager : MonoBehaviour
     private readonly List<EventInstance> eventInstances = new();
     private List<StudioEventEmitter> eventEmitters = new();
 
+    private EventInstance ambienceEventInstance;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -29,6 +31,7 @@ public class AudioManager : MonoBehaviour
     private void OnEnable()
     {
         SceneManager.activeSceneChanged += OnActiveSceneChanged;
+        SceneManager.sceneLoaded += OnSceneLoaded;
 
         ChunkManager.LoadedChunksShifted += OnLoadedChunksShifted;
     }
@@ -36,8 +39,21 @@ public class AudioManager : MonoBehaviour
     private void OnDisable()
     {
         SceneManager.activeSceneChanged -= OnActiveSceneChanged;
+        SceneManager.sceneLoaded -= OnSceneLoaded;
 
         ChunkManager.LoadedChunksShifted -= OnLoadedChunksShifted;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
+    {
+        WorldManager worldManager = FindFirstObjectByType<WorldManager>();
+
+        if (!worldManager.hasAmbience)
+        {
+            return;
+        }
+
+        InitializeAmbience(worldManager.ambienceAudio);
     }
 
     private void OnActiveSceneChanged(Scene fromScene, Scene toScene)
@@ -76,6 +92,13 @@ public class AudioManager : MonoBehaviour
         eventEmitters = eventEmitters.Where(emitter => emitter != null).ToList();
 
         Debug.Log("After: " + eventEmitters.Count);
+    }
+
+    private void InitializeAmbience(EventReference ambienceEventReference)
+    {
+        ambienceEventInstance = CreateEventInstance(ambienceEventReference);
+        
+        ambienceEventInstance.start();
     }
 
     private void CleanUp()

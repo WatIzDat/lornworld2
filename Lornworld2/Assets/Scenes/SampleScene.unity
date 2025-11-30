@@ -1483,6 +1483,30 @@ PrefabInstance:
       propertyPath: m_Name
       value: WorldManager
       objectReference: {fileID: 0}
+    - target: {fileID: 6848233014813615960, guid: c38c9dfa910bf6a4eaa7ff23937d73ff, type: 3}
+      propertyPath: hasAmbience
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6848233014813615960, guid: c38c9dfa910bf6a4eaa7ff23937d73ff, type: 3}
+      propertyPath: ambienceAudio.Path
+      value: event:/Ambience/Wind
+      objectReference: {fileID: 0}
+    - target: {fileID: 6848233014813615960, guid: c38c9dfa910bf6a4eaa7ff23937d73ff, type: 3}
+      propertyPath: ambienceAudio.Guid.Data1
+      value: -1095809896
+      objectReference: {fileID: 0}
+    - target: {fileID: 6848233014813615960, guid: c38c9dfa910bf6a4eaa7ff23937d73ff, type: 3}
+      propertyPath: ambienceAudio.Guid.Data2
+      value: 1232864165
+      objectReference: {fileID: 0}
+    - target: {fileID: 6848233014813615960, guid: c38c9dfa910bf6a4eaa7ff23937d73ff, type: 3}
+      propertyPath: ambienceAudio.Guid.Data3
+      value: 969837190
+      objectReference: {fileID: 0}
+    - target: {fileID: 6848233014813615960, guid: c38c9dfa910bf6a4eaa7ff23937d73ff, type: 3}
+      propertyPath: ambienceAudio.Guid.Data4
+      value: 1972316653
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
