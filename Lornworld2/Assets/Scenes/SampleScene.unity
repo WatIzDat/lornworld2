@@ -1285,7 +1285,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3c9fb8a0fea4d647a66f953a612a78e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mobPrefab: {fileID: 7742050174860863901, guid: 2329679e9ec4abf4ab260edb283b5aab, type: 3}
   mobParentTag: MobParent
   player: {fileID: 514829023}
   maxMobCount: 10

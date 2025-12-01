@@ -17,7 +17,10 @@ public class PathfindingUnit : MonoBehaviour
     private int targetIndex;
 
     private bool followPath;
+    private float followPathTime;
+
     private Vector2 currentWaypoint;
+
 
     //private bool pathRequested;
 
@@ -62,6 +65,7 @@ public class PathfindingUnit : MonoBehaviour
             path = newPath;
 
             followPath = true;
+            //followPathTime = 0f;
 
             startPos = transform.position;
 
@@ -107,7 +111,9 @@ public class PathfindingUnit : MonoBehaviour
         //    targetPos.x - startPos.x,
         //    targetPos.y - startPos.y).normalized;
 
-        followPathBehavior.FollowPath(rb, speed, direction, startPos, targetPos);
+        followPathBehavior.FollowPath(rb, speed, followPathTime, direction, startPos, targetPos);
+
+        followPathTime += Time.fixedDeltaTime;
     }
 
     private void OnDrawGizmos()
