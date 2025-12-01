@@ -55,7 +55,7 @@ public class AudioManager : MonoBehaviour
     {
         worldManager = FindFirstObjectByType<WorldManager>();
 
-        if (ScenePersistentInfo.PrevSceneId == null)
+        if (ScenePersistentInfo.IsInitialScene)
         {
             musicEventInstance = InitializePersistentEventInstance(musicEventReference);
         }
