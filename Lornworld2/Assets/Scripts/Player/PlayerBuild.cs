@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,10 +13,12 @@ public class PlayerBuild : MonoBehaviour
 
     private PlayerInventory playerInventory;
 
-    private FeatureScriptableObject featureToPlace;
-    private bool placeFeatureNextUpdate;
+    //private FeatureScriptableObject featureToPlace;
+    //private bool placeFeatureNextUpdate;
 
     private FeatureItemUseBehavior prevFeatureItemUseBehavior;
+
+    private readonly Queue<(Vector2 pos, FeatureScriptableObject feature, int index)> featuresToPlace = new();
 
     private void Awake()
     {
@@ -42,25 +46,43 @@ public class PlayerBuild : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (placeFeatureNextUpdate)
+        if (featuresToPlace.Count > 0)
         {
-            Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            (Vector2 mousePos, FeatureScriptableObject featureToPlace, int index) = featuresToPlace.Dequeue();
+
+            Vector2 pos = Camera.main.ScreenToWorldPoint(mousePos);
 
             RaycastHit2D raycastHit = Physics2D.Raycast(pos, Vector2.zero);
 
             if (raycastHit.collider != null)
             {
-                placeFeatureNextUpdate = false;
+                //placeFeatureNextUpdate = false;
 
                 return;
             }
 
-            Chunk chunk = chunkManager.FindChunkAt(new ChunkPos(Vector2Int.FloorToInt(pos / ChunkManager.ChunkSize)));
+            playerInventory.RemoveFromIndex(index);
 
-            Feature.Create(chunk, featureToPlace, pos, worldPositionStays: true);
+            StartCoroutine(ProcessFeaturePlacement(pos, featureToPlace));
 
-            placeFeatureNextUpdate = false;
+            //Chunk chunk = chunkManager.FindChunkAt(new ChunkPos(Vector2Int.FloorToInt(pos / ChunkManager.ChunkSize)));
+
+            //Feature.Create(chunk, featureToPlace, pos, worldPositionStays: true);
+
+            //placeFeatureNextUpdate = false;
         }
+    }
+
+    private IEnumerator ProcessFeaturePlacement(Vector2 pos, FeatureScriptableObject featureToPlace)
+    {
+        if (chunkManager.IsShiftingChunks)
+        {
+            yield return null;
+        }
+
+        Chunk chunk = chunkManager.FindChunkAt(new ChunkPos(Vector2Int.FloorToInt(pos / ChunkManager.ChunkSize)));
+
+        Feature.Create(chunk, featureToPlace, pos, worldPositionStays: true);
     }
 
     private void OnHotbarSelectedItemChanged(int index, InventoryItem oldInventoryItem, InventoryItem newInventoryItem)
@@ -87,10 +109,10 @@ public class PlayerBuild : MonoBehaviour
 
     public void PlaceFeature(FeatureScriptableObject feature)
     {
-        featureToPlace = feature;
+        //featureToPlace = feature;
 
-        placeFeatureNextUpdate = true;
+        //placeFeatureNextUpdate = true;
 
-        playerInventory.RemoveFromSelectedItem();
+        featuresToPlace.Enqueue((Input.mousePosition, feature, playerInventory.SelectedIndex));
     }
 }

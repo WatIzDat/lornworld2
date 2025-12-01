@@ -14,10 +14,10 @@ public class PlayerInventory : MonoBehaviour
     private int prevSelectedIndex;
 
     private int selectedIndex;
-    private int SelectedIndex
+    public int SelectedIndex
     {
         get => selectedIndex;
-        set
+        private set
         {
             prevSelectedIndex = selectedIndex;
             selectedIndex = value;
@@ -81,9 +81,9 @@ public class PlayerInventory : MonoBehaviour
         }
     }
 
-    public void RemoveFromSelectedItem()
+    public void RemoveFromIndex(int index)
     {
-        inventoryUIManager.AddStackToItem(SelectedIndex, -1);
+        inventoryUIManager.AddStackToItem(index, -1);
     }
 
 #pragma warning disable IDE0051, IDE0060
