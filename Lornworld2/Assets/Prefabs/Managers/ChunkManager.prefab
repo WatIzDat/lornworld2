@@ -47,4 +47,5 @@ MonoBehaviour:
   chunkPrefab: {fileID: 604306383070667801, guid: 30cac57e1a957b946b45e82bfd070d5a, type: 3}
   chunkParent: {fileID: 0}
   renderDistance: 2
+  maxSpawnpointSearchIterations: 10
   tilemap: {fileID: 0}

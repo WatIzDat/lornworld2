@@ -19,6 +19,9 @@ public class ChunkManager : MonoBehaviour
     private int renderDistance;
 
     //[SerializeField]
+    //private int maxSpawnpointSearchIterations;
+
+    //[SerializeField]
     private Player player;
 
     [SerializeField]
@@ -214,6 +217,13 @@ public class ChunkManager : MonoBehaviour
         {
             Chunk chunk = FindChunkAt(chunkPos);
 
+            if (chunk == null)
+            {
+                Debug.Log("max spawnpoint search");
+
+                break;
+            }
+
             List<Vector2> spawnableTiles = new();
 
             for (int y = 0; y < ChunkSize; y++)
@@ -270,7 +280,7 @@ public class ChunkManager : MonoBehaviour
             i++;
         }
 
-        Debug.Log(spawnpoint);
+        Debug.Log("Spawnpoint: " + spawnpoint);
 
         return spawnpoint;
     }

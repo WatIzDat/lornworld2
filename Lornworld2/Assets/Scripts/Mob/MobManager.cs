@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -24,6 +25,8 @@ public class MobManager : MonoBehaviour
     [SerializeField]
     private int minMobSpawnChunkDistance;
 
+    private bool isSpawningMob;
+
     //private void Start()
     //{
     //SpawnMob(MobRegistry.Instance.GetEntry(MobIds.SlimeMob), new Vector2(20, 30));
@@ -49,47 +52,51 @@ public class MobManager : MonoBehaviour
 
     private void Update()
     {
-        if (chunkManager.AreInitialChunksGenerated && !chunkManager.IsShiftingChunks && mobParent.childCount < maxMobCount)
+        if (chunkManager.AreInitialChunksGenerated &&
+            !chunkManager.IsShiftingChunks &&
+            mobParent.childCount < maxMobCount &&
+            !isSpawningMob)
         {
-            Vector2? spawnpoint = null;
+            StartCoroutine(TrySpawnMobAtRandomPos());
+            //Vector2? spawnpoint = null;
 
-            while (spawnpoint == null)
-            {
-                Chunk chunk = chunkManager.GetRandomLoadedChunk();
+            //while (spawnpoint == null)
+            //{
+            //    Chunk chunk = chunkManager.GetRandomLoadedChunk();
 
-                //Debug.Log("distance: " + Vector2.Distance(chunk.chunkPos.pos, player.ChunkPos.pos));
+            //    //Debug.Log("distance: " + Vector2.Distance(chunk.chunkPos.pos, player.ChunkPos.pos));
 
-                if (Vector2.Distance(chunk.chunkPos.pos, player.ChunkPos.pos) < minMobSpawnChunkDistance)
-                {
-                    continue;
-                }
+            //    if (Vector2.Distance(chunk.chunkPos.pos, player.ChunkPos.pos) < minMobSpawnChunkDistance)
+            //    {
+            //        continue;
+            //    }
 
-                List<Vector2> spawnableTiles = new();
+            //    List<Vector2> spawnableTiles = new();
 
-                for (int y = 0; y < ChunkManager.ChunkSize; y++)
-                {
-                    for (int x = 0; x < ChunkManager.ChunkSize; x++)
-                    {
-                        Vector2Int tilePos = new(x, y);
+            //    for (int y = 0; y < ChunkManager.ChunkSize; y++)
+            //    {
+            //        for (int x = 0; x < ChunkManager.ChunkSize; x++)
+            //        {
+            //            Vector2Int tilePos = new(x, y);
 
-                        Vector2 worldPos = tilePos + (chunk.chunkPos.pos * ChunkManager.ChunkSize);
+            //            Vector2 worldPos = tilePos + (chunk.chunkPos.pos * ChunkManager.ChunkSize);
 
-                        TileScriptableObject tile = chunk.GetTile(tilePos);
+            //            TileScriptableObject tile = chunk.GetTile(tilePos);
 
-                        if (tile.isWalkable)
-                        {
-                            spawnableTiles.Add(worldPos);
-                        }
-                    }
-                }
+            //            if (tile.isWalkable)
+            //            {
+            //                spawnableTiles.Add(worldPos);
+            //            }
+            //        }
+            //    }
 
-                if (spawnableTiles.Count > 0)
-                {
-                    spawnpoint = spawnableTiles[Random.Range(0, spawnableTiles.Count)];
+            //    if (spawnableTiles.Count > 0)
+            //    {
+            //        spawnpoint = spawnableTiles[Random.Range(0, spawnableTiles.Count)];
 
-                    SpawnMob(MobRegistry.Instance.GetEntry(MobIds.SlimeMob), (Vector2)spawnpoint);
-                }
-            }
+            //        SpawnMob(MobRegistry.Instance.GetEntry(MobIds.SlimeMob), (Vector2)spawnpoint);
+            //    }
+            //}
         }
 
         foreach (Transform mob in mobParent)
@@ -99,6 +106,52 @@ public class MobManager : MonoBehaviour
             {
                 Destroy(mob.gameObject);
             }
+        }
+    }
+
+    private IEnumerator TrySpawnMobAtRandomPos()
+    {
+        isSpawningMob = true;
+
+        Chunk chunk = chunkManager.GetRandomLoadedChunk();
+
+        //Debug.Log("distance: " + Vector2.Distance(chunk.chunkPos.pos, player.ChunkPos.pos));
+
+        if (Vector2.Distance(chunk.chunkPos.pos, player.ChunkPos.pos) < minMobSpawnChunkDistance)
+        {
+            yield return null;
+        }
+
+        List<Vector2> spawnableTiles = new();
+
+        for (int y = 0; y < ChunkManager.ChunkSize; y++)
+        {
+            for (int x = 0; x < ChunkManager.ChunkSize; x++)
+            {
+                Vector2Int tilePos = new(x, y);
+
+                Vector2 worldPos = tilePos + (chunk.chunkPos.pos * ChunkManager.ChunkSize);
+
+                TileScriptableObject tile = chunk.GetTile(tilePos);
+
+                if (tile.isWalkable)
+                {
+                    spawnableTiles.Add(worldPos);
+                }
+            }
+        }
+
+        if (spawnableTiles.Count > 0)
+        {
+            Vector2 spawnpoint = spawnableTiles[Random.Range(0, spawnableTiles.Count)];
+
+            SpawnMob(MobRegistry.Instance.GetEntry(MobIds.SlimeMob), spawnpoint);
+
+            isSpawningMob = false;
+        }
+        else
+        {
+            yield return null;
         }
     }
 

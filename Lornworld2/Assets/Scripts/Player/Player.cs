@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using FMOD.Studio;
 using FMODUnity;
+using System.Collections;
 
 public class Player : Entity, IDataPersistence<PlayerData>
 {
@@ -41,7 +42,7 @@ public class Player : Entity, IDataPersistence<PlayerData>
         SceneManager.sceneLoaded += OnSceneLoaded;
         //SceneManager.activeSceneChanged += OnActiveSceneChanged;
 
-        ChunkManager.InitialChunksGenerated += OnInitialChunksGenerated;
+        //ChunkManager.InitialChunksGenerated += OnInitialChunksGenerated;
 
         PlayerInventory.HotbarSelectedItemChanged += OnHotbarSelectedItemChanged;
 
@@ -57,7 +58,7 @@ public class Player : Entity, IDataPersistence<PlayerData>
         SceneManager.sceneLoaded -= OnSceneLoaded;
         //SceneManager.activeSceneChanged -= OnActiveSceneChanged;
 
-        ChunkManager.InitialChunksGenerated -= OnInitialChunksGenerated;
+        //ChunkManager.InitialChunksGenerated -= OnInitialChunksGenerated;
 
         PlayerInventory.HotbarSelectedItemChanged -= OnHotbarSelectedItemChanged;
 
@@ -98,22 +99,38 @@ public class Player : Entity, IDataPersistence<PlayerData>
 
         DataPersistenceManager.Instance.LoadObject<PlayerData>(
             data => LoadData(data),
-            () => isNewScene = true,
+            () => StartCoroutine(SetSpawnpoint()),
             Path.Combine(ScenePersistentInfo.SceneId, "player"));
     }
 
-    private void OnInitialChunksGenerated()
+    private IEnumerator SetSpawnpoint()
     {
-        if (isNewScene)
+        ChunkManager chunkManager = FindFirstObjectByType<ChunkManager>();
+
+        if (!chunkManager.AreInitialChunksGenerated)
         {
-            ChunkManager chunkManager = FindFirstObjectByType<ChunkManager>();
-            bool createSceneEntrance = ScenePersistentInfo.SceneId != "surface";
-
-            transform.position = chunkManager.GetSpawnpoint(createSceneEntrance) ?? Vector2.zero;
-
-            isNewScene = false;
+            yield return null;
         }
+
+        bool createSceneEntrance = ScenePersistentInfo.SceneId != "surface";
+
+        transform.position = chunkManager.GetSpawnpoint(createSceneEntrance) ?? Vector2.one;
     }
+
+    //private void OnInitialChunksGenerated()
+    //{
+    //    if (isNewScene)
+    //    {
+    //        Debug.Log("initial chunks gen");
+
+    //        ChunkManager chunkManager = FindFirstObjectByType<ChunkManager>();
+    //        bool createSceneEntrance = ScenePersistentInfo.SceneId != "surface";
+
+    //        transform.position = chunkManager.GetSpawnpoint(createSceneEntrance) ?? Vector2.one;
+
+    //        isNewScene = false;
+    //    }
+    //}
 
     //private void OnActiveSceneChanged(Scene fromScene, Scene toScene)
     //{
