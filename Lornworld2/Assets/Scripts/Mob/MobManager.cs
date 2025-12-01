@@ -130,7 +130,7 @@ public class MobManager : MonoBehaviour
             {
                 Vector2Int tilePos = new(x, y);
 
-                Vector2 worldPos = tilePos + (chunk.chunkPos.pos * ChunkManager.ChunkSize);
+                Vector2 worldPos = tilePos + (chunk.chunkPos.pos * ChunkManager.ChunkSize) + (Vector2.one * 0.5f);
 
                 TileScriptableObject tile = chunk.GetTile(tilePos);
 
