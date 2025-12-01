@@ -8,6 +8,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3198291104567318863, guid: 1b111fc0355f5a44bae329da98c46277, type: 3}
+      propertyPath: m_SortingLayer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3198291104567318863, guid: 1b111fc0355f5a44bae329da98c46277, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 1678156995
+      objectReference: {fileID: 0}
     - target: {fileID: 5269188878959487426, guid: 1b111fc0355f5a44bae329da98c46277, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -48,6 +56,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5337815252709301048, guid: 1b111fc0355f5a44bae329da98c46277, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5689603282861799343, guid: 1b111fc0355f5a44bae329da98c46277, type: 3}
       propertyPath: isInvulnerable
       value: 1
@@ -56,7 +68,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: SceneEntranceFeature
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 518751686277653235, guid: 1b111fc0355f5a44bae329da98c46277, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
