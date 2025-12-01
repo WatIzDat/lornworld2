@@ -9,6 +9,8 @@ using UnityEngine.UIElements;
 
 public class InventoryUIManager : MonoBehaviour, IDataPersistence<InventoryData>
 {
+    private static InventoryUIManager instance;
+
     public const int InventoryWidth = 9;
     public const int InventoryHeight = 4; // including hotbar
 
@@ -53,6 +55,15 @@ public class InventoryUIManager : MonoBehaviour, IDataPersistence<InventoryData>
 
     private void Awake()
     {
+        if (instance != null && instance != this)
+        {
+            Destroy(this);
+
+            return;
+        }
+
+        instance = this;
+
         root = GetComponent<UIDocument>().rootVisualElement;
         panel = root.Q<VisualElement>("Panel");
         slotContainer = root.Q<VisualElement>("SlotContainer");
