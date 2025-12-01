@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: SlimeMob
   m_EditorClassIdentifier: 
   mobName: Slime
+  mobPrefab: {fileID: 2895154013512286348, guid: b699616608becb646922b80db0d94ca6, type: 3}
   maxHealth: 5
   attackDamage: 5
   speed: 200

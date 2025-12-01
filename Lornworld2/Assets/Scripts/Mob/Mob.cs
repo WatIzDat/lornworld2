@@ -15,10 +15,10 @@ public class Mob : Entity
     private PathfindingUnit pathfindingUnit;
 
     // TODO: implement state machine and get rid of directly passing in player
-    public static Mob Create(Player player, GameObject mobPrefab, Transform mobParent, MobScriptableObject mobScriptableObject, Vector2 position)
+    public static Mob Create(Player player, Transform mobParent, MobScriptableObject mobScriptableObject, Vector2 position)
     {
         Mob mob = Instantiate(
-            mobPrefab,
+            mobScriptableObject.mobPrefab,
             position,
             Quaternion.identity,
             mobParent).GetComponent<Mob>();

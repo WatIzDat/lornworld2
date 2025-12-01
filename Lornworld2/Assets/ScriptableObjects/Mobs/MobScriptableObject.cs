@@ -5,6 +5,7 @@ using UnityEngine;
 public class MobScriptableObject : ScriptableObject
 {
     public string mobName;
+    public GameObject mobPrefab;
     public float maxHealth;
     public float attackDamage;
     public float speed;

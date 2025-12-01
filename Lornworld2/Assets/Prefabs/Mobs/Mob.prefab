@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4693605130561314953}
   - component: {fileID: 3894538981263161639}
   - component: {fileID: 4902268875161072665}
+  - component: {fileID: -2674766181333048659}
   m_Layer: 0
   m_Name: Mob
   m_TagString: Untagged
@@ -193,3 +194,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 500
+--- !u!114 &-2674766181333048659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7742050174860863901}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55b60efd8c00c804d80a52fbc04d5aa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: 0

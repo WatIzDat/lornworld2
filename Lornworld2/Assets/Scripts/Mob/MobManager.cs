@@ -5,8 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class MobManager : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject mobPrefab;
+    //[SerializeField]
+    //private GameObject mobPrefab;
 
     [SerializeField]
     private string mobParentTag;
@@ -157,6 +157,6 @@ public class MobManager : MonoBehaviour
 
     private void SpawnMob(MobScriptableObject mobScriptableObject, Vector2 position)
     {
-        Mob.Create(player, mobPrefab, mobParent, mobScriptableObject, position);
+        Mob.Create(player, mobParent, mobScriptableObject, position);
     }
 }
