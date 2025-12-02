@@ -16,6 +16,7 @@ MonoBehaviour:
   sprite: {fileID: 21300000, guid: 9279caaf65ebc6843bc0105ffdd5a2f0, type: 3}
   maxStackSize: 40
   itemUseBehavior: {fileID: 0}
+  itemAttackBehavior: {fileID: 11400000, guid: 9c0fe3d691caf2d4cb1fa19e0636233b, type: 2}
   itemSelectBehavior: {fileID: 0}
   statScaleBehavior: {fileID: 0}
   isArmor: 0
