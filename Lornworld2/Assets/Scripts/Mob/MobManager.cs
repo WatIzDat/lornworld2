@@ -117,9 +117,11 @@ public class MobManager : MonoBehaviour
 
         //Debug.Log("distance: " + Vector2.Distance(chunk.chunkPos.pos, player.ChunkPos.pos));
 
-        if (Vector2.Distance(chunk.chunkPos.pos, player.ChunkPos.pos) < minMobSpawnChunkDistance)
+        while (Vector2.Distance(chunk.chunkPos.pos, player.ChunkPos.pos) < minMobSpawnChunkDistance)
         {
             yield return null;
+
+            chunk = chunkManager.GetRandomLoadedChunk();
         }
 
         List<Vector2> spawnableTiles = new();
