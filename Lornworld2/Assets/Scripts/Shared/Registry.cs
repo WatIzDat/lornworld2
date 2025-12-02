@@ -44,5 +44,10 @@ public abstract class Registry<T, U> : MonoBehaviour where T : Object where U : 
         return idsMap[entry];
     }
 
+    public bool Contains(T entry)
+    {
+        return idsMap.ContainsKey(entry);
+    }
+
     protected abstract U CreateId(string id);
 }

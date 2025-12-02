@@ -20,3 +20,5 @@ MonoBehaviour:
   itemSelectBehavior: {fileID: 0}
   statScaleBehavior: {fileID: 0}
   isArmor: 0
+  isWeapon: 1
+  makeUniqueRuntimeInstances: 1

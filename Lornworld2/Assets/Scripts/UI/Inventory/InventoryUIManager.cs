@@ -385,6 +385,15 @@ public class InventoryUIManager : MonoBehaviour, IDataPersistence<InventoryData>
         InventoryItem oldInventoryItem = (InventoryItem)e.OldItems[0];
         InventoryItem newInventoryItem = (InventoryItem)e.NewItems[0];
 
+        if (newInventoryItem != null &&
+            newInventoryItem.item.makeUniqueRuntimeInstances &&
+            ItemRegistry.Instance.Contains(newInventoryItem.item))
+        {
+            items[e.NewStartingIndex] = new InventoryItem(Instantiate(newInventoryItem.item), newInventoryItem.stackSize);
+
+            newInventoryItem = items[e.NewStartingIndex];
+        }
+
         InventoryChanged?.Invoke(e.NewStartingIndex, newInventoryItem);
 
         if (e.NewStartingIndex < InventoryWidth)

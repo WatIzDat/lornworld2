@@ -12,4 +12,19 @@ public class ItemScriptableObject : ScriptableObject
     public StatScaleBehaviorScriptableObject statScaleBehavior;
     // TODO: make this into an item type enum
     public bool isArmor;
+    public bool isWeapon;
+
+    public bool makeUniqueRuntimeInstances;
+
+    public void SetItemAttackBehavior(ItemAttackBehaviorScriptableObject itemAttackBehavior)
+    {
+        if (!makeUniqueRuntimeInstances)
+        {
+            Debug.LogError("Not a unique runtime instance");
+
+            return;
+        }
+
+        this.itemAttackBehavior = itemAttackBehavior;
+    }
 }
