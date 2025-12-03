@@ -1,9 +1,9 @@
+using MemoryPack;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "ItemScriptableObject", menuName = "Scriptable Objects/Items/Item")]
-public class ItemScriptableObject : ScriptableObject
+public class ItemScriptableObject : RegistryEntry
 {
-    public string itemName;
     public Sprite sprite;
     public int maxStackSize;
     public ItemUseBehaviorScriptableObject itemUseBehavior;
@@ -27,4 +27,10 @@ public class ItemScriptableObject : ScriptableObject
 
         this.itemAttackBehavior = itemAttackBehavior;
     }
+}
+
+[MemoryPackable]
+public partial class ItemScriptableObjectData : IGameData
+{
+    public string itemAttackBehaviorAssetPath;
 }

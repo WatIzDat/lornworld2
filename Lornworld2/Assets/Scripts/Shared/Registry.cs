@@ -3,12 +3,13 @@ using System.Reflection;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public abstract class Registry<T, U> : MonoBehaviour where T : Object where U : Identifier
+public abstract class Registry<T, U> : MonoBehaviour where T : RegistryEntry where U : Identifier
 {
     public T[] Entries { get; private set; }
 
     private readonly Dictionary<U, T> entriesMap = new();
-    private readonly Dictionary<T, U> idsMap = new();
+    private readonly Dictionary<string, U> idsMap = new();
+    private readonly HashSet<T> entriesSet = new();
 
     [SerializeField]
     private string entriesPath;
@@ -30,7 +31,8 @@ public abstract class Registry<T, U> : MonoBehaviour where T : Object where U : 
             idsType.GetProperty(entry.name).SetValueOptimized(null, id);
 
             entriesMap.Add(id, entry);
-            idsMap.Add(entry, id);
+            idsMap.Add(entry.EntryName, id);
+            entriesSet.Add(entry);
         }
     }
 
@@ -41,12 +43,12 @@ public abstract class Registry<T, U> : MonoBehaviour where T : Object where U : 
 
     public U GetId(T entry)
     {
-        return idsMap[entry];
+        return idsMap[entry.EntryName];
     }
 
     public bool Contains(T entry)
     {
-        return idsMap.ContainsKey(entry);
+        return entriesSet.Contains(entry);
     }
 
     protected abstract U CreateId(string id);

@@ -7,6 +7,7 @@ using MemoryPack;
 [MemoryPackUnion(3, typeof(InventoryData))]
 [MemoryPackUnion(4, typeof(InventoryItemData))]
 [MemoryPackUnion(5, typeof(GameData))]
+[MemoryPackUnion(6, typeof(ItemScriptableObjectData))]
 public partial interface IGameData
 {
 }

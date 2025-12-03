@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -47,6 +48,13 @@ public class InventoryUIManager : MonoBehaviour, IDataPersistence<InventoryData>
     private int draggedStackSize;
 
     public bool IsInventoryOpen { get; private set; }
+
+    [Header("Item Behavior Paths")]
+    [SerializeField]
+    private string itemBehaviorAssetsDirectory = "ScriptableObjects/Items";
+
+    [SerializeField]
+    private string itemAttackBehaviorAssetsPath = "ItemAttackBehaviors";
 
     public static event Action InventoryInitialized;
     public static event Action<int, InventoryItem> InventoryChanged;
@@ -389,7 +397,7 @@ public class InventoryUIManager : MonoBehaviour, IDataPersistence<InventoryData>
             newInventoryItem.item.makeUniqueRuntimeInstances &&
             ItemRegistry.Instance.Contains(newInventoryItem.item))
         {
-            items[e.NewStartingIndex] = new InventoryItem(Instantiate(newInventoryItem.item), newInventoryItem.stackSize);
+            items[e.NewStartingIndex] = new InventoryItem(RegistryEntry.CreateUnique(newInventoryItem.item), newInventoryItem.stackSize);
 
             newInventoryItem = items[e.NewStartingIndex];
         }
@@ -512,9 +520,32 @@ public class InventoryUIManager : MonoBehaviour, IDataPersistence<InventoryData>
     public bool LoadData(InventoryData data)
     {
         List<InventoryItem> dataItems = data.items.Select(
-            item => item != null
-            ? new InventoryItem(ItemRegistry.Instance.GetEntry(item.item), item.stackSize)
-            : null)
+            item =>
+            {
+                if (item != null)
+                {
+                    if (item.itemData != null)
+                    {
+                        ItemScriptableObject itemScriptableObject =
+                            Instantiate(ItemRegistry.Instance.GetEntry(item.item));
+
+                        itemScriptableObject.makeUniqueRuntimeInstances = true;
+
+                        if (item.itemData.itemAttackBehaviorAssetPath != null)
+                        {
+                            itemScriptableObject.itemAttackBehavior = Resources.Load<ItemAttackBehaviorScriptableObject>(Path.Combine(itemBehaviorAssetsDirectory, itemAttackBehaviorAssetsPath, item.itemData.itemAttackBehaviorAssetPath));
+
+                            Debug.Log("Inventory load data: " + itemScriptableObject.itemAttackBehavior);
+                        }
+
+                        return new InventoryItem(itemScriptableObject, item.stackSize);
+                    }
+
+                    return new InventoryItem(ItemRegistry.Instance.GetEntry(item.item), item.stackSize);
+                }
+
+                return null;
+            })
             .ToList();
 
         Debug.Log("Items count: " + dataItems.Count);
@@ -541,11 +572,32 @@ public class InventoryUIManager : MonoBehaviour, IDataPersistence<InventoryData>
         saveCallback(
             new InventoryData(
                 items.Select(
-                    item => item != null 
-                    ? new InventoryItemData(
-                        ItemRegistry.Instance.GetId(item.item),
-                        item.stackSize) 
-                    : null)),
+                    item =>
+                    {
+                        if (item != null)
+                        {
+                            if (item.item.makeUniqueRuntimeInstances)
+                            {
+                                ItemScriptableObjectData uniqueItemData = new();
+
+                                if (item.item.itemAttackBehavior != null)
+                                {
+                                    uniqueItemData.itemAttackBehaviorAssetPath = item.item.itemAttackBehavior.name;
+                                }
+                                
+                                return new InventoryItemData(
+                                    ItemRegistry.Instance.GetId(item.item),
+                                    item.stackSize,
+                                    uniqueItemData);
+                            }
+
+                            return new InventoryItemData(
+                                ItemRegistry.Instance.GetId(item.item),
+                                item.stackSize);
+                        }
+
+                        return null;
+                    })),
             "inventory");
     }
 }

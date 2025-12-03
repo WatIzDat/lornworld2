@@ -33,7 +33,7 @@ public class TileRegistry : Registry<TileScriptableObject, TileIdentifier>
         {
             placeholderTileToTileObjMap.Add(tile.placeholderTile, tile);
 
-            string displayTilesDirectoryName = tile.tileName;
+            string displayTilesDirectoryName = tile.EntryName;
             Tile placeholderTile = tile.placeholderTile;
 
             Tile[] tiles = Resources.LoadAll<Tile>($"{tilesResourcesPath}/{displayTilesDirectoryName}");

@@ -6,7 +6,7 @@ using UnityEngine;
 //}
 
 [CreateAssetMenu(fileName = "FeatureScriptableObject", menuName = "Scriptable Objects/World/Features/Feature")]
-public class FeatureScriptableObject : ScriptableObject
+public class FeatureScriptableObject : RegistryEntry
 {
     public GameObject prefab;
     public float maxHealth;

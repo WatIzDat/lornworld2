@@ -304,6 +304,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   droppedItemPrefab: {fileID: 5804108876306653333, guid: 9a7543d4a28f3c846bec4d736d973589, type: 3}
+  itemBehaviorAssetsDirectory: ScriptableObjects/Items/
+  itemAttackBehaviorAssetsPath: ItemAttackBehaviors
 --- !u!1 &514829017
 GameObject:
   m_ObjectHideFlags: 0

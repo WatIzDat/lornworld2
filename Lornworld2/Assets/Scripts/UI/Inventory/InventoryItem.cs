@@ -41,11 +41,13 @@ public record InventoryItem
 public partial record InventoryItemData : IGameData
 {
     public ItemIdentifier item;
+    public ItemScriptableObjectData itemData;
     public int stackSize;
 
-    public InventoryItemData(ItemIdentifier item, int stackSize)
+    public InventoryItemData(ItemIdentifier item, int stackSize, ItemScriptableObjectData itemData = null)
     {
         this.item = item;
+        this.itemData = itemData;
         this.stackSize = stackSize;
     }
 }

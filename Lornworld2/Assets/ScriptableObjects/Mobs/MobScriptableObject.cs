@@ -2,9 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "MobScriptableObject", menuName = "Scriptable Objects/Mobs/Mob")]
-public class MobScriptableObject : ScriptableObject
+public class MobScriptableObject : RegistryEntry
 {
-    public string mobName;
     public GameObject mobPrefab;
     public float maxHealth;
     public float attackDamage;
