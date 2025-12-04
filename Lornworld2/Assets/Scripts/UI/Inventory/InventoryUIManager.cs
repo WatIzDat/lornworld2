@@ -527,7 +527,7 @@ public class InventoryUIManager : MonoBehaviour, IDataPersistence<InventoryData>
                     if (item.itemData != null)
                     {
                         ItemScriptableObject itemScriptableObject =
-                            Instantiate(ItemRegistry.Instance.GetEntry(item.item));
+                            RegistryEntry.CreateUnique(ItemRegistry.Instance.GetEntry(item.item));
 
                         itemScriptableObject.makeUniqueRuntimeInstances = true;
 
