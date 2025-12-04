@@ -8,7 +8,7 @@ public class FeatureItemUseBehavior : ItemUseBehaviorScriptableObject
 
     public FeatureScriptableObject feature;
 
-    public override void UseItem()
+    public override void UseItem(Player player, Vector2 mousePos, RaycastHit2D raycastHit, Func<UnityEngine.Object, Vector3, Quaternion, InstantiateParameters, UnityEngine.Object> instantiate)
     {
         ItemUsed?.Invoke(feature);
     }

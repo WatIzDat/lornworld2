@@ -1,4 +1,5 @@
 using MemoryPack;
+using UnityEngine;
 
 [System.Serializable]
 public record InventoryItem
@@ -28,11 +29,11 @@ public record InventoryItem
         return new InventoryItem(item, stack);
     }
 
-    public void UseItem()
+    public void UseItem(Player player, Vector2 mousePos, RaycastHit2D raycastHit, System.Func<Object, Vector3, Quaternion, InstantiateParameters, Object> instantiate)
     {
         if (item.itemUseBehavior != null)
         {
-            item.itemUseBehavior.UseItem();
+            item.itemUseBehavior.UseItem(player, mousePos, raycastHit, instantiate);
         }
     }
 }

@@ -11,6 +11,8 @@ public class PlayerInventory : MonoBehaviour
     [SerializeField]
     private CraftingMenuUIManager craftingMenuUIManager;
 
+    private Player player;
+
     private int prevSelectedIndex;
 
     private int selectedIndex;
@@ -31,6 +33,11 @@ public class PlayerInventory : MonoBehaviour
 
     private bool dropItemStackModifierPressed;
     private bool pickUpItemNextUpdate;
+
+    private void Awake()
+    {
+        player = GetComponent<Player>();
+    }
 
     private void OnEnable()
     {
@@ -141,7 +148,11 @@ public class PlayerInventory : MonoBehaviour
 
     private void OnUseItem(InputValue inputValue)
     {
-        SelectedItem?.UseItem();
+        Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        RaycastHit2D raycastHit = Physics2D.Raycast(mousePos, Vector2.zero);
+
+        SelectedItem?.UseItem(player, mousePos, raycastHit, Instantiate);
     }
 
     private void OnDropItem(InputValue inputValue)

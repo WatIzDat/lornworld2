@@ -12,10 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a7c9e5d0a2d4a248a76cb965631334a, type: 3}
   m_Name: WoodenSwordItem
   m_EditorClassIdentifier: 
-  itemName: Wooden Sword
   sprite: {fileID: 21300000, guid: fd2cef513de1ecf4c88907cc408ea1dd, type: 3}
   maxStackSize: 1
-  itemUseBehavior: {fileID: 0}
+  itemUseBehavior: {fileID: 11400000, guid: 3ce6ad23fa817c648a440841879b77b0, type: 2}
   itemAttackBehavior: {fileID: 0}
   itemSelectBehavior: {fileID: 0}
   statScaleBehavior: {fileID: 0}

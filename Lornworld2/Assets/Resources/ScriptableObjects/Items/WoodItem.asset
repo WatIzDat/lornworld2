@@ -12,10 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a7c9e5d0a2d4a248a76cb965631334a, type: 3}
   m_Name: WoodItem
   m_EditorClassIdentifier: 
-  itemName: Wood
   sprite: {fileID: 21300000, guid: 4fc2949ccf06a7949828fc8d21dd6277, type: 3}
   maxStackSize: 40
   itemUseBehavior: {fileID: 0}
+  itemAttackBehavior: {fileID: 0}
   itemSelectBehavior: {fileID: 0}
   statScaleBehavior: {fileID: 0}
   isArmor: 0
+  isWeapon: 0
+  makeUniqueRuntimeInstances: 0
