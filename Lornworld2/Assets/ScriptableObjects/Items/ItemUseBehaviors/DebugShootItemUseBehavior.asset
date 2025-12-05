@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7abc43621a01b674289818be066e84e8, type: 3}
   m_Name: DebugShootItemUseBehavior
   m_EditorClassIdentifier: 
-  projectilePrefab: {fileID: 2003992992970414056, guid: 0050754eea2e85f4692b913c2a69c73f, type: 3}
+  projectile: {fileID: -4564395544350740632, guid: 0050754eea2e85f4692b913c2a69c73f, type: 3}
   speed: 35
